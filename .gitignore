@@ -1,18 +1,10 @@
-# exclude everything
+#exclude everything
 *
 
-
-# except source files
+# except files needed for git and cmake
 !.gitignore
-!*/
-!*.cpp
-!*.h
-!*.lua
-!*.glsl
-!*.txt
-!*.und
-!README.md
-!res/*
+!**/CMakeLists.txt
 
-# the directory which you can use to build the project with cmake
-build/*
+#except source files
+!**.cpp
+!**.h

@@ -1,6 +1,0 @@
-[submodule "undicht_0.37_engine"]
-	path = undicht_0.37_engine
-	url = https://github.com/ebanjo-2/undicht_0.37_engine.git
-[submodule "graphics/extern/glfw"]
-	path = graphics/extern/glfw
-	url = https://github.com/ebanjo-2/glfw
