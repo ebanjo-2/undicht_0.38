@@ -10,6 +10,3 @@
 !*.glsl
 !*.und
 !README.md
-
-# if they are in these subdirectories
-#!examples/*

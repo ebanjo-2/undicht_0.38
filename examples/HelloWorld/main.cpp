@@ -1,7 +1,10 @@
 #include <iostream>
+#include <graphics_core.h>
 
 int main() {
 	
-	std::cout << "Hello World!" << "\n";
+	GraphicsCore core;
+	core.print();
+
 	return 0;
 }
