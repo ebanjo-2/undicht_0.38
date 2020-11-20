@@ -1,10 +1,15 @@
 #exclude everything
 *
 
-# except files needed for git and cmake
+# except these file types
 !.gitignore
-!**/CMakeLists.txt
+!*.cpp
+!*.h
+!*.lua
+!*.glsl
+!CMakeLists.txt
+!*.und
+!README.md
 
-#except source files
-!**.cpp
-!**.h
+# if they are in these subdirectories
+!examples/*
