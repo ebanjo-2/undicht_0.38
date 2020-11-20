@@ -1,15 +1,15 @@
 #exclude everything
-*
+*.*
 
 # except these file types
 !.gitignore
+!CMakeLists.txt
 !*.cpp
 !*.h
 !*.lua
 !*.glsl
-!CMakeLists.txt
 !*.und
 !README.md
 
 # if they are in these subdirectories
-!examples/*
+#!examples/*
