@@ -9,6 +9,31 @@ add_library(graphics STATIC
 	include/window/window.h
 	src/window/glfw/glfw_window.h
 	src/window/glfw/glfw_window.cpp
+	
+	include/core/frame_buffer.h
+	src/core/gl33/gl33_frame_buffer.h
+	src/core/gl33/gl33_frame_buffer.cpp
+	
+	include/core/renderer.h
+	src/core/gl33/gl33_renderer.h
+	src/core/gl33/gl33_renderer.cpp
+	
+	include/core/shader.h
+	src/core/gl33/gl33_shader.h
+	src/core/gl33/gl33_shader.cpp
+	
+	include/core/texture.h
+	src/core/gl33/gl33_texture.h
+	src/core/gl33/gl33_texture.cpp
+	
+	include/core/uniform.h
+	src/core/gl33/gl33_uniform.h
+	src/core/gl33/gl33_uniform.cpp
+	
+	include/vertex_buffer.h
+	src/core/gl33/gl33_vertex_buffer.h
+	src/core/gl33/gl33_vertex_buffer.cpp
+	
 )
 
 target_include_directories(graphics PUBLIC include src)
