@@ -30,7 +30,7 @@ add_library(graphics STATIC
 	src/core/gl33/gl33_uniform.h
 	src/core/gl33/gl33_uniform.cpp
 	
-	include/vertex_buffer.h
+	include/core/vertex_buffer.h
 	src/core/gl33/gl33_vertex_buffer.h
 	src/core/gl33/gl33_vertex_buffer.cpp
 	

@@ -1,5 +1,8 @@
 #exclude everything
 *.*
+*/
+* 
+# files without file endings (i.e. .txt)
 
 # except these file types
 !.gitignore
