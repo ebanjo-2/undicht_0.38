@@ -33,6 +33,9 @@ add_library(graphics STATIC
 	include/core/vertex_buffer.h
 	src/core/gl33/gl33_vertex_buffer.h
 	src/core/gl33/gl33_vertex_buffer.cpp
+
+    src/core/gl33/gl33_tools.cpp
+    src/core/gl33/gl33_tools.h
 	
 )
 
@@ -45,3 +48,4 @@ add_subdirectory(extern/EGL-Registry)
 target_link_libraries("graphics" khr_platform)
 target_link_libraries("graphics" glfw)
 target_link_libraries("graphics" glad)
+target_link_libraries("graphics" tools)

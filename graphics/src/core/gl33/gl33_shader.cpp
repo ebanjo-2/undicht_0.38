@@ -1,6 +1,10 @@
+#include <core/graphics_core.h>
+
+#ifdef USE_GL33
+
 #include <glad/glad.h>
 #include "gl33_shader.h"
-#include "gl_tools.h"
+#include "gl33_tools.h"
 #include <core/event_logger.h>
 #include "gl33_texture.h"
 #include "gl33_uniform.h"
@@ -267,3 +271,4 @@ namespace undicht {
 
 
 
+#endif // USE_GL33

@@ -1,38 +1,46 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <core/shared_lib_class.h>
 #include <string>
-#include <graphics/uniform.h>
-#include <graphics/texture.h>
+#include "graphics_core.h"
+#include "uniform.h"
+#include "texture.h"
 
 namespace undicht {
 
     namespace graphics {
 
-        SHARED_LIB_DECL_BASE_CLASS(Shader, ShaderBase, createShader, copyShader, deleteShader);
+        namespace interf {
 
-        SHARED_LIB_CLASS(class Shader : public ShaderBase {
+        class Shader {
             public:
-                Shader();
-                virtual ~Shader();
+
+                Shader() = default;
+                virtual ~Shader() = default;
 
             public:
                 // loading the shader source
 
                 /// glsl, but in a single string/file, shader types marked with #vertex, #fragment, ...
                 /// similar to TheChernos solution in the Hazel engine
-                virtual void loadSource(const std::string& source);
+                virtual void loadSource(const std::string& source) = 0;
 
             public:
                 // loading data to the shader
 
-                virtual void loadUniform(const graphics::Uniform& u);
+                virtual void loadUniform(const graphics::Uniform& u) = 0;
 
-                virtual void loadTexture(const graphics::Texture& t);
+                virtual void loadTexture(const graphics::Texture& t) = 0;
 
 
-        };)
+        };
+
+        } // interf
+
+#ifdef USE_GL33
+#include <core/gl33/gl33_shader.h>
+typedef gl33::Shader Shader;
+#endif // USE_GL33
 
     } // graphics
 

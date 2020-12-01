@@ -1,3 +1,5 @@
+#ifdef USE_GL33
+
 #include <glad/glad.h>
 
 #include "gl33_frame_buffer.h"
@@ -253,3 +255,5 @@ namespace undicht {
     } // graphics
 
 } // undicht
+
+#endif // USE_GL33

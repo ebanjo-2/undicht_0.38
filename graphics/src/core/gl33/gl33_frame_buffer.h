@@ -1,71 +1,68 @@
+#ifdef FRAME_BUFFER_H // this file should only be included via include/core/frame_buffer.h
+
 #ifndef GL33_FRAME_BUFFER_H
 #define GL33_FRAME_BUFFER_H
 
-#include <graphics/frame_buffer.h>
-#include "gl33_texture.h"
-#include <core/shared_id.h>
+#include <core/texture.h>
+#include <shared_id.h>
 
-namespace undicht {
+namespace gl33 {
 
-    namespace graphics {
+    class FrameBuffer : public implementation::FrameBuffer {
 
-        namespace gl33 {
+        public:
+            // opengl only members / functions
 
-            class FrameBuffer : public implementation::FrameBuffer {
+            int m_width = 0;
+            int m_height = 0;
 
-                public:
-                    // opengl only members / functions
+            core::SharedID m_id;
+            int m_type; // will always be GL_FRAMEBUFFER
 
-                    int m_width = 0;
-                    int m_height = 0;
+            std::vector<int> m_attachment_types;
+            std::vector<gl33::Texture*> m_attachments;
 
-                    core::SharedID m_id;
-                    int m_type; // will always be GL_FRAMEBUFFER
+            virtual int getColorOutputCount();
 
-                    std::vector<int> m_attachment_types;
-                    std::vector<gl33::Texture*> m_attachments;
+            virtual void updateColorOutputs();
 
-                    virtual int getColorOutputCount();
+            virtual void checkStatus();
 
-                    virtual void updateColorOutputs();
+            virtual void bind();
 
-                    virtual void checkStatus();
+            static void bind(int id);
 
-                    virtual void bind();
+        public:
 
-                    static void bind(int id);
+            /** setting the size of the framebuffer and all of its attachments */
+            virtual void setSize(int width, int height);
 
-                public:
+            virtual void getSize(int& width, int& height);
 
-                    /** setting the size of the framebuffer and all of its attachments */
-                    virtual void setSize(int width, int height);
+            /** @param texture: the framebuffer can only be used while the texture object exists
+            * @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
+            * @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE */
+            virtual void addAttachment(graphics::Texture& texture, int attachment_type);
 
-                    virtual void getSize(int& width, int& height);
+            /** @brief removes the attachment from the framebuffer */
+            virtual void removeAttachment(graphics::Texture& texture);
 
-                    /** @param texture: the framebuffer can only be used while the texture object exists
-                    * @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
-                    * @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE */
-                    virtual void addAttachment(graphics::Texture& texture, int attachment_type);
-
-                    /** @brief removes the attachment from the framebuffer */
-                    virtual void removeAttachment(graphics::Texture& texture);
-
-                    virtual void clearAttachments();
+            virtual void clearAttachments();
 
 
-                public:
+        public:
 
 
-                    FrameBuffer();
-                    virtual ~FrameBuffer();
+            FrameBuffer();
+            virtual ~FrameBuffer();
 
-            };
+    };
 
-        } // gl33
+} // gl33
 
-    } // graphics
 
-} // undicht
 
 
 #endif // GL33_FRAME_BUFFER_H
+
+#endif // FRAME_BUFFER_H

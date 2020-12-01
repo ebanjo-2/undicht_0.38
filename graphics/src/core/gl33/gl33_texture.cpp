@@ -1,8 +1,13 @@
-#include "gl33_texture.h"
+#include <core/graphics_core.h>
+
+#ifdef USE_GL33
+
+
+#include "core/texture.h"
 #include <glad/glad.h>
 #include <array>
-#include <core/types.h>
-#include "gl_tools.h"
+#include <types.h>
+#include "gl33_tools.h"
 
 using namespace undicht::core;
 
@@ -330,3 +335,5 @@ namespace undicht {
     } // graphics
 
 } // undicht
+
+#endif // USE_GL33
