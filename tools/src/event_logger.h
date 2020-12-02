@@ -2,14 +2,12 @@
 #define EventLogger_H
 
 #include <vector>
-#include <core/note.h>
-#include <core/string_tools.h>
+#include "note.h"
+#include "string_tools.h"
 
 namespace undicht {
 
-    namespace core {
-
-
+    namespace tools {
 
 
         class EventLogger {
@@ -44,7 +42,7 @@ namespace undicht {
 
         };
 
-    } // core
+    } // tools
 
 } // undicht
 

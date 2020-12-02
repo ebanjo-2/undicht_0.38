@@ -1,12 +1,12 @@
 #ifndef BUFFER_LAYOUT_H_INCLUDED
 #define BUFFER_LAYOUT_H_INCLUDED
 
-#include <core/types.h>
+#include "types.h"
 #include <vector>
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         /// a class that describes the data type stored in a buffer
         class BufferLayout {
@@ -22,7 +22,7 @@ namespace undicht {
 
         };
 
-    }
+    } // tools
 
 }
 

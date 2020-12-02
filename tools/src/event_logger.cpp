@@ -2,7 +2,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         std::vector<Note> EventLogger::s_error_Notes;
         std::vector<Note> EventLogger::s_warning_Notes;
@@ -89,6 +89,6 @@ namespace undicht {
         }
 
 
-    } // core
+    } // tools
 
 } // undicht

@@ -6,7 +6,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         class MemoryWatcher {
                 /** a class that gives an api to keep track of how many objects have access to some shared memory
@@ -54,7 +54,7 @@ namespace undicht {
         };
 
 
-    } //core
+    } // tools
 
 } // undicht
 

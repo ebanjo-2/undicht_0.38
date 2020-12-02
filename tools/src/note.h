@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <string>
-#include <core/memory_watcher.h>
+#include "memory_watcher.h"
 #include <sstream>
 #include <iostream>
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         // can be used to request only certain types of events from the event EventLoggerger
         enum NOTE_TYPE {
@@ -78,7 +78,7 @@ namespace undicht {
         };
 
 
-    } // core
+    } // tools
 
 } // undicht
 

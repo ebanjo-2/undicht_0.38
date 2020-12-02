@@ -6,7 +6,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         class SharedID : public Shared<unsigned int>{
             /** a class that stores the id to an object which may be referenced in multiple objects
@@ -26,7 +26,7 @@ namespace undicht {
 
         };
 
-    } // core
+    } // tools
 
 } // undicht
 

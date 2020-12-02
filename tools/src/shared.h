@@ -6,7 +6,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         template<typename ttype>
         class Shared : protected MemoryWatcher {
@@ -57,7 +57,7 @@ namespace undicht {
         };
 
 
-    } // core
+    } // tools
 
 } // undicht
 

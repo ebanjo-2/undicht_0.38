@@ -8,7 +8,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
 #define UND_CODE_SRC_FILE replaceAllChars(undicht::core::toStr(__FILE__), '\\', '/') /** on windows you might get '\' between directory names, which would break things */
 
@@ -48,9 +48,9 @@ namespace undicht {
         * @param stride is the distance in chars between each int, default is 1 (example: " ") */
         void extractIntArray(std::vector<int> &loadTo, std::string src, unsigned int num, int stride = 1);
 
-    }
+    } // tools
 
-}
+} // undicht
 
 
 

@@ -6,7 +6,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
     /** @return the size of the type in bytes */
     int getSizeOfType(int type);
@@ -83,7 +83,7 @@ namespace undicht {
     const extern int UND_AUDIO_STEREO16;
 
 
-    } // core
+    } // tools
 
 } // undicht
 

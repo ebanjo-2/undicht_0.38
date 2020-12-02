@@ -2,7 +2,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         SharedID::SharedID() {
             //ctor
@@ -30,6 +30,6 @@ namespace undicht {
         }
 
 
-    } // core
+    } // tools
 
 } // undicht

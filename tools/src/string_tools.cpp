@@ -4,7 +4,7 @@
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
 
         bool hasFileType(std::string file_name, std::string type) {
@@ -120,6 +120,6 @@ namespace undicht {
 
         }
 
-    } // core
+    } // tools
 
 } // undicht

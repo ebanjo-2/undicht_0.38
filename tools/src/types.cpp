@@ -1,11 +1,11 @@
-#include <core/types.h>
+#include "types.h"
 
 // integers to distinguish data types
 // i.e. to store the type of data of a buffer
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         const int UND_TYPE_UNAVAILABLE = 0;
 
@@ -124,6 +124,6 @@ namespace undicht {
         }
 
 
-    } // core
+    } // tools
 
 } // undicht

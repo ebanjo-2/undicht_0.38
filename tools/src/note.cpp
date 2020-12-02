@@ -1,9 +1,9 @@
 #include "note.h"
-#include <core/string_tools.h>
+#include "string_tools.h"
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         std::vector<std::string> Note::s_notes;
 
@@ -120,6 +120,6 @@ namespace undicht {
 
 
 
-    } // core
+    } // tools
 
 } // undicht

@@ -1,9 +1,9 @@
-#include <core/buffer_layout.h>
+#include "buffer_layout.h"
 
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         unsigned BufferLayout::getTotalSize() const{
 
@@ -20,6 +20,6 @@ namespace undicht {
         }
 
 
-    } // core
+    } // tools
 
 } // undicht

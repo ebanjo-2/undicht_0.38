@@ -1,10 +1,10 @@
-#include <core/memory_watcher.h>
+#include "memory_watcher.h"
 #include <iostream>
 
 
 namespace undicht {
 
-    namespace core {
+    namespace tools {
 
         std::vector<int> MemoryWatcher::s_user_count;
         std::vector<int> MemoryWatcher::s_deleted_user_counts;
