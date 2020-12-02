@@ -1,15 +1,35 @@
-#exclude everything
+# exclude everything that is not in subdirectories
 *.*
-*/
-* 
-# files without file endings (i.e. .txt)
 
-# except these file types
+#except these files
 !.gitignore
 !CMakeLists.txt
-!*.cpp
-!*.h
-!*.lua
-!*.glsl
-!*.und
 !README.md
+
+#exclude everything that is in subdirectories
+*/*.*
+
+#except whats in these directories
+!graphics/.gitignore
+!graphics/CMakeLists.txt
+!graphics/*/*.cpp
+!graphics/*/*.h
+!graphics/*/*.lua
+!graphics/*/*.glsl
+!graphics/*/*.und
+
+!examples/.gitignore
+!examples/CMakeLists.txt
+!examples/*/*.cpp
+!examples/*/*.h
+!examples/*/*.lua
+!examples/*/*.glsl
+!examples/*/*.und
+
+!tools/.gitignore
+!tools/CMakeLists.txt
+!tools/*/*.cpp
+!tools/*/*.h
+!tools/*/*.lua
+!tools/*/*.glsl
+!tools/*/*.und
