@@ -4,6 +4,7 @@
 #define GL33_TEXTURE_H
 
 #include <string>
+#include <array>
 #include "shared_id.h"
 
 namespace undicht {

@@ -8,12 +8,12 @@ using namespace graphics;
 
 
 int main() {
-	
+
 	GraphicsCore graphics;
 	graphics.init();
 
 	Window window;
-	if (!window.open(800, 600, "HELO WORLD!")) {
+	if (!window.open(800, 600, "HELLO WORLD!")) {
 
 		return -1;
 	}
