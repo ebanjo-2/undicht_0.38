@@ -1,9 +1,13 @@
+#include "core/graphics_core.h"
+
+#ifdef USE_GL33 
+
 #include <glad/glad.h>
 
-#include "gl33_renderer.h"
-#include <core/event_logger.h>
+#include "core/renderer.h"
+#include "event_logger.h"
 
-using namespace undicht::core;
+using namespace undicht::tools;
 
 namespace undicht {
 
@@ -29,14 +33,14 @@ namespace undicht {
 
             void Renderer::submit(graphics::VertexBuffer* vbo) {
 
-                m_current_vbo = (gl33::VertexBuffer*)vbo->m_shared_lib_object;
+                m_current_vbo = vbo;
 
 
             }
 
             void Renderer::submit(graphics::Shader* shader) {
 
-                m_current_shader = (gl33::Shader*)shader->m_shared_lib_object;
+                m_current_shader = shader;
 
             }
 
@@ -44,7 +48,7 @@ namespace undicht {
 
                 if(fbo) {
 
-                    m_current_fbo = (gl33::FrameBuffer*)fbo->m_shared_lib_object;
+                    m_current_fbo = fbo;
                     m_current_fbo->checkStatus();
                 } else {
                     m_current_fbo = 0;
@@ -197,50 +201,6 @@ namespace undicht {
 
             }
 
-            /////////////////////////////////////////// functions to load objects from the shared lib //////////////////////////
-
-
-            SHARED_LIB_EXPORT implementation::Renderer* createRenderer() {
-
-                return new gl33::Renderer;
-            }
-
-            SHARED_LIB_EXPORT void copyRenderer(implementation::Renderer* c, implementation::Renderer* o) {
-                //std::cout << "copying rendering info" << "\n";
-                ((gl33::Renderer*)c)->m_current_vbo = ((gl33::Renderer*)o)->m_current_vbo;
-                ((gl33::Renderer*)c)->m_current_shader = ((gl33::Renderer*)o)->m_current_shader;
-                ((gl33::Renderer*)c)->m_current_fbo = ((gl33::Renderer*)o)->m_current_fbo;
-            }
-
-            SHARED_LIB_EXPORT void deleteRenderer(implementation::Renderer* renderer) {
-
-                delete renderer;
-            }
-
-            // static function callers
-
-            SHARED_LIB_EXPORT void setViewport(int width, int height, int offset_x, int offset_y) {
-
-                Renderer::setViewport(width, height, offset_x, offset_y);
-            }
-
-            SHARED_LIB_EXPORT void enableDepthTest(bool enable) {
-
-                Renderer::enableDepthTest(enable);
-            }
-
-            SHARED_LIB_EXPORT void enableBackFaceCulling(bool enable) {
-
-                Renderer::enableBackFaceCulling(enable);
-            }
-
-
-            SHARED_LIB_EXPORT void getViewport(int& width, int& height, int& offset_x, int& offset_y) {
-
-                Renderer::getViewport(width, height, offset_x, offset_y);
-            }
-
-
         } // gl33
 
     } // graphics
@@ -248,3 +208,4 @@ namespace undicht {
 } // undicht
 
 
+#endif // USE_GL33

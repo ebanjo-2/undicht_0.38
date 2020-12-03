@@ -4,30 +4,37 @@
 #ifndef GLFW_GL33_GRAPHICS_CORE_H
 #define GLFW_GL33_GRAPHICS_CORE_H
 
-#include <core/graphics_core.h>
+namespace undicht {
 
-namespace glfw_gl33 {
+	namespace graphics {
 
-	class GraphicsCore : public interf::GraphicsCore {
-	public:
+		namespace glfw_gl33 {
 
-		GraphicsCore();
-		virtual ~GraphicsCore();
+			class Window;
 
-		/** @return false, if the initialization was unsuccesfull */
-		virtual bool init();
+			class GraphicsCore : public interf::GraphicsCore {
+			public:
 
-		/** @return false, if there are any errors unhandeled was unsuccesfull */
-		virtual bool terminate();
+				GraphicsCore();
+				virtual ~GraphicsCore();
 
-		/** makes the window the one that gets drawn to
-		* the first window created is by default the one that gets drawn to */
-		virtual void makeDrawWindow(interf::Window& window);
+				/** @return false, if the initialization was unsuccesfull */
+				virtual bool init();
 
-	};
+				/** @return false, if there are any errors unhandeled was unsuccesfull */
+				virtual bool terminate();
 
+				/** makes the window the one that gets drawn to
+				* the first window created is by default the one that gets drawn to */
+				virtual void makeDrawWindow(Window& window);
 
-}
+			};
+
+		} // glfw_gl33
+
+	} // graphics
+
+} // undicht
 
 #endif // GLFW_GL33_GRAPHICS_CORE_H
 

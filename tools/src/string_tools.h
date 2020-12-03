@@ -10,12 +10,12 @@ namespace undicht {
 
     namespace tools {
 
-#define UND_CODE_SRC_FILE replaceAllChars(undicht::core::toStr(__FILE__), '\\', '/') /** on windows you might get '\' between directory names, which would break things */
+#define UND_CODE_SRC_FILE replaceAllChars(undicht::tools::toStr(__FILE__), '\\', '/') /** on windows you might get '\' between directory names, which would break things */
 
         /** gives you a string containing data about
         * the location of the line this makro is used in
         * (file_path : line_number) */
-#define UND_CODE_ORIGIN UND_CODE_SRC_FILE + undicht::core::toStr(" : ") + undicht::core::toStr(__LINE__)
+#define UND_CODE_ORIGIN UND_CODE_SRC_FILE + undicht::tools::toStr(" : ") + undicht::tools::toStr(__LINE__)
 
 
         /** tries to convert everything into a string */

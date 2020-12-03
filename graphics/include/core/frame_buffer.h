@@ -39,15 +39,23 @@ namespace undicht {
 
         } // interf
 
-        // including the classes implementing the Framebuffer class
-#ifdef USE_GL33
-    #include <core/gl33/gl33_frame_buffer.h>
-    typedef gl33::FrameBuffer FrameBuffer;
-#endif // USE_GL33
 
     } // graphics
 
 } // undicht
 
+/////////////////////////////////////////////// including the classes implementing the Framebuffer class ////////////////////////////////////////////////////////
+
+#ifdef USE_GL33
+
+#include "core/gl33/gl33_frame_buffer.h"
+
+namespace undicht {
+	namespace graphics {
+		typedef gl33::FrameBuffer FrameBuffer;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 #endif // FRAME_BUFFER_H

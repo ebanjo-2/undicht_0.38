@@ -7,7 +7,6 @@
 #include <string>
 
 
-
 namespace undicht {
 
     namespace graphics {
@@ -28,7 +27,7 @@ namespace undicht {
                     virtual void setData(const void* data, int type, bool copy_data = true) = 0;
 
                     /** stores the data in a buffer accessable in the shader */
-                    virtual void setData(const void* data, core::BufferLayout layout, int num_of_elements) = 0;
+                    virtual void setData(const void* data, tools::BufferLayout layout, int num_of_elements) = 0;
 
                     /** sets the name with which the uniforms data can be accessed in the shader */
                     virtual void setName(const std::string& name) = 0;
@@ -39,7 +38,7 @@ namespace undicht {
                     virtual const std::string& getName() const = 0;
                     virtual int getType() const = 0;
                     virtual const void* getData() const = 0;
-                    virtual const core::BufferLayout& getLayout() const = 0;
+                    virtual const tools::BufferLayout& getLayout() const = 0;
 
 
                     Uniform() = default;
@@ -49,13 +48,20 @@ namespace undicht {
 
         } // interf
 
-        #ifdef USE_GL33
-        #include <core/gl33/gl33_uniform.h>
-        typedef gl33::Uniform Uniform;
-        #endif // USE_GL33
-
     } // graphics
 
 } // undicht
+
+#ifdef USE_GL33
+
+#include "core/gl33/gl33_uniform.h"
+
+namespace undicht {
+	namespace graphics {
+		typedef gl33::Uniform Uniform;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 #endif // UNIFORM_H

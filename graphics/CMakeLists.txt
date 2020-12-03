@@ -45,7 +45,7 @@ add_subdirectory(extern/glfw)
 add_subdirectory(extern/glad)
 add_subdirectory(extern/EGL-Registry)
 
-target_link_libraries("graphics" khr_platform)
+target_link_libraries("graphics" EGL-Registry) # khrplatform.h
 target_link_libraries("graphics" glfw)
 target_link_libraries("graphics" glad)
 target_link_libraries("graphics" tools)

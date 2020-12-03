@@ -3,6 +3,7 @@
 #ifdef USE_GL33
 
 #include <GLFW/glfw3.h>
+#include "window/window.h"
 
 
 namespace undicht {
@@ -38,7 +39,7 @@ namespace undicht {
 			}
 
 
-			void GraphicsCore::makeDrawWindow(interf::Window& window) {
+			void GraphicsCore::makeDrawWindow(Window& window) {
 				/** makes the window the one that gets drawn to
 				* the first window created is by default the one that gets drawn to */
 

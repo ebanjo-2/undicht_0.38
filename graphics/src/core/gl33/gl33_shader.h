@@ -3,49 +3,56 @@
 #ifndef GL33_SHADER_H
 #define GL33_SHADER_H
 
-#include <shared_id.h>
+#include "shared_id.h"
 
+namespace undicht {
 
-namespace gl33 {
+	namespace graphics {
 
-    class Shader : public interf::Shader {
-        public:
+		namespace gl33 {
 
-            core::SharedID m_id = 0;
+			class Shader : public interf::Shader {
+			public:
 
-            std::vector<std::string> m_textures; // storing the name of each texture loaded to the shader
+				tools::SharedID m_id = 0;
 
-            Shader();
-            virtual ~Shader();
+				std::vector<std::string> m_textures; // storing the name of each texture loaded to the shader
 
-            /// glsl, but in a single string/file, shader types marked with #vertex, #fragment, ...
-            /// similar to TheChernos solution in the Hazel engine
-            virtual void loadSource(const std::string& source);
+				Shader();
+				virtual ~Shader();
 
-        public:
-            // loading data to the shader
+				/// glsl, but in a single string/file, shader types marked with #vertex, #fragment, ...
+				/// similar to TheChernos solution in the Hazel engine
+				virtual void loadSource(const std::string& source);
 
-            virtual void loadUniform(const Uniform& u);
+			public:
+				// loading data to the shader
 
-            virtual void loadTexture(const graphics::Texture& t);
+				virtual void loadUniform(const Uniform& u);
 
-        public:
-            // not api functions
+				virtual void loadTexture(const graphics::Texture& t);
 
-            virtual int getTextureID(const std::string& texture_name);
+			public:
+				// not api functions
 
-            virtual void bind();
+				virtual int getTextureID(const std::string& texture_name);
 
-            static void bind(int id);
+				virtual void bind();
 
-            /// splits the shader source into glsl shaders
-            void splitShaderSrc(const std::string& source, std::string& vertex_src, std::string& fragment_src, std::string& geometry_src );
+				static void bind(int id);
 
-            unsigned int createGLShader(const std::string& source, unsigned int type);
+				/// splits the shader source into glsl shaders
+				void splitShaderSrc(const std::string& source, std::string& vertex_src, std::string& fragment_src, std::string& geometry_src);
 
-    };
+				unsigned int createGLShader(const std::string& source, unsigned int type);
 
-} // gl33
+			};
+
+		} // gl33
+
+	} // graphics
+
+} // undicht
 
 #endif // GL33_SHADER_H
 

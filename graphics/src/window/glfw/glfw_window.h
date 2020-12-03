@@ -4,55 +4,61 @@
 
 #include <GLFW/glfw3.h>
 
+namespace undicht {
 
-// since this file is only going to be included via window.h, glfw is the only namespace to use here 
-namespace glfw {
+	namespace graphics {
 
-	class Window : public undicht::graphics::interf::Window {
+		namespace glfw {
 
-	public:
-		int m_width = 800;
-		int m_height = 600;
-		std::string m_title = "Window";
+			class Window : public interf::Window {
 
-		bool m_cursor_visible = true;
+			public:
+				int m_width = 800;
+				int m_height = 600;
+				std::string m_title = "Window";
 
-		GLFWwindow* m_window = 0;
+				bool m_cursor_visible = true;
 
-	public:
+				GLFWwindow* m_window = 0;
 
-		Window();
-		virtual ~Window();
+			public:
 
-		/** opens the window
-		* @return false, if the window could not be created */
-		virtual bool open();
+				Window();
+				virtual ~Window();
 
-		virtual bool open(int width, int height, const std::string& title);
+				/** opens the window
+				* @return false, if the window could not be created */
+				virtual bool open();
 
-		virtual void close();
+				virtual bool open(int width, int height, const std::string& title);
 
-		virtual void update();
+				virtual void close();
 
-		/** \return whether a close was requested by the user */
-		virtual bool shouldClose();
+				virtual void update();
 
-		virtual void setSize(int width, int height);
+				/** \return whether a close was requested by the user */
+				virtual bool shouldClose();
 
-		virtual void getSize(int& width, int& height);
+				virtual void setSize(int width, int height);
 
-		virtual void setTitle(const std::string& title);
+				virtual void getSize(int& width, int& height);
 
-		virtual void setWindowMode(bool fullscreen, bool windowed);
+				virtual void setTitle(const std::string& title);
 
-		virtual void setCursorVisible(bool visible);
+				virtual void setWindowMode(bool fullscreen, bool windowed);
 
-		virtual bool getCursorVisible();
+				virtual void setCursorVisible(bool visible);
+
+				virtual bool getCursorVisible();
 
 
-	};
+			};
 
-} // glfw
+		} // glfw
+
+	} // graphics
+
+} // undicht
 
 
 #endif // ! GLFW_WINDOW_H

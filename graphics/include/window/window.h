@@ -46,16 +46,21 @@ namespace undicht {
 
 		} // interf
 
-		// including the classes implementing the Window class
-#ifdef USE_GLFW
-#include <window/glfw/glfw_window.h>
-		typedef glfw::Window Window;
-#endif // USE_GLFW
-
-
 	} // graphics
 
 } // undicht
+
+#ifdef USE_GLFW
+
+#include <window/glfw/glfw_window.h>
+
+namespace undicht {
+	namespace graphics {
+		typedef glfw::Window Window;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 
 #endif // WINDOW_H

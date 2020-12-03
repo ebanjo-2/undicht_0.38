@@ -1,14 +1,18 @@
+#include "core/graphics_core.h"
+
 #ifdef USE_GL33
 
 #include <glad/glad.h>
-
-#include "gl33_frame_buffer.h"
 #include <iostream>
-#include <core/event_logger.h>
-#include "gl_tools.h"
-#include <core/buffer_layout.h>
 
-using namespace undicht::core;
+
+#include "core/frame_buffer.h"
+#include "gl33_tools.h"
+
+#include "event_logger.h"
+#include "buffer_layout.h"
+
+using namespace undicht::tools;
 
 namespace undicht {
 
@@ -61,11 +65,11 @@ namespace undicht {
                 }
 
                 // reattaching them to the new fbo
-                for(int i = 0; i < m_attachments.size(); i++) {
+                for(unsigned int i = 0; i < m_attachments.size(); i++) {
 
                     // for sending an graphics::Texture to the function
-                    graphics::Texture graphics_texture;
-                    graphics_texture.m_shared_lib_object = m_attachments.at(i);
+                    graphics::Texture* graphics_texture;
+                    graphics_texture = m_attachments.at(i);
                     int type = m_attachment_types.at(i);
 
                     // the attachment gets stored again
@@ -73,7 +77,7 @@ namespace undicht {
                     m_attachment_types.erase(m_attachment_types.begin() + i);
 
 
-                    addAttachment(graphics_texture, type);
+                    addAttachment(*graphics_texture, type);
                 }
 
             }
@@ -91,33 +95,31 @@ namespace undicht {
                 * @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
                 * @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE */
 
-                gl33::Texture* opengl_texture = (gl33::Texture*)texture.m_shared_lib_object;
-
                 if(attachment_type == UND_COLOR_ATTACHMENT) {
                     // attaching a texture that can store the color output of a fragment shader
-                    if(!opengl_texture->m_layout_set) {
+                    if(!texture.m_layout_set) {
                         // setting default 24 bit rgb layout for the pixels
-                        opengl_texture->setPixelFormat(BufferLayout({UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR}));
+						texture.setPixelFormat(BufferLayout({UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR}));
                     }
 
-                    opengl_texture->setSize(m_width, m_height, 1);
+					texture.setSize(m_width, m_height, 1);
 
                     bind(); // binding the Framebuffer
-                    opengl_texture->bind(); // binding the texture
-                    opengl_texture->setData(0, 0);// reserving memory
+					texture.bind(); // binding the texture
+					texture.setData(0, 0);// reserving memory
                     std::cout << "adding color attachment " << getColorOutputCount() << "\n";
-                    glFramebufferTexture2D(m_type, GL_COLOR_ATTACHMENT0 + getColorOutputCount(), GL_TEXTURE_2D, opengl_texture->m_id, 0);
+                    glFramebufferTexture2D(m_type, GL_COLOR_ATTACHMENT0 + getColorOutputCount(), GL_TEXTURE_2D, texture.m_id, 0);
 
                 } else if (attachment_type == UND_DEPTH_ATTACHMENT_READ_AND_WRITE) {
                     // attaching a texture that can store the depth values of a scene
-                    opengl_texture->setOpenglFormat(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT);
-                    opengl_texture->setSize(m_width, m_height, 1);
-                    opengl_texture->setData(0, 0);// reserving memory
+					texture.setOpenglFormat(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT);
+					texture.setSize(m_width, m_height, 1);
+					texture.setData(0, 0);// reserving memory
 
                     bind(); // binding the Framebuffer
-                    opengl_texture->bind(); // binding the texture
+					texture.bind(); // binding the texture
                     std::cout << "adding depth attachment" << "\n";
-                    glFramebufferTexture2D(m_type, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, opengl_texture->m_id, 0);
+                    glFramebufferTexture2D(m_type, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.m_id, 0);
 
                 } else if (attachment_type == UND_DEPTH_ATTACHMENT_WRITE_ONLY) {
                     // using a renderbuffer, may be faster then a texture
@@ -128,7 +130,7 @@ namespace undicht {
                     return;
                 }
 
-                m_attachments.push_back(opengl_texture);
+                m_attachments.push_back(&texture);
                 m_attachment_types.push_back(attachment_type);
                 updateColorOutputs();
 
@@ -234,21 +236,6 @@ namespace undicht {
                 }
 
             }
-
-            /////////////////////////////////// functions to load Framebuffer objects from the shared lib ////////////////////////////////
-
-            SHARED_LIB_EXPORT implementation::FrameBuffer*createFrameBuffer() {
-                return new gl33::FrameBuffer;
-            }
-
-            SHARED_LIB_EXPORT void copyFrameBuffer(implementation::FrameBuffer* c, implementation::FrameBuffer* o) {
-                *(FrameBuffer*)c = *(FrameBuffer*)o;
-            }
-
-            SHARED_LIB_EXPORT void deleteFrameBuffer(implementation::FrameBuffer* object) {
-                delete (FrameBuffer*)object;
-            }
-
 
         } // gl33
 

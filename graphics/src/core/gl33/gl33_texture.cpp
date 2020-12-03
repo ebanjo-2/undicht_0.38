@@ -9,7 +9,7 @@
 #include <types.h>
 #include "gl33_tools.h"
 
-using namespace undicht::core;
+using namespace undicht::tools;
 
 namespace undicht {
 
@@ -37,7 +37,7 @@ namespace undicht {
 
             //////////////////////////////////////// managing the textures format /////////////////////////////////////
 
-            void Texture::setPixelFormat(const core::BufferLayout& format) {
+            void Texture::setPixelFormat(const tools::BufferLayout& format) {
 
                 std::array<int,4> component_types = getComponentTypes(format); // the types of each color component
                 setOpenglFormat(component_types);
@@ -99,9 +99,9 @@ namespace undicht {
                 int gl_method = GL_REPEAT;
 
                 if(method == UND_REPEAT) {
-                    gl_method == GL_REPEAT;
+                    gl_method = GL_REPEAT;
                 } else if (method == UND_CLAMP_TO_EDGE) {
-                    gl_method == GL_CLAMP_TO_EDGE;
+                    gl_method = GL_CLAMP_TO_EDGE;
                 }
 
                 glTexParameteri(m_type, GL_TEXTURE_WRAP_S, gl_method);
@@ -161,7 +161,7 @@ namespace undicht {
 
 
 
-            void Texture::bind(int target) {
+            void Texture::bind(unsigned int target) const{
 
                 if(target >= bound_textures.size()) {
                     EventLogger::storeNote(Note(UND_ERROR, "TEXTURE:ERROR: failed to bind texture, target exceeds limit", UND_CODE_ORIGIN));
@@ -222,7 +222,7 @@ namespace undicht {
             }
 
             /** @return an array containing the type for each component of the color */
-            std::array<int,4> Texture::getComponentTypes(const core::BufferLayout& format) {
+            std::array<int,4> Texture::getComponentTypes(const tools::BufferLayout& format) {
 
                 int component_count = 0;
                 std::array<int,4> component_types; // the types of each color component
@@ -305,28 +305,6 @@ namespace undicht {
                     return GL_LINEAR;
                 }
 
-            }
-
-            //////////////////// functions to load a texture object from the shared lib  ////////////////////////////////////
-
-            SHARED_LIB_EXPORT implementation::Texture* createTexture() {
-                return new gl33::Texture;
-            }
-
-            SHARED_LIB_EXPORT void copyTexture(implementation::Texture* c, implementation::Texture* o) {
-
-                Texture* c_texture = (Texture*)c;
-
-                if(c_texture->m_id.removeUser()) {
-                    glDeleteTextures(1, &c_texture->m_id.getID());
-                }
-
-                *c_texture = *(Texture*)o;
-
-            }
-
-            SHARED_LIB_EXPORT void deleteTexture(implementation::Texture* object) {
-                delete (Texture*)object;
             }
 
 

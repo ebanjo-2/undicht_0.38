@@ -5,6 +5,7 @@
 #include <buffer_layout.h>
 #include <string>
 
+
 namespace undicht {
 
     namespace graphics {
@@ -23,7 +24,7 @@ namespace undicht {
                     // managing the textures format
 
                     /** determines the size and layout of a single pixel (i.e. UND_VEC4F for RGBA) */
-                    virtual void setPixelFormat(const core::BufferLayout& format) = 0;
+                    virtual void setPixelFormat(const tools::BufferLayout& format) = 0;
 
                     /** @param depth: a texture object may contain multiple 2D textures, like in an array
                     * this can be used to store data for a cubemap (with depth = 6) */
@@ -69,14 +70,21 @@ namespace undicht {
 
         } // interf
 
-#ifdef USE_GL33
-#include <core/gl33/gl33_texture.h>
-typedef gl33::Texture Texture;
-#endif // USE_GL33
-
     } // graphics
 
 } // undicht
+
+#ifdef USE_GL33
+
+#include <core/gl33/gl33_texture.h>
+
+namespace undicht {
+	namespace graphics {
+		typedef gl33::Texture Texture;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 
 #endif // TEXTURE_H

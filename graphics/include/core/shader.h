@@ -37,13 +37,21 @@ namespace undicht {
 
         } // interf
 
-#ifdef USE_GL33
-#include <core/gl33/gl33_shader.h>
-typedef gl33::Shader Shader;
-#endif // USE_GL33
-
     } // graphics
 
 } // undicht
+
+
+#ifdef USE_GL33
+
+#include <core/gl33/gl33_shader.h>
+
+namespace undicht {
+	namespace graphics {
+		typedef gl33::Shader Shader;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 #endif // SHADER_H

@@ -13,8 +13,6 @@ namespace undicht {
             * and needs to be deleted when the last referencing object is destroyed */
             public:
 
-
-
                 void setID(unsigned int id);
 
                 const unsigned int& getID();
@@ -22,7 +20,6 @@ namespace undicht {
                 SharedID();
                 SharedID(unsigned int id);
                 virtual ~SharedID();
-
 
         };
 

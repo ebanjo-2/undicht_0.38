@@ -2,15 +2,16 @@
 
 #ifdef USE_GL33
 
-#include <glad/glad.h>
-#include "gl33_shader.h"
 #include "gl33_tools.h"
-#include <core/event_logger.h>
-#include "gl33_texture.h"
-#include "gl33_uniform.h"
+#include "event_logger.h"
+
+#include <glad/glad.h>
+#include "core/shader.h"
+#include "core/texture.h"
+#include "core/uniform.h"
 
 
-using namespace undicht::core;
+using namespace undicht::tools;
 
 namespace undicht {
 
@@ -75,9 +76,7 @@ namespace undicht {
 
                 bind();
 
-                gl33::Uniform* real_u = (gl33::Uniform*)u.m_shared_lib_object;
-
-                if(!real_u->m_ubo_id) {
+                if(!u.m_ubo_id) {
 
                     int location = glGetUniformLocation(m_id, u.getName().data());
 
@@ -120,20 +119,18 @@ namespace undicht {
 
             void Shader::loadTexture(const graphics::Texture& t) {
 
-                gl33::Texture* real_texture = (gl33::Texture*)t.m_shared_lib_object;
 
-
-                if(real_texture && real_texture->m_type && real_texture->m_id) {
+                if(t.m_type && t.m_id) {
                     // binding the texture and setting the sampler uniform in the shader
-                    real_texture->bind();
-                    int texture_id = getTextureID(real_texture->m_name);
+					t.bind();
+                    int texture_id = getTextureID(t.m_name);
 
 
                     graphics::Uniform u;
 
                     u.setData(&texture_id, UND_INT);
 
-                    u.setName(real_texture->m_name);
+                    u.setName(t.m_name);
                     loadUniform(u);
 
                 } else {
@@ -150,7 +147,7 @@ namespace undicht {
             int Shader::getTextureID(const std::string& texture_name) {
 
                 // checking if the texture name already has an id associated with it
-                for (int i = 0; i < m_textures.size(); i++) {
+                for (unsigned int i = 0; i < m_textures.size(); i++) {
 
                     if(!m_textures.at(i).compare(texture_name)) {
 
@@ -238,28 +235,6 @@ namespace undicht {
                 }
 
                 return shader_id;
-            }
-
-
-            SHARED_LIB_EXPORT implementation::Shader* createShader() {
-
-                return new gl33::Shader;
-            }
-
-            SHARED_LIB_EXPORT void copyShader(implementation::Shader* c, implementation::Shader* o) {
-
-                Shader* c_shader = (Shader*)c;
-
-                if(c_shader->m_id.removeUser()) {
-                    glDeleteProgram(c_shader->m_id);
-                }
-
-                *c_shader = *(Shader*)o;
-            }
-
-            SHARED_LIB_EXPORT void deleteShader(implementation::Shader* shader) {
-
-                delete shader;
             }
 
 

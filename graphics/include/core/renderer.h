@@ -1,56 +1,61 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <core/shared_lib_class.h>
-#include <graphics/shader.h>
-#include <graphics/vertex_buffer.h>
-#include <graphics/frame_buffer.h>
+#include "core/graphics_core.h"
+#include "core/shader.h"
+#include "core/vertex_buffer.h"
+#include "core/frame_buffer.h"
 
 namespace undicht {
 
     namespace graphics {
 
-        class GraphicsLib;
+		namespace interf {
 
-        SHARED_LIB_DECL_BASE_CLASS(Renderer, RendererBase, createRenderer, copyRenderer, deleteRenderer);
+			class Renderer {
+				/// the class that can draw stuff
 
-        SHARED_LIB_CLASS(class Renderer : public RendererBase{
-            /// the class that can draw stuff
-        private:
-            // pointer to the implementation of the static functions
-            static std::function<void(int,int,int,int)> s_set_viewport;
-            static std::function<void(bool)> s_enable_depth_test;
-            static std::function<void(bool)> s_enable_back_face_culling;
-            static std::function<void(int&,int&,int&,int&)> s_get_viewport;
+			public:
 
-            friend GraphicsLib;
+				virtual void submit(graphics::VertexBuffer* vbo);
+				virtual void submit(graphics::Shader* shader);
+				virtual void submit(graphics::FrameBuffer* fbo); // submit (FrameBuffer*) 0 to reset the submitted framebuffer
 
-        public:
+				// clears the content of the currently submitted framebuffer
+				virtual void clearFramebuffer(float r = 0.1, float g = 0.2, float b = 0.3, float alpha = 1);
 
-            virtual void submit(graphics::VertexBuffer* vbo);
-            virtual void submit(graphics::Shader* shader);
-            virtual void submit(graphics::FrameBuffer* fbo); // submit (FrameBuffer*) 0 to reset the submitted framebuffer
+				virtual void draw(unsigned int instance_count = 1);
 
-            // clears the content of the currently submitted framebuffer
-            virtual void clearFramebuffer(float r = 0.1, float g = 0.2, float b = 0.3, float alpha = 1);
+				/** redundand calls (with no changes) should be ignored */
+				static void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+				static void enableDepthTest(bool enable = true);
+				static void enableBackFaceCulling(bool enable = true);
 
-            virtual void draw(unsigned int instance_count = 1);
+				static void getViewport(int& width, int& height, int& offset_x, int& offset_y);
 
-            /** redundand calls (with no changes) should be ignored */
-            static void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
-            static void enableDepthTest(bool enable = true);
-            static void enableBackFaceCulling(bool enable = true);
+				Renderer();
+				virtual ~Renderer();
 
-            static void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+			};
 
-            Renderer();
-            virtual ~Renderer();
-
-        };)
-
+		} // interf
 
     } // graphics
 
 } // undicht
+
+
+#ifdef USE_GL33
+
+#include "core/gl33/gl33_renderer.h"
+
+namespace undicht {
+	namespace graphics {
+		typedef gl33::Renderer Renderer;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
+
 
 #endif // RENDERER_H

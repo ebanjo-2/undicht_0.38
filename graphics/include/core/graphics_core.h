@@ -27,21 +27,26 @@ namespace undicht {
 
 				/** makes the window the one that gets drawn to
 				* the first window created is by default the one that gets drawn to */
-				virtual void makeDrawWindow(interf::Window& window) = 0;
+				virtual void makeDrawWindow(interf::Window& window) {}; // this function may take in the current implementations window, so no = 0 
 
 			};
 
 		} // interf
 
-#ifdef USE_GLFW
-#ifdef USE_GL33
-#include <core/glfw_gl33/glfw_gl33_graphics_core.h>
-		typedef glfw_gl33::GraphicsCore GraphicsCore;
-#endif // USE_GLFW
-#endif // USE_GL33
-
 	} // graphics
 
 } // undicht
+
+#if defined(USE_GLFW) && defined(USE_GL33)
+
+#include <core/glfw_gl33/glfw_gl33_graphics_core.h>
+
+namespace undicht {
+	namespace graphics {
+		typedef glfw_gl33::GraphicsCore GraphicsCore;
+	} // graphics
+} // undicht
+
+#endif // USE_GL33
 
 #endif // GRAPHICS_CORE_H
