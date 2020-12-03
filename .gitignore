@@ -1,35 +1,26 @@
+#exclude everything that is in subdirectories
+/*/*
+
+#except whats in these directories
+!graphics/.gitignore
+!graphics/CMakeLists.txt
+!graphics/src
+!graphics/include
+
+!examples/.gitignore
+!examples/CMakeLists.txt
+!examples/HelloWorld/CMakeLists.txt
+!examples/HelloWorld/*.cpp
+!examples/HelloWorld/src
+
+!tools/.gitignore
+!tools/CMakeLists.txt
+!tools/src
+
 # exclude everything that is not in subdirectories
-*.*
+/*.*
 
 #except these files
 !.gitignore
 !CMakeLists.txt
 !README.md
-
-#exclude everything that is in subdirectories
-*/*.*
-
-#except whats in these directories
-!graphics/.gitignore
-!graphics/CMakeLists.txt
-!graphics/*/*.cpp
-!graphics/*/*.h
-!graphics/*/*.lua
-!graphics/*/*.glsl
-!graphics/*/*.und
-
-!examples/.gitignore
-!examples/CMakeLists.txt
-!examples/*/*.cpp
-!examples/*/*.h
-!examples/*/*.lua
-!examples/*/*.glsl
-!examples/*/*.und
-
-!tools/.gitignore
-!tools/CMakeLists.txt
-!tools/*/*.cpp
-!tools/*/*.h
-!tools/*/*.lua
-!tools/*/*.glsl
-!tools/*/*.und
