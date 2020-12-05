@@ -24,3 +24,5 @@
 !.gitignore
 !CMakeLists.txt
 !README.md
+
+**/Makefile

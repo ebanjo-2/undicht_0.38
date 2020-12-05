@@ -13,6 +13,12 @@ int main() {
 
 	Window window(800, 600, "HELLO WORLD!");
 
+	GraphicsCore graphics;
+	graphics.init();
+
+	Window window;
+	if (!window.open(800, 600, "HELLO WORLD!")) {
+
 	Renderer renderer;
 
 	while (!window.shouldClose()) {
