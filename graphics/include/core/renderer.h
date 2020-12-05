@@ -17,14 +17,14 @@ namespace undicht {
 
 			public:
 
-				virtual void submit(graphics::VertexBuffer* vbo);
-				virtual void submit(graphics::Shader* shader);
-				virtual void submit(graphics::FrameBuffer* fbo); // submit (FrameBuffer*) 0 to reset the submitted framebuffer
+				virtual void submit(graphics::VertexBuffer* vbo) = 0;
+				virtual void submit(graphics::Shader* shader) = 0;
+				virtual void submit(graphics::FrameBuffer* fbo) = 0; // submit (FrameBuffer*) 0 to reset the submitted framebuffer
 
 				// clears the content of the currently submitted framebuffer
-				virtual void clearFramebuffer(float r = 0.1, float g = 0.2, float b = 0.3, float alpha = 1);
+				virtual void clearFramebuffer(float r = 0.1, float g = 0.2, float b = 0.3, float alpha = 1) = 0;
 
-				virtual void draw(unsigned int instance_count = 1);
+				virtual void draw(unsigned int instance_count = 1) = 0;
 
 				/** redundand calls (with no changes) should be ignored */
 				static void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
@@ -33,8 +33,8 @@ namespace undicht {
 
 				static void getViewport(int& width, int& height, int& offset_x, int& offset_y);
 
-				Renderer();
-				virtual ~Renderer();
+				Renderer() = default;
+				virtual ~Renderer() = default;
 
 			};
 

@@ -13,6 +13,9 @@ namespace undicht {
 			class Window : public interf::Window {
 
 			public:
+
+				static int s_open_windows;
+
 				int m_width = 800;
 				int m_height = 600;
 				std::string m_title = "Window";
@@ -23,7 +26,10 @@ namespace undicht {
 
 			public:
 
+				static int getNumberOfOpenWindows();
+
 				Window();
+				Window(int width, int height, const std::string& title);
 				virtual ~Window();
 
 				/** opens the window

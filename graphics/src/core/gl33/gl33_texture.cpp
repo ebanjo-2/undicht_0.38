@@ -305,6 +305,7 @@ namespace undicht {
                     return GL_LINEAR;
                 }
 
+				return -1;
             }
 
 

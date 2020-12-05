@@ -11,23 +11,21 @@ namespace undicht {
 
 		namespace interf {
 
-			class Window;
-
 			class GraphicsCore {
 			public:
 
-				GraphicsCore() = default;
-				virtual ~GraphicsCore() = default;
+				/** @return false, if the initialization was unsuccesfull */				
+				static bool init();
 
-				/** @return false, if the initialization was unsuccesfull */
-				virtual bool init() = 0;
+				/** @return if the graphics core was initialized successfully and didnt get terminated, this will return true  */
+				static bool isInitialized();
 
 				/** @return false, if there are any errors unhandeled was unsuccesfull */
-				virtual bool terminate() = 0;
+				static bool terminate();
 
 				/** makes the window the one that gets drawn to
 				* the first window created is by default the one that gets drawn to */
-				virtual void makeDrawWindow(interf::Window& window) {}; // this function may take in the current implementations window, so no = 0 
+				static void makeDrawWindow(void* window);
 
 			};
 
@@ -47,6 +45,6 @@ namespace undicht {
 	} // graphics
 } // undicht
 
-#endif // USE_GL33
+#endif // USE_GL33 && USE_GLFW
 
 #endif // GRAPHICS_CORE_H

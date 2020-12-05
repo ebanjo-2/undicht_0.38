@@ -19,19 +19,19 @@ namespace undicht {
 
 				/** stores the content of data in the vertex buffer
 				* @param offset: (in bytes) at what point in the buffer the data should be stored (0: first byte of first vertex) */
-				virtual void setData(const std::vector<float>& data, unsigned int offset = 0);
+				virtual void setData(const std::vector<float>& data, unsigned int offset = 0) = 0;
 
 				/** @param size: (in bytes) the size of the data to copy from the data buffer */
-				virtual void setData(const void* data, unsigned int size, unsigned int offset = 0);
+				virtual void setData(const void* data, unsigned int size, unsigned int offset = 0) = 0;
 
 
 				/** retrieve the data from the vertex buffer and store it in the vector
 				* @param num_float: how many floats to copy from the buffer (not vertices !)
 				* @param offset: (in bytes) at what point in the buffer to start copying */
-				virtual void getData(std::vector<float>& data, unsigned int num_floats, unsigned int offset = 0);
+				virtual void getData(std::vector<float>& data, unsigned int num_floats, unsigned int offset = 0) = 0;
 
 				/** data should have at least #size bytes reserved */
-				virtual void getData(void* data, unsigned int size, unsigned int offset = 0);
+				virtual void getData(void* data, unsigned int size, unsigned int offset = 0) = 0;
 			public:
 				// additional vertex related data
 
@@ -39,16 +39,16 @@ namespace undicht {
 				* also determines how the data can be accessed in a vertex shader
 				* example for a vertex: 3D position, 2D texture coordinate, 3D normal
 				* translates into layout: UND_VEC3F, UND_VEC2F, UND_VEC3F */
-				virtual void setLayout(const tools::BufferLayout& layout);
+				virtual void setLayout(const tools::BufferLayout& layout) = 0;
 
 				/** returns the number of bytes stored in the buffer */
-				virtual unsigned int getSize();
+				virtual unsigned int getSize() = 0;
 
 				/** returns the size of one vertex */
-				virtual unsigned int getVertexSize();
+				virtual unsigned int getVertexSize() = 0;
 
 				/** returns the layout of the stored vertices */
-				virtual const tools::BufferLayout& getLayout();
+				virtual const tools::BufferLayout& getLayout() = 0;
 
 
 			public:
@@ -60,32 +60,32 @@ namespace undicht {
 				* (may only be useful on models with a lot of redundant vertices)
 				* setting index data will also enable the usage of that data
 				* @param offset: (in bytes) the position to copy the data to */
-				virtual void setIndexData(const std::vector<int>& data, unsigned int offset = 0);
+				virtual void setIndexData(const std::vector<int>& data, unsigned int offset = 0) = 0;
 
 				/** @param size: the size (in bytes) of index data to copy from the data buffer */
-				virtual void setIndexData(const void* data, unsigned int size, unsigned int offset = 0);
+				virtual void setIndexData(const void* data, unsigned int size, unsigned int offset = 0) = 0;
 
 				/** @brief retrieve data from the index array
 				* @param num_indices: number of indices to copy
 				* @param offset: (in bytes) position in the index array to copy from */
-				virtual void getIndexData(std::vector<int>& data, unsigned int num_indices, unsigned int offset = 0);
+				virtual void getIndexData(std::vector<int>& data, unsigned int num_indices, unsigned int offset = 0) = 0;
 
 				/** @param data should have at least #size bytes reserved
 				* @param the number of bytes to copy (number of indices * sizeof(int)) */
-				virtual void getIndexData(void* data, unsigned int size, unsigned int offset = 0);
+				virtual void getIndexData(void* data, unsigned int size, unsigned int offset = 0) = 0;
 
 			public:
 				// additional index related data
 
 				/** @return the number of bytes stored in the indices buffer */
-				virtual unsigned int getIndexBufferSize();
+				virtual unsigned int getIndexBufferSize() = 0;
 
-				virtual void setUsesIndices(bool use_indices = true);
-				virtual bool getUsesIndices();
+				virtual void setUsesIndices(bool use_indices = true) = 0;
+				virtual bool getUsesIndices() = 0;
 
 
-				VertexBuffer();
-				virtual ~VertexBuffer();
+				VertexBuffer() = default;
+				virtual ~VertexBuffer() = default;
 
 			};
 

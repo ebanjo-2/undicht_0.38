@@ -21,6 +21,28 @@ add_library("tools"
 	
 	src/types.h
 	src/types.cpp	
+	
+	src/files/file.h
+	src/files/file.cpp
+	
+	src/files/xml/xml_element.h
+	src/files/xml/xml_element.cpp
+	
+	src/files/xml/xml_file.h
+	src/files/xml/xml_file.cpp
+	
+	src/files/xml/xml_tag_attribute.h
+	src/files/xml/xml_tag_attribute.cpp
+	
+	src/files/model_loading/model_loader.h
+	src/files/model_loading/model_loader.cpp
+	
+	src/files/model_loading/collada/collada_file.h
+	src/files/model_loading/collada/collada_file.cpp
+
 )
 
 target_include_directories("tools" PUBLIC src)
+
+add_subdirectory(extern/stb)
+target_link_libraries("tools" PUBLIC stb_image)

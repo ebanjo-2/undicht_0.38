@@ -10,8 +10,16 @@ namespace undicht {
 
 		namespace glfw {
 
+			int Window::s_open_windows = 0;
+
+
 			Window::Window() {
 
+			}
+
+			Window::Window(int width, int height, const std::string& title) {
+
+				open(width, height, title);
 			}
 
 			Window::~Window() {
@@ -19,11 +27,24 @@ namespace undicht {
 			}
 
 
+			int Window::getNumberOfOpenWindows() {
+
+				return s_open_windows;
+			}
+
 			bool Window::open() {
 				/** opens the window
 				* @return false, if the window could not be created */
 
+				if (!(s_open_windows && GraphicsCore::isInitialized())) {
+					// first window, initializing the GraphicsCore
+					// might only init the window lib, since the graphics lib (i.e. glad) may need an open window
+
+					GraphicsCore::init();
+				}
+
 				m_window = glfwCreateWindow(m_width, m_height, m_title.data(), NULL, NULL); //glfwGetPrimaryMonitor() for fullscreen
+				s_open_windows += 1;
 
 				if (m_window == NULL) {
 					std::cout << "FAILED TO CREATE WINDOW" << "\n";
@@ -31,6 +52,12 @@ namespace undicht {
 				}
 
 				glfwMakeContextCurrent(m_window);
+
+				if (!GraphicsCore::isInitialized()) {
+					// calling again to init the graphics lib
+
+					GraphicsCore::init();
+				}
 
 				return true;
 			}
@@ -43,11 +70,20 @@ namespace undicht {
 
 			void Window::close() {
 				// to be done
+
+				s_open_windows -= 1;
+
+				if (!s_open_windows) {
+					// the last window just got closed
+					GraphicsCore::terminate();
+				}
+
 			}
 
 			void Window::update() {
 				getSize(m_width, m_height);
 				glfwPollEvents();
+				glfwSwapBuffers(m_window);
 			}
 
 			bool Window::shouldClose() {

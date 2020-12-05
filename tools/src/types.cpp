@@ -76,6 +76,16 @@ namespace undicht {
         const int UND_AUDIO_STEREO8 = 3;
         const int UND_AUDIO_STEREO16 = 4;
 
+
+		// vertex attribute types
+		const int UND_POS2F = 200; // 2D position
+		const int UND_POS3F = 201; // 3D position
+		const int UND_UV2F = 202; // texture coordinate
+		const int UND_NORMAL3F = 203; // the direction the surface is pointing at
+		const int UND_TANGENT3F = 204; // used for normal mapping
+		const int UND_BITANGENT3F = 205; // used for normal mapping
+
+
         int getSizeOfType(int type) {
             /** @return the size of the type in bytes */
 
@@ -93,8 +103,18 @@ namespace undicht {
                 return 2 * sizeof(float); // 2 float vector
             if(type == UND_MAT4F)
                 return 16 * sizeof(float); // 4 * 4 float matrix
-            if(type == UND_MAT3F)
-                return 9 * sizeof(float); // 3 * 3 float matrix
+            if(type == UND_POS2F)
+                return 2 * sizeof(float); // 2 float vector
+			if (type == UND_POS3F)
+				return 3 * sizeof(float); // 3 float vector
+			if (type == UND_UV2F)
+				return 2 * sizeof(float); // 2 float vector
+			if (type == UND_NORMAL3F)
+				return 3 * sizeof(float); // 3 float vector
+			if (type == UND_TANGENT3F)
+				return 3 * sizeof(float); // 3 float vector
+			if (type == UND_BITANGENT3F)
+				return 3 * sizeof(float); // 3 float vector
 
             return 0;
         }
@@ -119,6 +139,18 @@ namespace undicht {
                 return 16; // 4 * 4 float matrix
             if(type == UND_MAT3F)
                 return 9; // 3 * 3 float matrix
+			if (type == UND_POS2F)
+				return 2; // 2 float vector
+			if (type == UND_POS3F)
+				return 3; // 3 float vector
+			if (type == UND_UV2F)
+				return 2; // 2 float vector
+			if (type == UND_NORMAL3F)
+				return 3; // 3 float vector
+			if (type == UND_TANGENT3F)
+				return 3; // 3 float vector
+			if (type == UND_BITANGENT3F)
+				return 3; // 3 float vector
 
             return 0;
         }

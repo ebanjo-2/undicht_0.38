@@ -41,7 +41,7 @@ namespace undicht {
 				virtual void submit(graphics::Shader* shader);
 				virtual void submit(graphics::FrameBuffer* fbo);
 
-				virtual void clearFramebuffer(float r = 1, float g = 1, float b = 1, float alpha = 1);
+				virtual void clearFramebuffer(float r = 0.1f, float g = 0.1f, float b = 0.1f, float alpha = 1.0f);
 				virtual void draw(unsigned int instance_count = 1);
 
 				/** redundand calls (with no changes) should be ignored */

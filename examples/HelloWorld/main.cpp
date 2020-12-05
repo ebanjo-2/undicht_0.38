@@ -1,6 +1,7 @@
 #include <iostream>
 #include <window/window.h>
 #include <core/graphics_core.h>
+#include <core/renderer.h>
 
 
 using namespace undicht;
@@ -9,21 +10,20 @@ using namespace graphics;
 
 int main() {
 	
-	GraphicsCore graphics;
-	graphics.init();
 
-	Window window;
-	if (!window.open(800, 600, "HELO WORLD!")) {
+	Window window(800, 600, "HELLO WORLD!");
 
-		return -1;
-	}
+	Renderer renderer;
 
 	while (!window.shouldClose()) {
+
+		renderer.clearFramebuffer(0.1, 0.6, 0.1, 1.0F);
 
 		window.update();
 	}
 
-	graphics.terminate();
 
+	window.close();
+		
 	return 0;
 }
