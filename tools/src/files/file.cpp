@@ -15,6 +15,12 @@ namespace undicht {
 
         }
 
+		File::File(const std::string& file_name) {
+
+			open(file_name);
+		}
+
+
         File::~File() {
 
         }

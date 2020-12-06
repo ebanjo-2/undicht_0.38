@@ -82,6 +82,7 @@ namespace undicht {
             public:
 
                 File();
+				File(const std::string& file_name);
                 virtual ~File();
 
         };

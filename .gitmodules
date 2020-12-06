@@ -10,3 +10,6 @@
 [submodule "tools/extern/stb"]
 	path = tools/extern/stb
 	url = https://github.com/ebanjo-2/stb
+[submodule "tools/extern/glm"]
+	path = tools/extern/glm
+	url = https://github.com/ebanjo-2/glm.git

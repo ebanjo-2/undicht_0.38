@@ -3,9 +3,11 @@
 #include <core/graphics_core.h>
 #include <core/renderer.h>
 
+#include <files/model_loading/collada/collada_file.h>
 
 using namespace undicht;
 using namespace graphics;
+using namespace tools;
 
 
 int main() {
@@ -13,23 +15,38 @@ int main() {
 
 	Window window(800, 600, "HELLO WORLD!");
 
-	GraphicsCore graphics;
-	graphics.init();
+	{
 
-	Window window;
-	if (!window.open(800, 600, "HELLO WORLD!")) {
+		MeshData mesh_data;
+		TextureData texture_data;
 
-	Renderer renderer;
+		ColladaFile model_loader("res/TexCube.dae");
+		model_loader.getMesh(mesh_data);
 
-	while (!window.shouldClose()) {
+		VertexBuffer vbo;
+		vbo.setLayout(mesh_data.vertex_layout);
+		vbo.setData(mesh_data.vertices);
 
-		renderer.clearFramebuffer(0.1, 0.6, 0.1, 1.0F);
+		File shader_file("res/shader.glsl");
+		std::string shader_src;
+		shader_file.getAll(shader_src);
 
-		window.update();
+		Shader shader;
+		shader.loadSource(shader_src);
+
+		Renderer renderer;
+
+		while (!window.shouldClose()) {
+
+			renderer.clearFramebuffer(0.1, 0.6, 0.1, 1.0F);
+
+			window.update();
+		}
+
+
+		window.close();
+
 	}
 
-
-	window.close();
-		
 	return 0;
 }

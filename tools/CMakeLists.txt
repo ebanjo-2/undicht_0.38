@@ -42,7 +42,7 @@ add_library("tools"
 
 )
 
-target_include_directories("tools" PUBLIC src)
+target_include_directories("tools" PUBLIC src extern/glm)
 
 add_subdirectory(extern/stb)
 target_link_libraries("tools" PUBLIC stb_image)
