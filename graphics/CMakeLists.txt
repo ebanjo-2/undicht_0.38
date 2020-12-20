@@ -37,6 +37,11 @@ add_library(graphics STATIC
     src/core/gl33/gl33_tools.cpp
     src/core/gl33/gl33_tools.h
 	
+	src/camera/camera_3d.h
+	src/camera/camera_3d.cpp
+		
+	src/camera/perspective_camera_3d.h
+	src/camera/perspective_camera_3d.cpp
 )
 
 target_include_directories(graphics PUBLIC include src)

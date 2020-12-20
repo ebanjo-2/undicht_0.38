@@ -39,6 +39,15 @@ add_library("tools"
 	
 	src/files/model_loading/collada/collada_file.h
 	src/files/model_loading/collada/collada_file.cpp
+	
+	src/math/orientation_3d.h
+	src/math/orientation_3d.cpp
+
+	src/math/orthographic_projection.h
+	src/math/orthographic_projection.cpp
+	
+	src/math/perspective_projection.h
+	src/math/perspective_projection.cpp
 
 )
 
