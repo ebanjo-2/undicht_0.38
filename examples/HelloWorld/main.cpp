@@ -20,8 +20,9 @@ int main() {
 		MeshData mesh_data;
 		TextureData texture_data;
 
-		/*ColladaFile model_loader("res/SupertuxTex.dae");
-		model_loader.getMesh(mesh_data);*/
+		ColladaFile model_loader;
+		model_loader.open("res/SupertuxTex.dae");
+		model_loader.getMesh(mesh_data);
 
 		VertexBuffer vbo;
 		vbo.setLayout(mesh_data.vertex_layout);

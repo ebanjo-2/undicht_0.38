@@ -25,14 +25,19 @@ namespace undicht {
 
 		bool XmlFile::open(const std::string& file_name) {
 
-			if (!open(file_name)) {
-				// failed to open
-				close();
+			m_file_name = file_name;
+
+			// opening the file
+			m_file_stream.open(file_name); // open for both input and output
+
+			if (m_file_stream.fail()) {
 				return false;
 			}
 
-			m_child_elements.clear();
+			m_file_size = getSize();
 
+			// loading all xml elements
+			m_child_elements.clear();
 
 			// the line in which the xml information is stored
 			std::string xml_info = getLine();
