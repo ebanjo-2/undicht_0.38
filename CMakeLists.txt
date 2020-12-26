@@ -11,3 +11,4 @@ add_subdirectory("graphics")
 
 # adding example applications
 add_subdirectory("examples/HelloWorld")
+add_subdirectory("examples/DeferredShading")

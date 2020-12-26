@@ -89,15 +89,7 @@ namespace undicht {
 
 			std::vector<XmlElement*> materials = getAllElements({ "COLLADA", "library_materials", "material" }); // all materials stored in the file
 
-			// getting the material with the id
-			for (unsigned int i = 0; i < materials.size(); i++) {
-				if (!materials.at(i)->getAttribute("id")->m_value.compare(toStr(id))) {
-					// found the right material
-					loadMaterialTextures(materials.at(i), loadTo_texture);
-					break;
-				}
-			}
-
+			loadMaterialTextures(materials.at(id), loadTo_texture);
 
 		}
 
