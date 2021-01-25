@@ -93,6 +93,8 @@ namespace undicht {
                 return sizeof(int);
             if(type == UND_FLOAT)
                 return sizeof(float);
+			if (type == UND_UNSIGNED_CHAR)
+				return sizeof(unsigned char);
             if(type == UND_VEC4F)
                 return 4 * sizeof(float);
             if(type == UND_VEC3F)

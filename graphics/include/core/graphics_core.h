@@ -1,9 +1,7 @@
 #ifndef GRAPHICS_CORE_H
 #define GRAPHICS_CORE_H
 
-/* should be configured via cmake */
-#define USE_GLFW
-#define USE_GL33 
+#include "core.h"
 
 namespace undicht {
 

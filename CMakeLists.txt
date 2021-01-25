@@ -6,8 +6,10 @@ project("undicht")
 
 
 # adding undicht libraries
+add_subdirectory("core")
 add_subdirectory("tools")
 add_subdirectory("graphics")
+add_subdirectory("user_input")
 
 # adding example applications
 add_subdirectory("examples/HelloWorld")
