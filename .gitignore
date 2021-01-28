@@ -1,7 +1,9 @@
-#exclude everything that is in subdirectories
-/*/*
+# Ignore everything
+*
+# But descend into directories
+!*/
 
-#except whats in these directories
+# dont ignore whats in these directories
 !graphics/.gitignore
 !graphics/CMakeLists.txt
 !graphics/src
@@ -11,11 +13,19 @@
 !examples/CMakeLists.txt
 !examples/HelloWorld/CMakeLists.txt
 !examples/HelloWorld/*.cpp
-!examples/HelloWorld/src
+!examples/HelloWorld/src/*.*
+!examples/Cell/CMakeLists.txt
+!examples/Cell/*.cpp
+!examples/Cell/src/*.*
 
 !tools/.gitignore
 !tools/CMakeLists.txt
 !tools/src
+
+!user_input/.gitignore
+!user_input/CMakeLists.txt
+!user_input/src/*.*
+!user_input/include/*.*
 
 # exclude everything that is not in subdirectories
 /*.*

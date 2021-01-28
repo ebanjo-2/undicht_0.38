@@ -13,4 +13,5 @@ add_subdirectory("user_input")
 
 # adding example applications
 add_subdirectory("examples/HelloWorld")
-add_subdirectory("examples/DeferredShading")
+#add_subdirectory("examples/DeferredShading")
+add_subdirectory("examples/Cell")
