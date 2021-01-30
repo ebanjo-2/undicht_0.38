@@ -33,7 +33,8 @@ namespace undicht {
 			m_rot_mat = glm::toMat4(getRotation());
 
 			m_view_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(0, 0, 1)); // dont ask why this works, but it does
-
+			m_up_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(0, 1, 0));
+			m_right_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(1, 0, 0));
 		}
 
 
@@ -59,6 +60,29 @@ namespace undicht {
 			}
 
 			return m_view_dir;
+		}
+
+
+		const glm::vec3& Camera3D::getUpDirection() {
+
+			if (m_update_rot) {
+
+				updateRotation();
+				m_update_rot = false;
+			}
+
+			return m_up_dir;
+		}
+
+		const glm::vec3& Camera3D::getRightDirection() {
+
+			if (m_update_rot) {
+
+				updateRotation();
+				m_update_rot = false;
+			}
+
+			return m_right_dir;
 		}
 
 	} // graphics

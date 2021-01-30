@@ -13,6 +13,8 @@ namespace undicht {
 
 			glm::mat4 m_view_mat;
 			glm::vec3 m_view_dir;
+			glm::vec3 m_up_dir;
+			glm::vec3 m_right_dir;
 
 		protected:
 			// function called when the transformation matrix needs to be updated, and with it the view matrix
@@ -29,6 +31,9 @@ namespace undicht {
 			/** a unit vector pointing in the direction the camera is "facing" */
 			const glm::vec3& getViewDirection();
 
+			const glm::vec3& getUpDirection();
+
+			const glm::vec3& getRightDirection();
 
 			Camera3D();
 			virtual ~Camera3D();
