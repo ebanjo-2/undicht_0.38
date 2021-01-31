@@ -20,14 +20,16 @@ namespace undicht {
 
                     virtual void getSize(int& width, int& height) = 0;
 
-                    /** @param texture: the framebuffer can only be used while the texture object exists
-                    * @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
-                    * @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE */
-                    virtual void addAttachment(graphics::Texture& texture, int attachment_type) = 0;
+					/** @param texture: the framebuffer can only be used while the texture object exists
+					* @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
+					* @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE
+					* @param location: the location under which the output buffer can be accessed in a shader */
+                    virtual void addAttachment(graphics::Texture& texture, int attachment_type, int location = 0) = 0;
 
                     /** @brief removes the attachment from the framebuffer */
                     virtual void removeAttachment(graphics::Texture& texture) = 0;
 
+					/** clears the contents stored in the attachments (i.e. to begin a new frame) */
                     virtual void clearAttachments() = 0;
 
                 public:

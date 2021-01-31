@@ -35,7 +35,8 @@ namespace undicht {
 			public:
 				// not api functions
 
-				virtual int getTextureID(const std::string& texture_name);
+				/** @param was_know: set to true, if the texture name was used before */
+				virtual int getTextureID(const std::string& texture_name, bool& was_known);
 
 				virtual void bind();
 

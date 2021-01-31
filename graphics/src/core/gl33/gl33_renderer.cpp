@@ -80,6 +80,11 @@ namespace undicht {
 
             void Renderer::draw(unsigned int instance_count) {
 
+				/** setting the global vars to what this renderer uses */
+				setViewport();
+				enableBackFaceCulling();
+				enableDepthTest();
+
                 if(m_current_shader) {
 
                     m_current_shader->bind();
@@ -135,44 +140,20 @@ namespace undicht {
 
             void Renderer::setViewport(int width, int height, int offset_x, int offset_y) {
 
-                if((width != s_viewport_width) || (height != s_viewport_height) || (offset_x != s_viewport_offset_x) || (offset_y != s_viewport_offset_y)) {
-
-                    glViewport(offset_x, offset_y, width, height);
-
-                }
+				m_viewport_width = width;
+				m_viewport_height = height;
+				m_viewport_offset_x = offset_x;
+				m_viewport_offset_y = offset_y;
             }
 
             void Renderer::enableDepthTest(bool enable) {
 
-
-                if(s_depth_test_enabled != enable) {
-
-                    if(enable) {
-                        glEnable(GL_DEPTH_TEST);
-                    } else {
-                        glDisable(GL_DEPTH_TEST);
-                    }
-
-                    s_depth_test_enabled = enable;
-                }
-
-
-
+				m_depth_test_enabled = enable;
             }
 
             void Renderer::enableBackFaceCulling(bool enable) {
 
-                if(s_culling_enabled != enable) {
-
-                    if(enable) {
-                        glEnable(GL_CULL_FACE);
-                    } else {
-                        glDisable(GL_CULL_FACE);
-                    }
-
-                    s_culling_enabled = enable;
-                }
-
+				m_culling_enabled = enable;
             }
 
 
@@ -185,6 +166,20 @@ namespace undicht {
 
             }
 
+
+			void Renderer::setGlobalViewport(int width, int height, int offset_x, int offset_y) {
+				/** sets the viewport without a renderer (following drawcalls will override the values) */
+
+				if ((width != s_viewport_width) || (height != s_viewport_height) || (offset_x != s_viewport_offset_x) || (offset_y != s_viewport_offset_y)) {
+
+					glViewport(offset_x, offset_y, width, height);
+
+					s_viewport_width = width;
+					s_viewport_height = height;
+					s_viewport_offset_x = offset_x;
+					s_viewport_offset_y = offset_y;
+				}
+			}
 
             /////////////////////////////////////////////////// opengl only functions //////////////////////////////////////////
 
@@ -201,6 +196,54 @@ namespace undicht {
 
             }
 
+			void Renderer::setViewport() {
+
+				if ((m_viewport_width != s_viewport_width) || (m_viewport_height != s_viewport_height) || (m_viewport_offset_x != s_viewport_offset_x) || (m_viewport_offset_y != s_viewport_offset_y)) {
+
+					glViewport(m_viewport_offset_x, m_viewport_offset_y, m_viewport_width, m_viewport_height);
+
+					s_viewport_width = m_viewport_width;
+					s_viewport_height = m_viewport_height;
+					s_viewport_offset_x = m_viewport_offset_x;
+					s_viewport_offset_y = m_viewport_offset_y;
+				}
+
+			}
+
+			void Renderer::enableDepthTest() {
+
+
+				if (s_depth_test_enabled != m_depth_test_enabled) {
+
+					if (m_depth_test_enabled) {
+						glEnable(GL_DEPTH_TEST);
+					}
+					else {
+						glDisable(GL_DEPTH_TEST);
+					}
+
+					s_depth_test_enabled = m_depth_test_enabled;
+				}
+
+
+
+			}
+
+			void Renderer::enableBackFaceCulling() {
+
+				if (s_culling_enabled != m_culling_enabled) {
+
+					if (m_culling_enabled) {
+						glEnable(GL_CULL_FACE);
+					}
+					else {
+						glDisable(GL_CULL_FACE);
+					}
+
+					s_culling_enabled = m_culling_enabled;
+				}
+
+			}
         } // gl33
 
     } // graphics

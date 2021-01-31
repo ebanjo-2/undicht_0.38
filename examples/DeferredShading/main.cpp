@@ -2,7 +2,7 @@
 #include <window/window.h>
 #include <core/graphics_core.h>
 #include <core/renderer.h>
-#include <core/frame_buffer.h>
+#include <deferred_shading/geometry_buffer.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -21,8 +21,16 @@ using namespace user_input;
 
 // rendering
 void initRenderer();
-Renderer* renderer = 0;
-Shader* shader = 0;
+
+// drawing the scene data to a geometry buffer
+Renderer* gbuffer_renderer = 0;
+Shader* gbuffer_shader = 0;
+GeometryBuffer* gbuffer = 0;
+
+// drawing the final result to the screen
+Renderer* final_renderer = 0;
+Shader* final_shader = 0;
+VertexBuffer* screen_quad = 0;
 
 void updateViewPort(Window& window);
 int width, height, old_width, old_height;
@@ -49,6 +57,7 @@ int main() {
 
 
 	Window window(800, 600, "HELLO WORLD!");
+	//window.setWindowMode(true, false);
 
 	{
 
@@ -61,25 +70,34 @@ int main() {
 		PerspectiveCamera3D cam;
 		cam.setPosition(glm::vec3(0, 0, -7));
 
-		loadCam(cam, *shader);
+		loadCam(cam, *gbuffer_shader);
 
 
 		while (!window.shouldClose()) {
 
-			renderer->clearFramebuffer(0.1, 0.6, 0.1, 1.0F);
+			final_renderer->clearFramebuffer(0.1, 0.1, 0.7, 1.0F);
+			gbuffer_renderer->clearFramebuffer(0.6, 0.1, 0.1, 1.0f);
 
+			// drawing the model to the geometry buffer
 			for (int i = 0; i < vbos.size(); i++) {
 
-				shader->loadTexture(*texs[tex_ids[i]]);
-				renderer->submit(vbos[i]);
-				renderer->draw();
+				gbuffer_shader->loadTexture(*texs[tex_ids[i]]);
+				gbuffer_renderer->submit(vbos[i]);
+				gbuffer_renderer->draw();
 
 			}
+
+			// drawing the geometry buffer to the visible framebuffer
+
+			final_shader->loadTexture(*gbuffer->getColorBuffer());
+			final_shader->loadTexture(*gbuffer->getNormalBuffer());
+			final_renderer->submit(screen_quad);
+			final_renderer->draw();
 
 			endFrame(window);
 
 			moveCam(cam);
-			loadCam(cam, *shader);
+			loadCam(cam, *gbuffer_shader);
 		}
 
 		terminate();
@@ -93,17 +111,59 @@ int main() {
 
 void initRenderer() {
 
-	File shader_file("res/shader.glsl");
+	// Geometry Stage
+	File gbuffer_shader_file("src/gbuffer_shader.glsl");
 	std::string shader_src;
-	shader_file.getAll(shader_src);
+	gbuffer_shader_file.getAll(shader_src);
 
-	shader = new Shader;
-	shader->loadSource(shader_src);
+	gbuffer_shader = new Shader;
+	gbuffer_shader->loadSource(shader_src);
 
-	renderer = new Renderer;
-	renderer->submit(shader);
-	renderer->enableDepthTest(true);
-	renderer->enableBackFaceCulling(false);
+	gbuffer = new GeometryBuffer;
+	gbuffer->setSize(800, 600);
+	gbuffer->setDepthBuffer();
+	gbuffer->setColorBuffer();
+	//gbuffer->setPositionBuffer();
+	gbuffer->setNormalBuffer();
+
+	gbuffer_renderer = new Renderer;
+	gbuffer_renderer->submit(gbuffer_shader);
+	gbuffer_renderer->submit(gbuffer);
+	gbuffer_renderer->enableDepthTest(true);
+	gbuffer_renderer->enableBackFaceCulling(true);
+
+	// Final Stage
+	File final_shader_file;
+	shader_src.clear();
+	final_shader_file.open("src/final_shader.glsl");
+	final_shader = new Shader;
+	final_shader->loadSource(final_shader_file.getAll(shader_src));
+
+	final_renderer = new Renderer;
+	final_renderer->submit(final_shader);
+	final_renderer->enableDepthTest(false);
+	final_renderer->enableBackFaceCulling(false);
+
+	screen_quad = new VertexBuffer;
+	screen_quad->setLayout(BufferLayout({ UND_VEC3F, UND_VEC2F }));
+
+	// quad vertices taken from https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/8.2.deferred_shading_volumes/deferred_shading_volumes.cpp
+	float quadVertices[] = {
+		// positions        // texture Coords
+		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+		 1.0f, -1.0f, 0.0f, 1.0f, 0.0f
+	};
+
+	unsigned int quadIndices[] = {
+		0,1,2,
+		1,3,2
+	};
+
+	screen_quad->setData(quadVertices, sizeof(quadVertices));
+	screen_quad->setIndexData(quadIndices, sizeof(quadIndices));
+
 
 	key_input = new KeyInput;
 	mouse_input = new MouseInput;
@@ -115,7 +175,9 @@ void updateViewPort(Window& window) {
 
 	if ((width != old_width) || (height != old_height)) {
 
-		renderer->setViewport(width, height);
+		final_renderer->setViewport(width, height);
+		gbuffer_renderer->setViewport(width, height);
+		gbuffer->setSize(width, height);
 	}
 
 	old_height = height;
@@ -243,8 +305,13 @@ void loadCam(Camera3D& cam, Shader shader) {
 
 void terminate() {
 
-	delete renderer;
-	delete shader;
+	delete gbuffer;
+	delete gbuffer_renderer;
+	delete gbuffer_shader;
+
+	delete final_renderer;
+	delete final_shader;
+	delete screen_quad;
 
 	delete key_input;
 	delete mouse_input;

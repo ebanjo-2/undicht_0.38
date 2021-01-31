@@ -32,6 +32,8 @@ namespace undicht {
             /** opens a file from the hard drive
             * @return whether or not the file could be opened */
 
+			close();
+
             m_file_name = file_name;
 
             // opening the file

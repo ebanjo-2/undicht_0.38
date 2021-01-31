@@ -24,6 +24,7 @@ namespace undicht {
                 unsigned int id;
                 glGenTextures(1, &id);
                 m_id = id;
+				m_type = GL_TEXTURE_2D;
 
             }
 

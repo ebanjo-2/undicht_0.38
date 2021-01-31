@@ -42,6 +42,10 @@ add_library(graphics STATIC
 		
 	src/camera/perspective_camera_3d.h
 	src/camera/perspective_camera_3d.cpp
+	
+	src/deferred_shading/geometry_buffer.h
+	src/deferred_shading/geometry_buffer.cpp
+
 )
 
 target_include_directories(graphics PUBLIC include src)

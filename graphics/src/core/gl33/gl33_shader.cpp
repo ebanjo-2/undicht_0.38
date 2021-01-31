@@ -122,16 +122,23 @@ namespace undicht {
 
                 if(t.m_type && t.m_id) {
                     // binding the texture and setting the sampler uniform in the shader
-					t.bind();
-                    int texture_id = getTextureID(t.m_name);
 
+					bool texture_known;
 
-                    graphics::Uniform u;
+					int texture_id = getTextureID(t.m_name, texture_known);
+					t.bind(texture_id);
 
-                    u.setData(&texture_id, UND_INT);
+					if (!texture_known) {
+						/** loading a unique id to the sampler in the shader */
 
-                    u.setName(t.m_name);
-                    loadUniform(u);
+						graphics::Uniform u;
+						u.setData(&texture_id, UND_INT);
+
+						u.setName(t.m_name);
+						loadUniform(u);
+					}
+
+					
 
                 } else {
 
@@ -144,13 +151,16 @@ namespace undicht {
 
             /////////////////////////////////////// non api functions ///////////////////////////////////////
 
-            int Shader::getTextureID(const std::string& texture_name) {
+
+            int Shader::getTextureID(const std::string& texture_name, bool& was_known) {
+				/** to load multiple textures to a shader, each sampler2D has to be given a unique value */
 
                 // checking if the texture name already has an id associated with it
                 for (unsigned int i = 0; i < m_textures.size(); i++) {
 
                     if(!m_textures.at(i).compare(texture_name)) {
 
+						was_known = true;
                         return i;
                     }
 
@@ -159,7 +169,8 @@ namespace undicht {
 
                 // adding the texture to the list of textures loaded to the shader
                 m_textures.push_back(texture_name);
-
+	
+				was_known = false;
                 return m_textures.size() - 1;
             }
 

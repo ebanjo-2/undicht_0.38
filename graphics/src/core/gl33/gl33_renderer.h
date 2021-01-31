@@ -19,6 +19,15 @@ namespace undicht {
 				Shader* m_current_shader = 0;
 				FrameBuffer* m_current_fbo = 0;
 
+				bool m_depth_test_enabled;
+				bool m_culling_enabled;
+
+				int m_viewport_width;
+				int m_viewport_height;
+				int m_viewport_offset_x;
+				int m_viewport_offset_y;
+
+				// current state of opengl
 				static bool s_depth_test_enabled;
 				static bool s_culling_enabled;
 
@@ -35,6 +44,11 @@ namespace undicht {
 				/// binding the submitted fbo
 				void useFbo();
 
+				/** sets the global rendering settings to what this renderer uses */
+				void setViewport();
+				void enableDepthTest();
+				void enableBackFaceCulling();
+
 			public:
 
 				virtual void submit(graphics::VertexBuffer* vbo);
@@ -45,11 +59,14 @@ namespace undicht {
 				virtual void draw(unsigned int instance_count = 1);
 
 				/** redundand calls (with no changes) should be ignored */
-				static void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
-				static void enableDepthTest(bool enable = true);
-				static void enableBackFaceCulling(bool enable = true);
+				void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+				void enableDepthTest(bool enable);
+				void enableBackFaceCulling(bool enable);
 
-				static void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+				void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+
+				/** sets the viewport without a renderer (following drawcalls will override the values) */
+				static void setGlobalViewport(int width, int height, int offset_x = 0, int offset_y = 0); // used for example to clear framebuffers
 
 				Renderer();
 				virtual ~Renderer();

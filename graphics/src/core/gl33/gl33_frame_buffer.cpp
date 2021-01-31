@@ -12,6 +12,8 @@
 #include "event_logger.h"
 #include "buffer_layout.h"
 
+#include "core/renderer.h"
+
 using namespace undicht::tools;
 
 namespace undicht {
@@ -47,7 +49,7 @@ namespace undicht {
                 m_width = width;
                 m_height = height;
 
-                std::cout << "resizing the framebuffer to " << width << " " << height << "\n";
+                //std::cout << "resizing the framebuffer to " << width << " " << height << "\n";
 
 
                 // according to this: https://gamedev.stackexchange.com/questions/91991/resizing-a-framebuffer-object-ie-its-attachments-on-screen-resize
@@ -65,19 +67,28 @@ namespace undicht {
                 }
 
                 // reattaching them to the new fbo
-                for(unsigned int i = 0; i < m_attachments.size(); i++) {
 
-                    // for sending an graphics::Texture to the function
-                    graphics::Texture* graphics_texture;
-                    graphics_texture = m_attachments.at(i);
-                    int type = m_attachment_types.at(i);
+				std::vector<Texture*> att = m_attachments;
+				std::vector<int> att_types = m_attachment_types;
+				std::vector<int> color_locations = m_color_outputs;
 
-                    // the attachment gets stored again
-                    m_attachments.erase(m_attachments.begin() + i);
-                    m_attachment_types.erase(m_attachment_types.begin() + i);
+				m_color_outputs.clear();
+				m_attachments.clear();
+				m_attachment_types.clear();
 
+				int col_out_count = 0;
 
-                    addAttachment(*graphics_texture, type);
+                for(unsigned int i = 0; i < att.size(); i++) {
+
+					if (att_types[i] == UND_COLOR_ATTACHMENT) {
+
+						addAttachment(*att[i], att_types[i], color_locations[col_out_count]);
+						col_out_count++;
+					}
+					else {
+
+						addAttachment(*att[i], att_types[i]);
+					}
                 }
 
             }
@@ -90,16 +101,20 @@ namespace undicht {
             }
 
 
-            void FrameBuffer::addAttachment(graphics::Texture& texture, int attachment_type) {
-                /** @param texture: the framebuffer can only be used while the texture object exists
-                * @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
-                * @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE */
+            void FrameBuffer::addAttachment(graphics::Texture& texture, int attachment_type, int location) {
+				/** @param texture: the framebuffer can only be used while the texture object exists
+				* @param texture: it should have a pixel layout set before attachment, if not, default 24 bit rgb is going to be used for color attachments
+				* @param attachment_type: UND_COLOR_ATTACHMENT, UND_DEPTH_ATTACHMENT_WRITE_ONLY or UND_DEPTH_ATTACHMENT_READ_AND_WRITE
+				* @param location: the location under which the output buffer can be accessed in a shader */
 
                 if(attachment_type == UND_COLOR_ATTACHMENT) {
                     // attaching a texture that can store the color output of a fragment shader
+
                     if(!texture.m_layout_set) {
                         // setting default 24 bit rgb layout for the pixels
 						texture.setPixelFormat(BufferLayout({UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR}));
+						texture.setFilteringMethod(UND_NEAREST, UND_NEAREST);
+						texture.setWrappingMethod(UND_REPEAT);
                     }
 
 					texture.setSize(m_width, m_height, 1);
@@ -107,8 +122,21 @@ namespace undicht {
                     bind(); // binding the Framebuffer
 					texture.bind(); // binding the texture
 					texture.setData(0, 0);// reserving memory
-                    std::cout << "adding color attachment " << getColorOutputCount() << "\n";
-                    glFramebufferTexture2D(m_type, GL_COLOR_ATTACHMENT0 + getColorOutputCount(), GL_TEXTURE_2D, texture.m_id, 0);
+
+					glFramebufferTexture2D(m_type, GL_COLOR_ATTACHMENT0 + location, GL_TEXTURE_2D, texture.m_id, 0);
+
+					// updating the m_color_outputs vector
+					// first: checking if the location was already used by another attachment
+					bool color_output_stored = false;
+					for (int& i : m_color_outputs) {
+
+						if (i == location) {
+							color_output_stored = true;
+						}
+					}
+
+					// second: if the location is new, it gets added to the list
+					if (!color_output_stored) m_color_outputs.push_back(location);
 
                 } else if (attachment_type == UND_DEPTH_ATTACHMENT_READ_AND_WRITE) {
                     // attaching a texture that can store the depth values of a scene
@@ -118,8 +146,8 @@ namespace undicht {
 
                     bind(); // binding the Framebuffer
 					texture.bind(); // binding the texture
-                    std::cout << "adding depth attachment" << "\n";
-                    glFramebufferTexture2D(m_type, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.m_id, 0);
+
+					glFramebufferTexture2D(m_type, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.m_id, 0);
 
                 } else if (attachment_type == UND_DEPTH_ATTACHMENT_WRITE_ONLY) {
                     // using a renderbuffer, may be faster then a texture
@@ -148,14 +176,13 @@ namespace undicht {
 
             void FrameBuffer::clearAttachments() {
 
-                //std::cout << "clearing the framebuffer" << "\n";
-
-                checkStatus();
+				// std::cout << "clearing fbo" << "\n";
 
                 bind();
-                glViewport(0, 0, m_width, m_height);
 
-                glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
+				Renderer::setGlobalViewport(m_width, m_height);
+
+                glClearColor(0.5f, 0.0f, 0.5f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 undCheckGLError(UND_CODE_ORIGIN);
@@ -168,21 +195,18 @@ namespace undicht {
             void FrameBuffer::updateColorOutputs() {
                 // taken from undicht 0.21.9
 
-                // counting the number of enabled color outputs
-                int number_of_outputs = getColorOutputCount();
-
                 // saving the index of each enabled output in an array
-                unsigned int* outputs = new unsigned int[number_of_outputs]; // an array that holds all enabled GL_COLOR_ATTACHMENTS
-                int last_enabled_output = 0;
-                for(unsigned int i = 0; i < m_attachment_types.size(); i++) {
-                    if(m_attachment_types.at(i) == UND_COLOR_ATTACHMENT) {
-                        outputs[last_enabled_output] = GL_COLOR_ATTACHMENT0 + i;
-                        last_enabled_output++;
-                    }
-                }
+                unsigned int* outputs = new unsigned int[m_color_outputs.size()]; // an array that holds all enabled GL_COLOR_ATTACHMENTS
 
-                if(number_of_outputs) {
-                    glDrawBuffers(number_of_outputs, outputs);
+				for (int i = 0; i < m_color_outputs.size(); i++) {
+					outputs[i] = GL_COLOR_ATTACHMENT0 + m_color_outputs[i];
+				}
+
+				bind();
+
+                if(m_color_outputs.size()) {
+					
+                    glDrawBuffers(m_color_outputs.size(), outputs);
                 } else {
                     // from undicht 0.05
                     glDrawBuffer(GL_NONE);// no color attachment will be used
@@ -192,16 +216,11 @@ namespace undicht {
                 delete[] outputs;
             }
 
+
             int FrameBuffer::getColorOutputCount() {
                 // counting the number of enabled color outputs
 
-                int number_of_outputs = 0;
-                for(int &output_type : m_attachment_types) {
-                    if(output_type == UND_COLOR_ATTACHMENT)
-                        number_of_outputs += 1;
-                }
-
-                return number_of_outputs;
+                return m_color_outputs.size();
             }
 
             void FrameBuffer::checkStatus() {
@@ -230,6 +249,7 @@ namespace undicht {
             void FrameBuffer::bind(int id) {
 
                 if(id != bound_fbo) {
+
                     glBindFramebuffer(GL_FRAMEBUFFER, id);
                     bound_fbo = id;
 

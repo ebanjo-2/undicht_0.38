@@ -27,11 +27,15 @@ namespace undicht {
 				virtual void draw(unsigned int instance_count = 1) = 0;
 
 				/** redundand calls (with no changes) should be ignored */
-				static void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
-				static void enableDepthTest(bool enable = true);
-				static void enableBackFaceCulling(bool enable = true);
+				void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+				void enableDepthTest(bool enable);
+				void enableBackFaceCulling(bool enable);
 
-				static void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+				void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+
+				/** sets the viewport without a renderer (following drawcalls will override the values) */
+				static void setGlobalViewport(int width, int height, int offset_x = 0, int offset_y = 0); // used for example to clear framebuffers
+
 
 				Renderer() = default;
 				virtual ~Renderer() = default;

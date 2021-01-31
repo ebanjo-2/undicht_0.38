@@ -33,6 +33,8 @@ namespace undicht {
 
 				std::string m_name; // uniform name
 
+				bool m_size_set = false;
+				bool m_layout_set = false;
 
 			public:
 				// managing the textures format
@@ -84,10 +86,6 @@ namespace undicht {
 				// opengl only functions / members
 
 				virtual void bind(unsigned int target = 0) const;
-
-				bool m_size_set = false;
-				bool m_layout_set = false;
-
 
 				/** updates the texture to the set layout and size */
 				void updateFormat();
