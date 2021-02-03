@@ -174,7 +174,7 @@ namespace undicht {
 
             }
 
-            void FrameBuffer::clearAttachments() {
+            void FrameBuffer::clearAttachments(float r, float g, float b, float alpha) {
 
 				// std::cout << "clearing fbo" << "\n";
 
@@ -182,7 +182,7 @@ namespace undicht {
 
 				Renderer::setGlobalViewport(m_width, m_height);
 
-                glClearColor(0.5f, 0.0f, 0.5f, 1.0f);
+                glClearColor(r,g,b,alpha);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 undCheckGLError(UND_CODE_ORIGIN);

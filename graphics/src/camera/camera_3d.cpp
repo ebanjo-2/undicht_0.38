@@ -32,9 +32,9 @@ namespace undicht {
 			// updating the view direction as well as the rotation matrix
 			m_rot_mat = glm::toMat4(getRotation());
 
-			m_view_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(0, 0, 1)); // dont ask why this works, but it does
-			m_up_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(0, 1, 0));
-			m_right_dir = glm::rotate(glm::inverse(getRotation()), glm::vec3(1, 0, 0));
+			m_view_dir = glm::rotate(getRotation(), glm::vec3(0, 0, 1));
+			m_up_dir = glm::rotate(getRotation(), glm::vec3(0, 1, 0));
+			m_right_dir = glm::rotate(getRotation(), glm::vec3(1, 0, 0));
 		}
 
 

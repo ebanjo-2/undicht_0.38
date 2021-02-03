@@ -93,8 +93,10 @@ namespace undicht {
                         glUniform3fv(location, 1, (float*)u.getData());
                     } else if(type == UND_VEC3I) {
                         glUniform3iv(location, 1, (int*)u.getData());
-                    } else if(type == UND_VEC2F) {
-                        glUniform2fv(location, 1, (float*)u.getData());
+					} else if (type == UND_VEC2F) {
+						glUniform2fv(location, 1, (float*)u.getData());
+					} else if (type == UND_VEC2I) {
+						glUniform2iv(location, 1, (int*)u.getData());
                     } else if(type == UND_MAT4F) {
                         glUniformMatrix4fv(location, 1, GL_FALSE, (float*)u.getData());
                     } else if(type == UND_MAT3F) {

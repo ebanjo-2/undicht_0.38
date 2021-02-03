@@ -17,6 +17,10 @@ namespace undicht {
 
     // primitive data types
     const extern int UND_INT;
+	const extern int UND_UINT8; // 8 bit unsigned int, = UND_UNSIGNED_CHAR
+	const extern int UND_UINT16; // = unsigned short
+	const extern int UND_UINT32; // = default int
+
     const extern int UND_FLOAT;
     const extern int UND_STR;
     const extern int UND_UNSIGNED_CHAR;
@@ -36,6 +40,7 @@ namespace undicht {
     const extern int UND_VEC3F; // 3 float vector
     const extern int UND_VEC3I; // 3 int vector
     const extern int UND_VEC2F; // 2 float vector
+	const extern int UND_VEC2I; // 2 int vector
     const extern int UND_MAT4F; // 4 * 4 float matrix
     const extern int UND_MAT3F; // 3 * 3 float matrix
 
@@ -50,6 +55,19 @@ namespace undicht {
 
     const extern int UND_REPEAT; // wrapping
     const extern int UND_CLAMP_TO_EDGE;
+
+	// blending occurrs when the output of the fragment shader (dst color) gets mixed with another color
+	// for example with what was already stored in the buffer that is being rendered to (src color)
+	// blending factors translate directly into opengl blend factors
+	// see https://learnopengl.com/Advanced-OpenGL/Blending
+	const extern int UND_SRC_ALPHA;
+	const extern int UND_ONE_MINUS_SRC_ALPHA;
+	const extern int UND_DST_ALPHA;
+	const extern int UND_ONE_MINUS_DST_ALPHA;
+
+	// face culling
+	const extern int UND_BACK_FACE;
+	const extern int UND_FRONT_FACE;
 
     // attachments for Framebuffers
     /*const extern int UND_COLOR_RG_ATTACHMENT;

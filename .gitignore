@@ -17,7 +17,7 @@
 
 !examples/DeferredShading/CMakeLists.txt
 !examples/DeferredShading/*.cpp
-!examples/DeferredShading/src/*/*.*
+!examples/DeferredShading/src/*
 
 !examples/Cell/CMakeLists.txt
 !examples/Cell/*.cpp

@@ -11,6 +11,10 @@ namespace undicht {
 
         // primitive data types
         const int UND_INT = 1;
+		const int UND_UINT8 = UND_UNSIGNED_CHAR; // 8 bit unsigned int, = UND_UNSIGNED_CHAR
+		const int UND_UINT16 = 10; // = unsigned short
+		const int UND_UINT32 = 11; // = unsigned int
+
         const int UND_FLOAT = 2;
         const int UND_STR = 3;
         const int UND_UNSIGNED_CHAR = 4;
@@ -30,8 +34,9 @@ namespace undicht {
         const int UND_VEC3F = 101; // 3 float vector
         const int UND_VEC3I = 102; // 3 int vector
         const int UND_VEC2F = 103; // 2 float vector
-        const int UND_MAT4F = 104; // 4 * 4 float matrix
-        const int UND_MAT3F = 105; // 3 * 3 float matrix
+		const int UND_VEC2I = 104; // 2 int vector
+        const int UND_MAT4F = 105; // 4 * 4 float matrix
+        const int UND_MAT3F = 106; // 3 * 3 float matrix
 
         // input states
         const int UND_KEY_RELEASED = 0; // 0
@@ -44,6 +49,19 @@ namespace undicht {
 
         const int UND_REPEAT = 0; // wrapping
         const int UND_CLAMP_TO_EDGE = 1;
+
+		// blending occurrs when the output of the fragment shader (dst color) gets mixed with another color
+		// for example with what was already stored in the buffer that is being rendered to (src color)
+		// blending factors translate directly into opengl blend factors
+		// see https://learnopengl.com/Advanced-OpenGL/Blending
+		const int UND_SRC_ALPHA = 0;
+		const int UND_ONE_MINUS_SRC_ALPHA = 1;
+		const int UND_DST_ALPHA = 2;
+		const int UND_ONE_MINUS_DST_ALPHA = 3;
+
+		// face culling
+		const int UND_BACK_FACE = 0;
+		const int UND_FRONT_FACE = 1;
 
         // attachments for Framebuffers
         /*const int UND_COLOR_RG_ATTACHMENT = 0;
@@ -91,6 +109,12 @@ namespace undicht {
 
             if(type == UND_INT)
                 return sizeof(int);
+			if (type == UND_UINT8)
+				return sizeof(unsigned char);
+			if (type == UND_UINT16)
+				return sizeof(unsigned short);
+			if (type == UND_UINT32)
+				return sizeof(unsigned int);
             if(type == UND_FLOAT)
                 return sizeof(float);
 			if (type == UND_UNSIGNED_CHAR)
@@ -103,6 +127,8 @@ namespace undicht {
                 return 3 * sizeof(int); // 3 int vector
             if(type == UND_VEC2F)
                 return 2 * sizeof(float); // 2 float vector
+			if (type == UND_VEC2I)
+				return 2 * sizeof(int); // 2 int vector
             if(type == UND_MAT4F)
                 return 16 * sizeof(float); // 4 * 4 float matrix
             if(type == UND_POS2F)
@@ -127,6 +153,12 @@ namespace undicht {
 
             if(type == UND_INT)
                 return 1;
+			if (type == UND_UINT8)
+				return 1;
+			if (type == UND_UINT16)
+				return 1;
+			if (type == UND_UINT32)
+				return 1;
             if(type == UND_FLOAT)
                 return 1;
             if(type == UND_VEC4F)
@@ -137,6 +169,8 @@ namespace undicht {
                 return 3; // 3 int vector
             if(type == UND_VEC2F)
                 return 2; // 2 float vector
+			if (type == UND_VEC2I)
+				return 2; // 2 int vector
             if(type == UND_MAT4F)
                 return 16; // 4 * 4 float matrix
             if(type == UND_MAT3F)

@@ -67,7 +67,13 @@ namespace undicht {
 				XmlElement* primitive = mesh->getElement({ primitive_type });
 
 				if (primitive) {
-					material_id = primitive->getAttribute("material")->m_value;
+					const XmlTagAttrib* mat_attrib = primitive->getAttribute("material");
+
+					if (mat_attrib) {
+
+						material_id = mat_attrib->m_value;
+					}
+
 					break;
 				}
 			}

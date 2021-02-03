@@ -186,7 +186,7 @@ namespace undicht {
 
 			glm::quat rotation = glm::angleAxis(0.0f, glm::vec3(0, 0, -1));
 
-			for (int i = angles.size() - 1; i >= 0; i--) {
+			for (int i = 0; i < angles.size(); i++) {
 
 				switch (axes[i]) {
 

@@ -257,23 +257,33 @@ namespace undicht {
 
             void Texture::setOpenglFormat(const std::array<int,4>& component_types) {
 
-                if(component_types[0] == UND_UNSIGNED_CHAR) {
-                    if(component_types[1] == UND_UNSIGNED_CHAR) {
-                        if(component_types[2] == UND_UNSIGNED_CHAR) {
-                            if(component_types[3] == UND_UNSIGNED_CHAR) {
-                                // 32 bit rgba
-                                m_pixel_layout = GL_RGBA;
-                                m_memory_format = GL_RGBA8;
-                            } else if (component_types[3] == UND_TYPE_UNAVAILABLE) {
-                                // 24 bit rgb
-                                m_pixel_layout = GL_RGB;
-                                m_memory_format = GL_RGB8;
-                            }
-                        }
-                    }
-                } else if(component_types[0] == UND_FLOAT) {
-                    // dunno what to do
-                }
+				if (component_types[3] != UND_TYPE_UNAVAILABLE) {
+					// rgba channels
+
+					if (component_types[0] == UND_UNSIGNED_CHAR) {
+						// 8 bits per color channel
+						m_pixel_layout = GL_RGBA;
+						m_memory_format = GL_RGBA8;
+					} else if (component_types[0] == UND_UINT16) {
+						// 16 bits per color channel
+						m_pixel_layout = GL_RGBA;
+						m_memory_format = GL_RGBA16;
+					}
+
+				} else if (component_types[2] != UND_TYPE_UNAVAILABLE) {
+					// rgb channels
+
+					if (component_types[0] == UND_UNSIGNED_CHAR) {
+						// 8 bits per color channel
+						m_pixel_layout = GL_RGB;
+						m_memory_format = GL_RGB8;
+					} else if (component_types[0] == UND_UINT16) {
+						// 16 bits per color channel
+						m_pixel_layout = GL_RGB;
+						m_memory_format = GL_RGB16;
+					}
+
+				}
 
                 if(m_pixel_layout && m_memory_format) {
 

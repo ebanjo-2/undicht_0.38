@@ -30,7 +30,7 @@ namespace undicht {
                     virtual void removeAttachment(graphics::Texture& texture) = 0;
 
 					/** clears the contents stored in the attachments (i.e. to begin a new frame) */
-                    virtual void clearAttachments() = 0;
+                    virtual void clearAttachments(float r = 0.1f, float g = 0.1f, float b = 0.1f, float alpha = 1.0f) = 0;
 
                 public:
 

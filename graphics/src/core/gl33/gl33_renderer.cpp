@@ -16,7 +16,13 @@ namespace undicht {
         namespace gl33 {
 
             bool Renderer::s_depth_test_enabled = false;
+			int Renderer::s_depth_test_operator = UND_LESS;
             bool Renderer::s_culling_enabled = false;
+			int Renderer::s_cull_face = UND_BACK_FACE;
+
+			bool Renderer::s_blending_enabled = false;
+			int Renderer::s_blending_sfactor = UND_TYPE_UNAVAILABLE;
+			int Renderer::s_blending_dfactor = UND_TYPE_UNAVAILABLE;
 
             int Renderer::s_viewport_width = 0;
             int Renderer::s_viewport_height = 0;
@@ -59,7 +65,7 @@ namespace undicht {
             void Renderer::clearFramebuffer(float r, float g, float b, float alpha) {
 
                 if(m_current_fbo) {
-                    m_current_fbo->clearAttachments();
+                    m_current_fbo->clearAttachments(r, g, b, alpha);
                 } else {
                     FrameBuffer::bind(0);
                     glClearColor(r,g,b,alpha);
@@ -84,6 +90,8 @@ namespace undicht {
 				setViewport();
 				enableBackFaceCulling();
 				enableDepthTest();
+				enableBlending();
+
 
                 if(m_current_shader) {
 
@@ -146,15 +154,25 @@ namespace undicht {
 				m_viewport_offset_y = offset_y;
             }
 
-            void Renderer::enableDepthTest(bool enable) {
+            void Renderer::enableDepthTest(bool enable, int test_operator) {
 
+				m_depth_test_operator = test_operator;
 				m_depth_test_enabled = enable;
             }
 
-            void Renderer::enableBackFaceCulling(bool enable) {
+            void Renderer::enableBackFaceCulling(bool enable, int cull_face) {
 
 				m_culling_enabled = enable;
+				m_cull_face = cull_face;
             }
+
+			void Renderer::enableBlending(bool enable, int sfactor, int dfactor) {
+
+				m_blending_enabled = enable;
+				m_blending_sfactor = sfactor;
+				m_blending_dfactor = dfactor;
+
+			}
 
 
             void Renderer::getViewport(int& width, int& height, int& offset_x, int& offset_y) {
@@ -216,6 +234,7 @@ namespace undicht {
 				if (s_depth_test_enabled != m_depth_test_enabled) {
 
 					if (m_depth_test_enabled) {
+						
 						glEnable(GL_DEPTH_TEST);
 					}
 					else {
@@ -225,7 +244,19 @@ namespace undicht {
 					s_depth_test_enabled = m_depth_test_enabled;
 				}
 
+				// setting the depth test function
+				if (m_depth_test_operator != s_depth_test_operator) {
 
+					if (m_depth_test_operator == UND_TRUE) glDepthFunc(GL_ALWAYS);
+					if (m_depth_test_operator == UND_FALSE) glDepthFunc(GL_NEVER);
+					if (m_depth_test_operator == UND_LESS) glDepthFunc(GL_LESS);
+					if (m_depth_test_operator == UND_GREATER) glDepthFunc(GL_GREATER);
+					if (m_depth_test_operator == UND_EQUAL) glDepthFunc(GL_EQUAL);
+					if (m_depth_test_operator == UND_LEQUAL) glDepthFunc(GL_LEQUAL);
+					if (m_depth_test_operator == UND_GEQUAL) glDepthFunc(GL_GEQUAL);
+
+					s_depth_test_operator = m_depth_test_operator;
+				}
 
 			}
 
@@ -234,16 +265,57 @@ namespace undicht {
 				if (s_culling_enabled != m_culling_enabled) {
 
 					if (m_culling_enabled) {
+			
 						glEnable(GL_CULL_FACE);
-					}
-					else {
+					} 	else {
+
 						glDisable(GL_CULL_FACE);
 					}
 
 					s_culling_enabled = m_culling_enabled;
 				}
 
+				if (m_cull_face != s_cull_face) {
+
+					if (m_cull_face == UND_BACK_FACE) glCullFace(GL_BACK);
+					if (m_cull_face == UND_FRONT_FACE) glCullFace(GL_FRONT);
+
+					s_cull_face = m_cull_face;
+				}
+
 			}
+
+			void Renderer::enableBlending() {
+
+				if (m_blending_enabled != s_blending_enabled) {
+
+					if (m_blending_enabled) {
+
+						if ((m_blending_sfactor != s_blending_sfactor) || (m_blending_dfactor != s_blending_dfactor)) {
+							// updating the factors								
+
+							if ((m_blending_sfactor == UND_SRC_ALPHA) && (m_blending_dfactor == UND_ONE_MINUS_SRC_ALPHA))
+								glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+							if ((m_blending_sfactor == UND_DST_ALPHA) && (m_blending_dfactor == UND_ONE_MINUS_DST_ALPHA))
+								glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+
+							s_blending_sfactor = m_blending_sfactor;
+							s_blending_dfactor = m_blending_dfactor;
+						}
+
+						glEnable(GL_BLEND);
+					} else {
+
+						glDisable(GL_BLEND);
+					}
+
+					s_blending_enabled = m_blending_enabled;
+
+				}
+
+			}
+
         } // gl33
 
     } // graphics

@@ -1,3 +1,6 @@
+#ifndef GEOMETRY_BUFFER_H
+#define GEOMETRY_BUFFER_H
+
 #include <core/frame_buffer.h>
 #include <core/texture.h>
 
@@ -61,3 +64,5 @@ namespace undicht {
 	} // graphics
 
 } // undicht
+
+#endif // ! GEOMETRY_BUFFER_H

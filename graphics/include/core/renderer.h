@@ -6,6 +6,8 @@
 #include "core/vertex_buffer.h"
 #include "core/frame_buffer.h"
 
+#include <types.h>
+
 namespace undicht {
 
     namespace graphics {
@@ -28,8 +30,11 @@ namespace undicht {
 
 				/** redundand calls (with no changes) should be ignored */
 				void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
-				void enableDepthTest(bool enable);
-				void enableBackFaceCulling(bool enable);
+
+				/** @param test_operator : the operator used to determine if a fragment passes the depth test */
+				void enableDepthTest(bool enable, int test_operator = tools::UND_LESS);
+				void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE);
+				void enableBlending(bool enable, int sfactor, int dfactor);
 
 				void getViewport(int& width, int& height, int& offset_x, int& offset_y);
 

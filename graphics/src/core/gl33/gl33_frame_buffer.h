@@ -53,7 +53,7 @@ namespace undicht {
 				/** @brief removes the attachment from the framebuffer */
 				virtual void removeAttachment(graphics::Texture& texture);
 
-				virtual void clearAttachments();
+				virtual void clearAttachments(float r = 0.1f, float g = 0.1f, float b = 0.1f, float alpha = 1.0f);
 
 
 			public:

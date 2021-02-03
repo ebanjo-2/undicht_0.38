@@ -69,6 +69,9 @@ namespace undicht {
 				// enabling the position buffer
 
 				m_buffers[POSITION_BUFFER].setName("position");
+				m_buffers[POSITION_BUFFER].setPixelFormat(BufferLayout({ UND_UINT16, UND_UINT16, UND_UINT16 })); // 2 bytes per channel for higher precision
+				m_buffers[POSITION_BUFFER].setFilteringMethod(UND_NEAREST, UND_NEAREST);
+				m_buffers[POSITION_BUFFER].setWrappingMethod(UND_REPEAT);
 				addAttachment(m_buffers[POSITION_BUFFER], UND_COLOR_ATTACHMENT, 1);
 				m_position_buffer = true;
 
