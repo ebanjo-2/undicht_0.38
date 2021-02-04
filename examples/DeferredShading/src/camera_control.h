@@ -19,4 +19,3 @@ void initCam();
 void termCam();
 
 void moveCam(PerspectiveCamera3D& cam);
-void loadCam(PerspectiveCamera3D& cam, Shader shader);

@@ -16,7 +16,9 @@ namespace undicht {
         namespace gl33 {
 
             bool Renderer::s_depth_test_enabled = false;
+			bool Renderer::s_write_to_depth_buffer = true;
 			int Renderer::s_depth_test_operator = UND_LESS;
+
             bool Renderer::s_culling_enabled = false;
 			int Renderer::s_cull_face = UND_BACK_FACE;
 
@@ -154,9 +156,10 @@ namespace undicht {
 				m_viewport_offset_y = offset_y;
             }
 
-            void Renderer::enableDepthTest(bool enable, int test_operator) {
+            void Renderer::enableDepthTest(bool enable, bool write_to_buffer, int test_operator) {
 
 				m_depth_test_operator = test_operator;
+				m_write_to_depth_buffer = write_to_buffer;
 				m_depth_test_enabled = enable;
             }
 
@@ -243,6 +246,22 @@ namespace undicht {
 
 					s_depth_test_enabled = m_depth_test_enabled;
 				}
+
+
+				// setting whether or not the depth buffer should be updated
+				if (m_write_to_depth_buffer != s_write_to_depth_buffer) {
+
+					if (m_write_to_depth_buffer) {
+
+						glDepthMask(GL_TRUE);
+					} else {
+
+						glDepthMask(GL_FALSE);
+					}
+
+					s_write_to_depth_buffer = m_write_to_depth_buffer;
+				}
+
 
 				// setting the depth test function
 				if (m_depth_test_operator != s_depth_test_operator) {

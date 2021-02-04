@@ -28,10 +28,8 @@ uniform sampler2D light_map;
 void main() {
 
 	out_frag_color = texture(color, uv) * (texture(light_map, uv) + 0.1);
-	
-	//out_frag_color = texture(normal, uv).rgb;
-	
-	//out_frag_color = texture(light_map, uv).rgb;
+		
+	//out_frag_color = texture(light_map, uv);
 	
 }
 

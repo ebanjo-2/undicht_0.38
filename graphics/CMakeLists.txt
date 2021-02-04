@@ -45,6 +45,15 @@ add_library(graphics STATIC
 	
 	src/deferred_shading/geometry_buffer.h
 	src/deferred_shading/geometry_buffer.cpp
+	
+	src/deferred_shading/gbuffer_renderer.h
+	src/deferred_shading/gbuffer_renderer.cpp
+	
+	src/deferred_shading/light_renderer.h
+	src/deferred_shading/light_renderer.cpp
+	
+	src/deferred_shading/final_renderer.h
+	src/deferred_shading/final_renderer.cpp
 
 )
 

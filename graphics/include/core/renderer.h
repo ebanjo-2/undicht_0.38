@@ -29,14 +29,16 @@ namespace undicht {
 				virtual void draw(unsigned int instance_count = 1) = 0;
 
 				/** redundand calls (with no changes) should be ignored */
-				void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+				virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0) = 0;
 
-				/** @param test_operator : the operator used to determine if a fragment passes the depth test */
-				void enableDepthTest(bool enable, int test_operator = tools::UND_LESS);
-				void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE);
-				void enableBlending(bool enable, int sfactor, int dfactor);
+				/** @param test_operator : the operator used to determine if a fragment passes the depth test 
+				* @param write_to_buffer : (only if enable is true) choose whether or not the fragment that passed the depth test 
+				* gets written into the depth buffer */
+				virtual void enableDepthTest(bool enable, bool write_to_buffer = true, int test_operator = tools::UND_LESS) = 0;
+				virtual void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE) = 0;
+				virtual void enableBlending(bool enable, int sfactor, int dfactor) = 0;
 
-				void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+				virtual void getViewport(int& width, int& height, int& offset_x, int& offset_y) = 0;
 
 				/** sets the viewport without a renderer (following drawcalls will override the values) */
 				static void setGlobalViewport(int width, int height, int offset_x = 0, int offset_y = 0); // used for example to clear framebuffers

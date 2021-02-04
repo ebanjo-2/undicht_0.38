@@ -46,13 +46,13 @@ namespace undicht {
 
 			void setNormalBuffer(bool use_normal = true);
 
-			const Texture* getDepthBuffer();
+			const Texture* getDepthBuffer() const;
 
-			const Texture* getColorBuffer();
+			const Texture* getColorBuffer() const;
 
-			const Texture* getPositionBuffer();
+			const Texture* getPositionBuffer() const;
 
-			const Texture* getNormalBuffer();
+			const Texture* getNormalBuffer() const;
 		public:
 
 			GeometryBuffer();

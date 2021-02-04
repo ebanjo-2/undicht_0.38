@@ -105,11 +105,11 @@ namespace undicht {
 		}
 
 
-		const Texture* GeometryBuffer::getDepthBuffer() {
+		const Texture* GeometryBuffer::getDepthBuffer() const {
 
 			if (m_depth_buffer) {
 
-				return &m_buffers.at(m_depth_buffer);
+				return &m_buffers.at(DEPTH_BUFFER);
 			} else {
 
 				return 0;
@@ -117,7 +117,7 @@ namespace undicht {
 		}
 
 
-		const Texture* GeometryBuffer::getColorBuffer() {
+		const Texture* GeometryBuffer::getColorBuffer() const {
 
 			if (m_color_buffer) {
 
@@ -130,7 +130,7 @@ namespace undicht {
 		}
 
 
-		const Texture* GeometryBuffer::getPositionBuffer() {
+		const Texture* GeometryBuffer::getPositionBuffer() const {
 
 			if (m_position_buffer) {
 
@@ -142,7 +142,7 @@ namespace undicht {
 		}
 
 
-		const Texture* GeometryBuffer::getNormalBuffer() {
+		const Texture* GeometryBuffer::getNormalBuffer() const {
 
 			if (m_normal_buffer) {
 

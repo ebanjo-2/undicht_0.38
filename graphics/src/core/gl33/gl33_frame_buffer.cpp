@@ -140,9 +140,12 @@ namespace undicht {
 
                 } else if (attachment_type == UND_DEPTH_ATTACHMENT_READ_AND_WRITE) {
                     // attaching a texture that can store the depth values of a scene
-					texture.setOpenglFormat(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT);
+
 					texture.setSize(m_width, m_height, 1);
-					texture.setData(0, 0);// reserving memory
+
+					if (!texture.m_layout_set) {
+						texture.setOpenglFormat(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT);
+					}
 
                     bind(); // binding the Framebuffer
 					texture.bind(); // binding the texture
@@ -234,6 +237,9 @@ namespace undicht {
                     case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
                         EventLogger::storeNote(Note(UND_WARNING, "WARNING: Framebuffer: incomplete, missing attachment", UND_CODE_ORIGIN));
                         break;
+					case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+						EventLogger::storeNote(Note(UND_WARNING, "WARNING: Framebuffer: attached buffer is incomplete", UND_CODE_ORIGIN));
+						break;
                     default:
                         EventLogger::storeNote(Note(UND_WARNING, "WARNING: Framebuffer: not ready to use", UND_CODE_ORIGIN));
                 }

@@ -20,6 +20,7 @@ namespace undicht {
 				FrameBuffer* m_current_fbo = 0;
 
 				bool m_depth_test_enabled = false;
+				bool m_write_to_depth_buffer = false; // in case you want to use depth testing but dont want to write to the depth buffer
 				int m_depth_test_operator = tools::UND_LESS;
 
 				bool m_culling_enabled = false;
@@ -36,6 +37,7 @@ namespace undicht {
 
 				// current state of opengl
 				static bool s_depth_test_enabled;
+				static bool s_write_to_depth_buffer;
 				static int s_depth_test_operator;
 
 				static bool s_culling_enabled;
@@ -56,13 +58,13 @@ namespace undicht {
 				// opengl only functions
 
 				/// binding the submitted fbo
-				void useFbo();
+				virtual void useFbo();
 
 				/** sets the global rendering settings to what this renderer uses */
-				void setViewport();
-				void enableDepthTest();
-				void enableBackFaceCulling();
-				void enableBlending();
+				virtual void setViewport();
+				virtual void enableDepthTest();
+				virtual void enableBackFaceCulling();
+				virtual void enableBlending();
 
 			public:
 
@@ -74,13 +76,13 @@ namespace undicht {
 				virtual void draw(unsigned int instance_count = 1);
 
 				/** redundand calls (with no changes) should be ignored */
-				void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
-				void enableDepthTest(bool enable, int test_operator = tools::UND_LESS);
-				void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE);
-				void enableBlending(bool enable, int sfactor, int dfactor);
+				virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+				virtual void enableDepthTest(bool enable, bool write_to_buffer = true, int test_operator = tools::UND_LESS);
+				virtual void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE);
+				virtual void enableBlending(bool enable, int sfactor, int dfactor);
 
 
-				void getViewport(int& width, int& height, int& offset_x, int& offset_y);
+				virtual void getViewport(int& width, int& height, int& offset_x, int& offset_y);
 
 				/** sets the viewport without a renderer (following drawcalls will override the values) */
 				static void setGlobalViewport(int width, int height, int offset_x = 0, int offset_y = 0); // used for example to clear framebuffers
