@@ -4,6 +4,9 @@
 !*/
 
 # dont ignore whats in these directories
+!core/CMakeLists.txt
+!core/include/*
+
 !graphics/.gitignore
 !graphics/CMakeLists.txt
 !graphics/src/*/*.*
