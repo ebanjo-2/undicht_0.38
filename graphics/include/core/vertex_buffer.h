@@ -83,6 +83,46 @@ namespace undicht {
 				virtual void setUsesIndices(bool use_indices = true) = 0;
 				virtual bool getUsesIndices() = 0;
 
+			public:
+				// per instance data
+
+				/** when using instanced rendering, you may use this buffer to store data
+				* that changes from instance to instance but not between the vertices
+				* this data can be accessed in the shader just as vertex attributes,
+				* their indexes follow the vertex attributes */
+
+				/* @param offset : (in bytes) at what point in the buffer the data should be stored(0: first byte) */
+				virtual void setInstanceData(const std::vector<float>& data, unsigned int offset = 0) = 0;
+
+				/** @param size: (in bytes) the size of the data to copy from the data buffer */
+				virtual void setInstanceData(const void* data, unsigned int size, unsigned int offset = 0) = 0;
+
+
+				/** retrieve the data from the instance buffer and store it in the vector
+				* @param num_float: how many floats to copy from the buffer
+				* @param offset: (in bytes) at what point in the buffer to start copying */
+				virtual void getInstanceData(std::vector<float>& data, unsigned int num_floats, unsigned int offset = 0) = 0;
+
+				/** data should have at least #size bytes reserved */
+				virtual void getInstanceData(void* data, unsigned int size, unsigned int offset = 0) = 0;
+
+			public:
+				// additional instance related data
+
+				/** determines how many and what types of components belong to the per instance data
+				* also determines how the data can be accessed in a vertex shader
+				* example for a vertex: 3D position, 2D texture coordinate, 3D normal
+				* translates into layout: UND_VEC3F, UND_VEC2F, UND_VEC3F */
+				virtual void setInstanceLayout(const tools::BufferLayout& layout) = 0;
+
+				/** returns the number of bytes stored in the instance buffer */
+				virtual unsigned int getInstanceBufferSize() = 0;
+
+				/** returns the size of the data for one instance */
+				virtual unsigned int getInstanceSize() = 0;
+
+				/** returns the layout of the stored data for each instance */
+				virtual const tools::BufferLayout& getInstanceLayout() = 0;
 
 				VertexBuffer() = default;
 				virtual ~VertexBuffer() = default;

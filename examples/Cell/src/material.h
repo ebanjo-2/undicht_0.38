@@ -22,18 +22,6 @@ class Material {
     * like texture, physical behaviour, ... */
 
     public:
-        // all the materials, in the order in which they were constructed
-        static std::vector<std::string> s_names;
-
-        static std::vector<int> s_material_prefixes; // the prefixes used by the materials
-
-        static std::vector<std::string> s_prefixes;
-
-        const std::string& getName(unsigned short material_id);
-        const std::string& getPrefix(unsigned short material_id);
-        unsigned short getID(const std::string& material_prefix, const std::string& material_name);
-
-    public:
         // string names
         // they should be universally unique
         // since these will be the ones identifying a material in a file

@@ -10,10 +10,10 @@ using namespace std;
 
 int main() {
 
-    Chunk<8> c;
+    Chunk<4> c;
     std::cout << c.m_cells.size() << " : " << sizeof(c) << "\n";
 
-    CellChunk<10> cc;
+    CellChunk<2> cc;
     cc.m_pos_x = 3;
     std::cout << sizeof(cc) << " " << cc.m_pos_x << "\n";
 
