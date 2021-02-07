@@ -28,7 +28,7 @@
 
 !tools/.gitignore
 !tools/CMakeLists.txt
-!tools/src/*/*.*
+!tools/src/*
 
 !user_input/.gitignore
 !user_input/CMakeLists.txt

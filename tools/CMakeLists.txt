@@ -22,8 +22,8 @@ add_library("tools"
 	src/types.h
 	src/types.cpp	
 	
-	src/time.h
-	src/time.cpp	
+	src/undicht_time.h
+	src/undicht_time.cpp	
 	
 	src/files/file.h
 	src/files/file.cpp

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <window/window.h>
 
-#include <time.h>
+#include <undicht_time.h>
 
 #include <camera_control.h>
 #include <scene.h>
@@ -118,7 +118,7 @@ int main() {
 
 			endFrame(window);
 
-			// updating the viewport in case the window was resized 
+			// updating the viewport in case the window was resized
 			window.getSize(width, height);
 
 			if ((width != old_width) || (height != old_height)) {

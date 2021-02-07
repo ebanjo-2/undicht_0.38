@@ -1,5 +1,5 @@
-#ifndef TIME_H_INCLUDED
-#define TIME_H_INCLUDED
+#ifndef UNDICHT_TIME_H_INCLUDED
+#define UNDICHT_TIME_H_INCLUDED
 
 
 #include <chrono>
@@ -24,4 +24,4 @@ namespace undicht {
 
 
 
-#endif // TIME_H_INCLUDED
+#endif // UNDICHT_TIME_H_INCLUDED
