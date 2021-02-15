@@ -272,13 +272,14 @@ namespace undicht {
 
 				m_instance_layout = layout;
 
-				bind();
-
 				// the per instance attributes come after the vertex attributes
 				int per_vertex_attr = m_layout.m_types.size();
 
 				// telling opengl about the layout via attribute pointers
 				setAttrPointer(layout, m_ibo_id, getInstanceSize(), per_vertex_attr);
+
+				bind();
+				glBindBuffer(GL_ARRAY_BUFFER, m_ibo_id);
 
 				// telling opengl that the attributes are per instance, not vertex
 				for (int i = 0; i < layout.m_types.size(); i++) {
@@ -345,7 +346,9 @@ namespace undicht {
 					}
 					else if (attr == UND_VEC3F) {
 
-						//std::cout << "setting vec3 attribute, id= " << attr_id << "\n";
+						/*std::cout << "setting vec3 attribute, id= " << attr_index_offset + attr_id << "\n";
+						std::cout << "buffer_chunk_size " << buffer_chunk_size << "\n";
+						std::cout << "attr_sum " << attr_sum << "\n";*/
 
 						glVertexAttribPointer(attr_index_offset + attr_id, 3, GL_FLOAT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
 						glEnableVertexAttribArray(attr_index_offset + attr_id);
@@ -358,6 +361,12 @@ namespace undicht {
 						glVertexAttribPointer(attr_index_offset + attr_id, 2, GL_FLOAT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
 						glEnableVertexAttribArray(attr_index_offset + attr_id);
 						attr_sum += 2 * sizeof(float);
+					}
+					else if (attr == UND_VEC3I) {
+
+						glVertexAttribPointer(attr_index_offset + attr_id, 3, GL_INT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
+						glEnableVertexAttribArray(attr_index_offset + attr_id);
+						attr_sum += 3 * sizeof(int);
 					}
 					else if (attr == UND_MAT4F) {
 						glVertexAttribPointer(attr_index_offset + attr_id, 16, GL_FLOAT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
@@ -448,6 +457,7 @@ namespace undicht {
 
 				getInstanceData(old_data, getInstanceBufferSize(), 0);
 
+
 				// resizing the buffer and restoring the data
 				if (getInstanceBufferSize() < size) {
 					// increasing the size of the buffer (old_data not big enough)
@@ -467,7 +477,7 @@ namespace undicht {
 					glBufferData(GL_ARRAY_BUFFER, size, old_data, GL_STATIC_DRAW);
 				}
 
-				m_size = size;
+				m_instance_size = size;
 				delete[] old_data; // temporary buffer
 
 				UND_CHECK_GL_ERROR();

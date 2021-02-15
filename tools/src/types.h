@@ -101,12 +101,12 @@ namespace undicht {
     const extern int UND_AUDIO_STEREO16;
 
 	// vertex attribute types
-	const extern int UND_POS2F; // 2D position
+	/*const extern int UND_POS2F; // 2D position
 	const extern int UND_POS3F; // 3D position
 	const extern int UND_UV2F; // texture coordinate
 	const extern int UND_NORMAL3F; // the direction the surface is pointing at
 	const extern int UND_TANGENT3F; // used for normal mapping
-	const extern int UND_BITANGENT3F; // used for normal mapping
+	const extern int UND_BITANGENT3F; // used for normal mapping*/
 
 
     } // tools

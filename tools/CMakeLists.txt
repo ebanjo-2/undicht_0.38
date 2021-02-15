@@ -37,6 +37,9 @@ add_library("tools"
 	src/files/xml/xml_tag_attribute.h
 	src/files/xml/xml_tag_attribute.cpp
 	
+	src/files/model_loading/image_loader.h
+	src/files/model_loading/image_loader.cpp
+	
 	src/files/model_loading/model_loader.h
 	src/files/model_loading/model_loader.cpp
 	

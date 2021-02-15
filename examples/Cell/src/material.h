@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include <core/texture.h>
+
 enum MaterialType {
 
     DrawAsNothing,      // wont get drawn
@@ -34,11 +36,15 @@ class Material {
         // the material is going to be distinguished by an id during runtime, since this is faster than comparing strings
         // the id might change between runtimes
 
-        unsigned short m_id = 0; // an unique id is assigned to a new material in its constructor
+		// an unique id is assigned to a new material in its constructor
+        unsigned short m_id = 0; 
 
         MaterialType m_type = DrawAsBlock;
 
-        unsigned short setName(const std::string& material_prefix, const std::string& material_name);
+		void setID(unsigned short id);
+		unsigned short getID();
+
+        void setName(const std::string& material_prefix, const std::string& material_name);
         const std::string& getPrefix();
         const std::string& getName();
 
@@ -48,7 +54,7 @@ class Material {
     public:
         // properties (mostly temporary, to be replaced with something actually meaningfull)
 
-        int texture = 0;
+		// texture is accessed via m_id and stored by the CellRenderer
         float density = 1.0f; // be water my friend
 
     public:

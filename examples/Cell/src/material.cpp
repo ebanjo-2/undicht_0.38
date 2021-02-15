@@ -12,13 +12,22 @@ Material::~Material() {
 }
 
 
-unsigned short Material::setName(const std::string& material_prefix, const std::string& material_name) {
+void Material::setID(unsigned short id) {
+
+	m_id = id;
+}
+
+unsigned short Material::getID() {
+
+	return m_id;
+}
+
+void Material::setName(const std::string& material_prefix, const std::string& material_name) {
     /** @return the new id assigned to the material */
 
 	m_name = material_name;
 	m_prefix = material_prefix;
 
-	return m_id;
 }
 
 const std::string& Material::getPrefix() {

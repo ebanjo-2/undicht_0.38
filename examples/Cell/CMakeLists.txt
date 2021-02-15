@@ -9,8 +9,15 @@ add_executable("cell"
 
     src/material.h
     src/material.cpp
+	
+	src/rendering/cell_renderer.h
+	src/rendering/cell_renderer.cpp
+	src/rendering/cell_shader.glsl
+	
+	src/camera/camera_control.h
+	src/camera/camera_control.cpp
 
 )
 
-target_link_libraries("cell" graphics)
+target_link_libraries("cell" graphics user_input)
 target_include_directories("cell" PUBLIC src)

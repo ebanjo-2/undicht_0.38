@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <buffer_layout.h>
+#include "image_loader.h"
 
 namespace undicht {
 
@@ -22,19 +23,7 @@ namespace undicht {
 
 		};
 
-		struct TextureData {
-
-			std::vector<char> pixels;
-
-			int width;
-			int height;
-			int depth;
-
-			BufferLayout pixel_layout;
-
-		};
-
-		class ModelLoader {
+		class ModelLoader : public ImageLoader {
 			/** the base class to all classes that load Meshes, Textures ... from files */
 
 		public:
@@ -83,11 +72,6 @@ namespace undicht {
 
 			/** removes double vertices by adding indices referencing the first version of that vertex to the loadTo_indices vector*/
 			virtual void buildIndices(const std::vector<float>& vertices, const BufferLayout& vertex_layout, std::vector<float>& loadTo_vertices, std::vector<int>& loadTo_indices);
-
-		public:
-			// loading textures from files
-
-			void loadTextureFromFile(TextureData& loadTo_texture, const std::string& file_name);
 
 		};
 
