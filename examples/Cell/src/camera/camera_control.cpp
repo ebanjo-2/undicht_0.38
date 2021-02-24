@@ -41,7 +41,7 @@ void moveCam(PerspectiveCamera3D& cam) {
 		speed = 0.1;
 	} else {
 
-		speed = 1; // speed and power
+		speed = 0.9; // speed and power
 	}
 
 	if (key_input->getKeyState(UND_KEY_W)) {

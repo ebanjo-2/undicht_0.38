@@ -88,8 +88,16 @@ namespace undicht {
                 m_min_filter = min_filter;
                 m_mag_filter = mag_filter;
 
-                glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, getGLFilteringMethod(min_filter));
-                glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, getGLFilteringMethod(mag_filter));
+                int gl_min_filter = getGLFilteringMethod(min_filter);
+                int gl_mag_filter = getGLFilteringMethod(mag_filter);
+
+                if(gl_min_filter == -1 || gl_mag_filter == -1) {
+                    EventLogger::storeNote(Note(UND_ERROR, "invalid texture filter method", UND_CODE_ORIGIN));
+                    return;
+                }
+
+                glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, gl_min_filter);
+                glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, gl_mag_filter);
             }
 
             void Texture::setWrappingMethod(int method) {

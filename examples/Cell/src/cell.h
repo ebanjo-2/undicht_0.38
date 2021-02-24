@@ -1,6 +1,8 @@
 #ifndef CELL_H
 #define CELL_H
 
+#include <array>
+
 struct Cell {
 
     unsigned short m_material; // short is 65536 numbers, should be more than enough
@@ -39,7 +41,7 @@ unsigned int m_size_z :
 		m_size_x = a[3];
 		m_size_y = a[4];
 		m_size_z = a[5];
-	
+
 		m_material = a[6];
 	}
 };

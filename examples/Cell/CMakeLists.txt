@@ -13,7 +13,10 @@ add_executable("cell"
 	src/rendering/cell_renderer.h
 	src/rendering/cell_renderer.cpp
 	src/rendering/cell_shader.glsl
-	
+
+	src/rendering/chunk_buffer.h
+	src/rendering/chunk_buffer.cpp
+
 	src/camera/camera_control.h
 	src/camera/camera_control.cpp
 

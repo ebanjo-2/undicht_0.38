@@ -16,17 +16,23 @@ layout (location = 5) in float aMaterial; // opengl doesnt seem to like integers
 uniform mat4 view;
 uniform mat4 proj;
 
+// chunk uniforms
+uniform vec3 chunk_offset = vec3(0,0,0);
+
 out vec2 uv;
 out float material;
 
 
 void main() {
 
-	uv = aUV;
+    vec3 pos = aPos * aBlockSize;
+
+	uv = aNormal.x * pos.zy + aNormal.y * pos.xz + aNormal.z * pos.xy;
+    //uv = aNormal.x * pos.zy;
 	material = aMaterial;
 
-	gl_Position = proj * view * vec4((aPos * aBlockSize) + aBlockPos, 1.0f);
-	//gl_Position = proj * view * vec4(aPos * 10, 1.0f);
+	gl_Position = proj * view * vec4(pos + aBlockPos + chunk_offset, 1.0f);
+
 }
 
 #fragment

@@ -1,9 +1,6 @@
 #include "model_loader.h"
 #include "event_logger.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 
 namespace undicht {
 
@@ -34,7 +31,7 @@ namespace undicht {
 		}
 
 
-		void ModelLoader::buildMeshVertices(std::vector<float>& loadTo_vertices, const std::vector<std::vector<float>>& vertex_attributes, 
+		void ModelLoader::buildMeshVertices(std::vector<float>& loadTo_vertices, const std::vector<std::vector<float>>& vertex_attributes,
 			const BufferLayout& vertex_layout, const std::vector<int>& attribute_indices) {
 			/** takes an attribute (size determined by vertex_layout, can be UND_FLOAT, UND_VEC3F, ...) from each attribute_data list,
 			* which attribute is determined by the attribute index, to build the vertices */

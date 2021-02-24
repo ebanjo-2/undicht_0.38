@@ -8,13 +8,13 @@ std::vector<int> tex_ids;
 
 void initScene() {
 
-	
+
 
 	std::vector<MeshData> mesh_data;
 	std::vector<TextureData> texture_data;
 
 	ColladaFile model_loader;
-	model_loader.open("res/sponza_collada/sponza.dae");
+	//model_loader.open("res/sponza_collada/sponza.dae");
 	//model_loader.open("res/SupertuxTex.dae");
 
 	model_loader.loadAllMeshes(mesh_data);
