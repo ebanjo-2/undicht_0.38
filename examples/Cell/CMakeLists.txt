@@ -3,22 +3,23 @@ add_executable("cell"
 
     main.cpp
     
-    src/cell.h
-    
-    src/chunk.h
 
-    src/material.h
-    src/material.cpp
+  src/material.h
+  src/material.cpp
 	
 	src/rendering/cell_renderer.h
 	src/rendering/cell_renderer.cpp
 	src/rendering/cell_shader.glsl
 
-	src/rendering/chunk_buffer.h
-	src/rendering/chunk_buffer.cpp
 
 	src/camera/camera_control.h
 	src/camera/camera_control.cpp
+	
+	src/chunks/draw_chunk.h
+	src/chunks/draw_chunk.cpp
+
+	src/chunks/edit_chunk.h
+	src/chunks/edit_chunk.cpp
 
 )
 

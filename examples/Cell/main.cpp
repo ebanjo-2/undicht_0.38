@@ -5,18 +5,19 @@
 #include <window/window.h>
 
 #include <material.h>
-#include <cell.h>
-#include <chunk.h>
 
 #include <rendering/cell_renderer.h>
 
 #include <camera/camera_control.h>
 #include <files/model_loading/image_loader.h>
 
+#include <chunks/edit_chunk.h>
+
 using namespace undicht;
 using namespace graphics;
 
 using namespace std;
+using namespace cell;
 
 int main() {
 
@@ -63,32 +64,25 @@ int main() {
 		cr.setMaterialTexture(grass, data);
 
 
-		// cells
-		CellChunk<8> cells[5];
-		cells[0] = std::array<unsigned int, 7>({ 0,0,0, 255,3,255, 3 });
-		cells[1] = std::array<unsigned int, 7>({ 15,4,0, 30,0,240, 4 });
-		cells[2] = std::array<unsigned int, 7>({ 20,5,20, 9,9,9, 0 });
-		cells[3] = std::array<unsigned int, 7>({ 19,5,31, 13,1,10, 2 });
-		cells[4] = std::array<unsigned int, 7>({ 13,4,5, 0,0,0, 1 });
+        EditChunk big_chunk;
+        big_chunk.setCell({ 0,0,0, 255,3,255, dirt.m_id });
+        big_chunk.setCell({ 15,4,0, 30,0,240, grass.m_id });
+        big_chunk.setCell({ 20,5,20, 9,9,9, stone.m_id });
+        big_chunk.setCell({ 19,5,31, 13,1,10, wood_floor.m_id });
 
-		CompactChunk<8> chunk;
+        std::cout << big_chunk.getCell(0,0,0) << "\n";
 
-		for (const CellChunk<8>& cc : cells) {
+        DrawChunk draw_chunk;
+        big_chunk.updateDrawChunk(draw_chunk);
 
-			chunk.m_cells.push_back(cc);
-
-		}
-
-
-		cr.updateChunk(chunk, 0,0,0);
-        cr.updateChunk(chunk, 0,0,1);
+        std::cout << sizeof(big_chunk) << "\n";
 
 		while (!window.shouldClose()) {
 
 			cr.clearFramebuffer();
 
 			cr.loadCam(cam);
-			cr.drawChunks();
+			cr.drawChunk(draw_chunk, 0,0,0);
 
 			moveCam(cam);
 
