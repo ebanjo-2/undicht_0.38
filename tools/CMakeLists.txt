@@ -54,6 +54,9 @@ add_library("tools"
 	
 	src/math/perspective_projection.h
 	src/math/perspective_projection.cpp
+	
+	src/math/math_tools.h
+	src/math/math_tools.cpp
 
 )
 

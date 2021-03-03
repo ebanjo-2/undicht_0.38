@@ -10,9 +10,9 @@
 namespace cell {
 
     struct Cell {
-
-        unsigned short pos[3];
-        unsigned short siz[3];
+        // 3 + 3 + 2 bytes = 8 bytes
+        std::array<unsigned char,3> pos;
+        std::array<unsigned char,3> siz;
         unsigned short mat;
 
     };
@@ -43,9 +43,15 @@ namespace cell {
             std::vector<Cell> m_cells; // on ram for the cpu
             undicht::graphics::VertexBuffer m_buffer; // on vram for the gpu
 
+            unsigned int m_drawn_cells = 0;
+
+        public:
+
             /** stores the data from m_cells in m_buffer
             * so that the gpu can access it */
             void updateCellBuffer();
+
+            unsigned int getDrawnCellCount();
 
         public:
 

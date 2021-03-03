@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include <algorithm>
+
 using namespace undicht;
 using namespace graphics;
 using namespace tools;
@@ -176,7 +178,7 @@ namespace cell {
 
         // drawing the chunk
         submit(&chunk.m_buffer);
-        draw(chunk.m_cells.size());
+        draw(chunk.m_drawn_cells);
 
     }
 

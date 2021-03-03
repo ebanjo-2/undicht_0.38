@@ -19,6 +19,20 @@ namespace cell {
         m_buffer.setLayout(s_cube_layout);
         m_buffer.setData(s_cube_vertices.data(), sizeof(s_cube_vertices));
 
+        // init to complete void
+        // m_cells.push_back({0,0,0, 255,255,255, 0});
+        // this would work, but very large cells are slower to edit
+
+        // thats why the chunk is initialized with 8 * 8 * 8 smaller cells
+        for(int x = 0; x < 4; x++) {
+            for(int y = 0; y < 4; y++) {
+                for(int z = 0; z < 4; z++) {
+
+                    m_cells.push_back({x * 64, y * 64, z * 64, 63, 63, 63, 0});
+                }
+            }
+        }
+
     }
 
     DrawChunk::~DrawChunk() {
@@ -51,6 +65,13 @@ namespace cell {
         m_buffer.setInstanceLayout(instance_layout);
         m_buffer.setInstanceData(cell_data.data(), cell_data.size() * sizeof(int));
 
+        m_drawn_cells = cell_data.size() / 7;;
+
+    }
+
+    unsigned int DrawChunk::getDrawnCellCount() {
+
+        return m_drawn_cells;
     }
 
     ////////////////////////////////////////// building cube vertices //////////////////////////////////////////
