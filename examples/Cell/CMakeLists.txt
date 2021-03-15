@@ -21,6 +21,11 @@ add_executable("cell"
 	src/chunks/edit_chunk.h
 	src/chunks/edit_chunk.cpp
 
+	src/chunks/cell.h
+	src/chunks/cell.cpp
+	
+	src/chunks/acell.h
+	src/chunks/acell.cpp
 )
 
 target_link_libraries("cell" graphics user_input)

@@ -1,4 +1,5 @@
 #include "draw_chunk.h"
+#include <iostream>
 
 namespace cell {
 
@@ -24,11 +25,17 @@ namespace cell {
         // this would work, but very large cells are slower to edit
 
         // thats why the chunk is initialized with 8 * 8 * 8 smaller cells
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 4; y++) {
-                for(int z = 0; z < 4; z++) {
+        for(int x = 0; x < 255; x += 51) {
+            for(int y = 0; y < 255; y += 51) {
+                for(int z = 0; z < 255; z += 51) {
 
-                    m_cells.push_back({x * 64, y * 64, z * 64, 63, 63, 63, 0});
+                    Cell ncell;
+                    ncell.setPosition({x,y,z});
+                    ncell.setSize({51,51,51});
+                    ncell.mat = 0;
+
+                    m_cells.push_back(ncell);
+
                 }
             }
         }
@@ -49,13 +56,13 @@ namespace cell {
 
             if(c.mat == 0) continue;
 
-            cell_data.push_back(c.pos[0]);
-            cell_data.push_back(c.pos[1]);
-            cell_data.push_back(c.pos[2]);
+            cell_data.push_back(c.getPoint1()[0]);
+            cell_data.push_back(c.getPoint1()[1]);
+            cell_data.push_back(c.getPoint1()[2]);
 
-            cell_data.push_back(c.siz[0] + 1); // the smallest size (0) should translate to a side length of 1
-            cell_data.push_back(c.siz[1] + 1);
-            cell_data.push_back(c.siz[2] + 1);
+            cell_data.push_back(c.getSize()[0]);
+            cell_data.push_back(c.getSize()[1]);
+            cell_data.push_back(c.getSize()[2]);
 
             cell_data.push_back(c.mat);
         }
@@ -66,6 +73,8 @@ namespace cell {
         m_buffer.setInstanceData(cell_data.data(), cell_data.size() * sizeof(int));
 
         m_drawn_cells = cell_data.size() / 7;;
+
+        std::cout << "drawing " << m_drawn_cells << "\n";
 
     }
 

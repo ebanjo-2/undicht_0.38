@@ -68,9 +68,9 @@ namespace cell {
     void EditChunk::updateRefs(const Cell& c, int ref_id) {
         // updates the refs inside the cells volume to ref_id
 
-        for(int x = c.pos[0]; x < c.pos[0] + c.siz[0] + 1; x++) {
-            for(int y = c.pos[1]; y < c.pos[1] + c.siz[1] + 1; y++) {
-                for(int z = c.pos[2]; z < c.pos[2] + c.siz[2] + 1; z++) {
+        for(int x = c.getPoint1()[0]; x < c.getPoint2()[0] + 1; x++) {
+            for(int y = c.getPoint1()[1]; y < c.getPoint2()[1] + 1; y++) {
+                for(int z = c.getPoint1()[2]; z < c.getPoint2()[2] + 1; z++) {
                     // storing a reference to the cell
 
                     m_refs[x][y][z] = ref_id;
@@ -91,12 +91,12 @@ namespace cell {
         // testing for every reference inside the Cell c
         // or testing every Cell in m_draw_chunk
 
-        if(m_draw_chunk->m_cells.size() > (c.siz[0] + 1) * (c.siz[1] + 1) * (c.siz[2] + 1)) {
+        if(m_draw_chunk->m_cells.size() > c.getVolume()) {
             // there is more cells in the draw chunk then reference within c
 
-            for(int x = c.pos[0]; x < c.pos[0] + c.siz[0] + 1; x++) {
-                for(int y = c.pos[1]; y < c.pos[1] + c.siz[1] + 1; y++) {
-                    for(int z = c.pos[2]; z < c.pos[2] + c.siz[2] + 1; z++) {
+            for(int x = c.getPoint1()[0]; x < c.getPoint2()[0] + 1; x++) {
+                for(int y = c.getPoint1()[1]; y < c.getPoint2()[1] + 1; y++) {
+                    for(int z = c.getPoint1()[2]; z < c.getPoint2()[2] + 1; z++) {
                         // getting the cell at the position x,y,z
 
                         Cell* canditate = &getCell(x,y,z, m_draw_chunk);
@@ -117,7 +117,7 @@ namespace cell {
                         if(new_cell) {
 
                             loadTo.push_back(canditate);
-                            shared_volume.push_back(getSharedVolume(canditate, &c));
+                            shared_volume.push_back(canditate->getSharedVolume(c));
 
                         }
 
@@ -130,10 +130,10 @@ namespace cell {
 
             for(Cell& candidate : m_draw_chunk->m_cells) {
 
-                if(cellsSharingVolume(&candidate, &c)) {
+                if(candidate.sharesVolume(c)) {
 
                     loadTo.push_back(&candidate);
-                    shared_volume.push_back(getSharedVolume(&candidate, &c));
+                    shared_volume.push_back(candidate.getSharedVolume(c));
                 }
 
             }
@@ -142,44 +142,6 @@ namespace cell {
 
     }
 
-
-    Cell EditChunk::getSharedVolume(const Cell* c1, const Cell* c2) {
-        /** @return a cell representing the overlapping volume between the two cells
-        * the material of the returned cell will be equal to c2s material */
-
-        unsigned int x1 = c1->pos[0];
-        unsigned int y1 = c1->pos[1];
-        unsigned int z1 = c1->pos[2];
-
-        unsigned int x2 = c2->pos[0];
-        unsigned int y2 = c2->pos[1];
-        unsigned int z2 = c2->pos[2];
-
-        unsigned int x = std::max(x1, x2);
-        unsigned int y = std::max(y1, y2);
-        unsigned int z = std::max(z1, z2);
-
-        unsigned int sx = std::min((x1 + c1->siz[0] - x), (x2 + c2->siz[0] - x));
-        unsigned int sy = std::min((y1 + c1->siz[1] - y), (y2 + c2->siz[1] - y));
-        unsigned int sz = std::min((z1 + c1->siz[2] - z), (z2 + c2->siz[2] - z));
-
-        return Cell({x,y,z, sx, sy, sz, c2->mat});
-    }
-
-    bool EditChunk::cellsSharingVolume(const Cell* c1, const Cell* c2) {
-        /** @return true, if the cells volumes intersect at some point */
-
-        for(int i = 0; i < 3; i++) {
-            // testing for every dimension
-
-            if(!overlappingRanges<int>(c1->pos[i], c1->pos[i] + c1->siz[i], c2->pos[i], c2->pos[i] + c2->siz[i])) {
-
-                return false;
-            }
-        }
-
-        return true;
-    }
 
 
     unsigned int EditChunk::editCell(Cell* old, Cell* edit, std::vector<Cell>& new_cells) {
@@ -191,101 +153,11 @@ namespace cell {
         *   + the number of new cells will be returned
         *   + old will be replaced with edit */
 
-        int new_cell_count = 0;
+        size_t last_count = new_cells.size();
 
-        if(old->mat == edit->mat) {
-            // case 1: old and edit have the same material
+        old->setInCell(*edit, new_cells);
 
-            return 0;
-        } else if((old->pos[0] == edit->pos[0]) && (old->pos[1] == edit->pos[1]) && (old->pos[2] == edit->pos[2])
-                  && (old->siz[0] == edit->siz[0]) && (old->siz[1] == edit->siz[1]) && (old->siz[2] == edit->siz[2])) {
-            // case 2: old and edit have the same volume
-
-            old->mat = edit->mat;
-
-            return 0;
-        } else {
-            // case 3: assuming edits volume is a part of old
-            // creating a maximum of 6 new cells, depending on if edit touches one or more sides of old
-            // this could be the only case, since it handles the other two cases as well ...
-
-            int oxtoex = edit->pos[0] - old->pos[0]; // olds x to edits x
-            int oytoey = edit->pos[1] - old->pos[1]; // olds y to edits y
-            int oztoez = edit->pos[2] - old->pos[2]; // olds z to edits z
-
-            int efxtoofx = old->siz[0] - edit->siz[0] - oxtoex; // edits final x to olds final x
-            int efytoofy = old->siz[1] - edit->siz[1] - oytoey; // distance between the other edges
-            int efztoofz = old->siz[2] - edit->siz[2] - oztoez;
-
-            if(oytoey > 0) {
-                // creating a cell below edit (full x + z size)
-
-                new_cell_count++;
-
-                new_cells.push_back({ old->pos[0], old->pos[1], old->pos[2],
-                                      old->siz[0], oytoey - 1, old->siz[2],
-                                      old->mat});
-            }
-
-            if(efytoofy > 0) {
-                // creating a cell on top of edit (full x + z size)
-
-                new_cell_count++;
-
-                new_cells.push_back({old->pos[0], edit->pos[1] + edit->siz[1] + 1, old->pos[2],
-                                     old->siz[0], efytoofy - 1, old->siz[2],
-                                     old->mat});
-            }
-
-            if(oztoez > 0) {
-                // creating a cell behind edit (reduced y scale)
-
-                new_cell_count++;
-
-                new_cells.push_back({old->pos[0], edit->pos[1], old->pos[2],
-                                     old->siz[0], edit->siz[1], oztoez - 1,
-                                     old->mat});
-            }
-
-            if(efztoofz > 0) {
-                // creating a cell in front of edit (reduced y scale)
-
-                new_cell_count++;
-
-                new_cells.push_back({old->pos[0], edit->pos[1], edit->pos[2] + edit->siz[2] + 1,
-                                     old->siz[0], edit->siz[1], efztoofz - 1,
-                                     old->mat});
-            }
-
-            if(oxtoex > 0) {
-                // creating a cell to the left of edit
-
-                new_cell_count++;
-
-                new_cells.push_back({old->pos[0], edit->pos[1], edit->pos[2],
-                                     oxtoex - 1, edit->siz[1], edit->siz[2],
-                                     old->mat});
-            }
-
-            if(efxtoofx > 0) {
-                // creating a cell to the right of edit
-
-                new_cell_count++;
-
-                new_cells.push_back({edit->pos[0] + edit->siz[0] + 1, edit->pos[1], edit->pos[2],
-                                     efxtoofx - 1, edit->siz[1], edit->siz[2],
-                                     old->mat});
-            }
-
-
-            // old takes up edits volume,
-            // since the rest of the volume should be covered by the new cells
-            *old = *edit;
-
-
-        }
-
-        return new_cell_count;
+        return new_cells.size() - last_count;
     }
 
 

@@ -47,14 +47,6 @@ namespace cell {
         * the material of the shared_volume cells will be the one provided with c */
         void getCellsSharingVolume(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume);
 
-        /** @return a cell representing the overlapping volume between the two cells
-        * the material of the returned cell will be equal to c2s material
-        * the returned cell will only be correct if they actually share volume */
-        Cell getSharedVolume(const Cell* c1, const Cell* c2);
-
-        /** @return true, if the cells volumes intersect at some point */
-        bool cellsSharingVolume(const Cell* c1, const Cell* c2);
-
         /** @brief calculates the changes needed to set "edit" into the old cell
         * if old and edit share the same material, nothing happens
         * if old and edit share the same volume, olds material will be set to edits

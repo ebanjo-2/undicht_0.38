@@ -7,15 +7,9 @@
 
 #include <core/vertex_buffer.h>
 
+#include <chunks/cell.h>
+
 namespace cell {
-
-    struct Cell {
-        // 3 + 3 + 2 bytes = 8 bytes
-        std::array<unsigned char,3> pos;
-        std::array<unsigned char,3> siz;
-        unsigned short mat;
-
-    };
 
     class EditChunk;
     class CellRenderer;

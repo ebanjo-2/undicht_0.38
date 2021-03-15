@@ -69,23 +69,24 @@ int main() {
         DrawChunk draw_chunk;
 
         EditChunk big_chunk;
-        big_chunk.setCell({ 0,0,0, 255,255,255, stone.m_id }, &draw_chunk);
+        /*Cell c(stone.m_id);
+        c.setPosition({0,0,0});
+        c.setSize({255,255,255});
 
-        /*big_chunk.setCell({ 0,0,0, 255,3,255, dirt.m_id }, &draw_chunk);
-        big_chunk.setCell({ 15,4,1, 30,1,240, grass.m_id }, &draw_chunk);
-        big_chunk.setCell({ 20,5,20, 13,1,10, stone.m_id }, &draw_chunk);
+        big_chunk.setCell(c, &draw_chunk);*/
+
+        big_chunk.setCell(Cell({ 0,0,0}, { 255,3,255}, dirt.m_id), &draw_chunk);
+        big_chunk.setCell(Cell({ 15,4,1}, {30,2,240}, grass.m_id), &draw_chunk);
+        /*big_chunk.setCell(Cell({ 20,5,20}, {13,1,10}, stone.m_id), &draw_chunk);
         //big_chunk.setCell({ 20,15,20, 9,9,9, stone.m_id }, &draw_chunk);
-        big_chunk.setCell({ 19,5,31, 13,1,10, wood_floor.m_id }, &draw_chunk);
-
-        // should produce a hole
-        big_chunk.setCell({ 20,0,155, 20,20,20, 0 }, &draw_chunk);*/
+        big_chunk.setCell(Cell({ 19,5,31}, {13,1,10}, wood_floor.m_id), &draw_chunk);*/
 
         draw_chunk.updateCellBuffer();
 
 
         while (!window.shouldClose()) {
 
-            unsigned int x = cam.getPosition().x;
+            /*unsigned int x = cam.getPosition().x;
             unsigned int y = cam.getPosition().y;
             unsigned int z = cam.getPosition().z;
 
@@ -97,9 +98,11 @@ int main() {
             y = std::max(y, (uint)13);
             z = std::max(z, (uint)13);
 
-
-            big_chunk.setCell({x - 13,y - 13,z - 13 ,26,26,26, 0}, &draw_chunk);
-            draw_chunk.updateCellBuffer();
+            c.setPosition({x - 13,y - 13,z - 13 });
+            c.setSize({26,26,26});
+            c.mat = 0;
+            big_chunk.setCell(c, &draw_chunk);
+            draw_chunk.updateCellBuffer();*/
 
             cr.clearFramebuffer();
 
