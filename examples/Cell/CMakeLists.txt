@@ -17,6 +17,9 @@ add_executable("cell"
 	
 	src/chunks/draw_chunk.h
 	src/chunks/draw_chunk.cpp
+	
+	src/chunks/fast_access_chunk.h
+	src/chunks/fast_access_chunk.cpp
 
 	src/chunks/edit_chunk.h
 	src/chunks/edit_chunk.cpp

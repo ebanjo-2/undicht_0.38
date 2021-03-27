@@ -24,21 +24,21 @@ namespace cell {
         // m_cells.push_back({0,0,0, 255,255,255, 0});
         // this would work, but very large cells are slower to edit
 
-        // thats why the chunk is initialized with 8 * 8 * 8 smaller cells
-        for(int x = 0; x < 255; x += 51) {
-            for(int y = 0; y < 255; y += 51) {
-                for(int z = 0; z < 255; z += 51) {
+        // thats why the chunk is initialized with smaller cells
+        for(int x = 0; x < 5; x++) {
+            for(int y = 0; y < 5; y++) {
+                for(int z = 0; z < 5; z++) {
 
-                    Cell ncell;
-                    ncell.setPosition({x,y,z});
-                    ncell.setSize({51,51,51});
-                    ncell.mat = 0;
+					glm::uvec3 pos = glm::uvec3(x * 51, y * 51, z * 51);
+					glm::uvec3 siz = glm::uvec3(51, 51, 51);
 
-                    m_cells.push_back(ncell);
+                    m_cells.push_back(Cell(pos, pos + siz, 0));
 
                 }
             }
         }
+
+		//m_cells.push_back(Cell(glm::uvec3(0,0,0), glm::uvec3(255, 255, 255), 0));
 
     }
 
@@ -65,6 +65,7 @@ namespace cell {
             cell_data.push_back(c.getSize()[2]);
 
             cell_data.push_back(c.mat);
+
         }
 
         // each instance of the cube drawn has got its own position, size and material

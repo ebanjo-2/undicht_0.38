@@ -12,6 +12,7 @@
 namespace cell {
 
     class EditChunk;
+	class FastAccessChunk;
     class CellRenderer;
 
     class DrawChunk {
@@ -19,6 +20,7 @@ namespace cell {
             * with a side length of 256 units */
 
             friend EditChunk;
+			friend FastAccessChunk;
             friend CellRenderer;
 
         protected:

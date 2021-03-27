@@ -69,14 +69,11 @@ int main() {
         DrawChunk draw_chunk;
 
         EditChunk big_chunk;
-        /*Cell c(stone.m_id);
-        c.setPosition({0,0,0});
-        c.setSize({255,255,255});
+        Cell c(stone.m_id);
 
-        big_chunk.setCell(c, &draw_chunk);*/
-
-        big_chunk.setCell(Cell({ 0,0,0}, { 255,3,255}, dirt.m_id), &draw_chunk);
-        big_chunk.setCell(Cell({ 15,4,1}, {30,2,240}, grass.m_id), &draw_chunk);
+        //big_chunk.setCell(c, &draw_chunk);
+		big_chunk.setCell(Cell(glm::uvec3(0,0,0), glm::uvec3(255,3,255), dirt.m_id), &draw_chunk);
+        //big_chunk.setCell(Cell(glm::uvec3(1,1,1), glm::uvec3(2,2,2), grass.m_id), &draw_chunk);
         /*big_chunk.setCell(Cell({ 20,5,20}, {13,1,10}, stone.m_id), &draw_chunk);
         //big_chunk.setCell({ 20,15,20, 9,9,9, stone.m_id }, &draw_chunk);
         big_chunk.setCell(Cell({ 19,5,31}, {13,1,10}, wood_floor.m_id), &draw_chunk);*/
@@ -86,23 +83,22 @@ int main() {
 
         while (!window.shouldClose()) {
 
-            /*unsigned int x = cam.getPosition().x;
+            unsigned int x = cam.getPosition().x;
             unsigned int y = cam.getPosition().y;
             unsigned int z = cam.getPosition().z;
 
-            x = std::min(x, (uint)242);
-            y = std::min(y, (uint)242);
-            z = std::min(z, (uint)242);
+            x = std::min(x, unsigned int(250));
+            y = std::min(y, unsigned int(250));
+            z = std::min(z, unsigned int(250));
 
-            x = std::max(x, (uint)13);
-            y = std::max(y, (uint)13);
-            z = std::max(z, (uint)13);
+            x = std::max(x, unsigned int(5));
+            y = std::max(y, unsigned int(5));
+            z = std::max(z, unsigned int(5));
 
-            c.setPosition({x - 13,y - 13,z - 13 });
-            c.setSize({26,26,26});
-            c.mat = 0;
-            big_chunk.setCell(c, &draw_chunk);
-            draw_chunk.updateCellBuffer();*/
+            c.setPosition(glm::uvec3(x - 5,y - 5,z - 5));
+            c.setSize(glm::uvec3(10, 10, 10));
+			if(key_input->getKeyState(UND_KEY_E)) big_chunk.setCell(c, &draw_chunk);
+            draw_chunk.updateCellBuffer();
 
             cr.clearFramebuffer();
 

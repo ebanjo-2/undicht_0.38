@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 namespace cell {
 
     class Cell {
@@ -22,30 +24,30 @@ namespace cell {
         // setting the data of the cell
 
         /** sets the position of the corner with the smallest coordinates */
-        void setPosition(std::array<unsigned char,3> pos);
+        void setPosition(const glm::uvec3& pos);
 
-        void setSize(std::array<unsigned char,3> siz);
+        void setSize(const glm::uvec3& siz);
 
         /** sets whether the textures are mirrored in the directions */
-        void setOrientation(bool rot_x, bool rot_y, bool rot_z);
+        void setOrientation(const glm::bvec3& mirror);
 
 
     public:
         // getting the data of the cell
 
         /** @return the point within the cell volume with the smallest x,y and z coords */
-        std::array<unsigned char,3> getPoint1() const;
+		glm::uvec3 getPoint1() const;
 
         /** @return the point within the cell volume with the biggest x,y and z coords */
-        std::array<unsigned char,3> getPoint2() const;
+		glm::uvec3 getPoint2() const;
 
         /** @return the number of ACells in the positive direction from getPoint1()
         * negative sizes still mean cells in the positive direction,
         * but the textures should be mirrored in that direction */
-        std::array<unsigned char,3> getSize() const;
+		glm::uvec3 getSize() const;
 
         /** whether the textures are mirrored in the directions */
-        std::array<bool,3> getOrientation();
+		glm::bvec3 getOrientation();
 
         unsigned int getVolume() const;
 
@@ -64,12 +66,18 @@ namespace cell {
         * @param c should be a part of this cells volume */
         void setInCell(const Cell& c, std::vector<Cell>& new_cells);
 
+	public:
+		// other useful functions
+
+		/** marches the vector through every position within the cell
+		* @return false, if the end of the cell was reached */
+		static bool marchInCell(glm::uvec3& vec, const glm::uvec3& point1, const glm::uvec3& point2);
 
     public:
 
         Cell();
         Cell(unsigned short mat);
-        Cell(std::array<unsigned char,3> pos, std::array<unsigned char,3> siz, unsigned short mat);
+        Cell(const glm::uvec3& pos1, const glm::uvec3& pos2, unsigned short mat);
         virtual ~Cell();
 
     };

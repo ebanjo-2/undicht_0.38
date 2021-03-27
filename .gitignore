@@ -24,6 +24,7 @@
 
 !examples/Cell/CMakeLists.txt
 !examples/Cell/*.cpp
+!examples/Cell/res/**/*
 !examples/Cell/src/**/*
 
 !tools/.gitignore
