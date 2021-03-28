@@ -221,16 +221,16 @@ namespace cell {
 			new_cells.emplace_back(Cell(glm::uvec3(point0.x, point0.y, point0.z), glm::uvec3(point1.x, point3.y, point3.z), mat));
 		}
 
+		if (point0.y != point1.y) {
+			// new cell below
+			new_cells.emplace_back(Cell(glm::uvec3(point1.x, point0.y, point0.z), glm::uvec3(point2.x, point1.y, point3.z), mat));
+		}
+
 		if (point0.z != point1.z) {
 			// new cell behind
 			new_cells.emplace_back(Cell(glm::uvec3(point1.x, point1.y, point0.z), glm::uvec3(point2.x, point2.y, point1.z), mat));
 		}
 
-		if (point0.y != point1.y) {
-			// new cell below
-			new_cells.emplace_back(Cell(glm::uvec3(point1.x, point0.y, point0.z), glm::uvec3(point2.x, point1.y, point3.z), mat));
-		}
-		
 		if (point2.x != point3.x) {
 			// new cell to the right
 			new_cells.emplace_back(Cell(glm::uvec3(point2.x, point0.y, point0.z), glm::uvec3(point3.x, point3.y, point3.z), mat));

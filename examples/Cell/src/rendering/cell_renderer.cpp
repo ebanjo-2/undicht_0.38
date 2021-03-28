@@ -178,7 +178,7 @@ namespace cell {
 
         // drawing the chunk
         submit(&chunk.m_buffer);
-        draw(chunk.m_drawn_cells);
+        draw(chunk.getDrawnCellCount());
 
     }
 

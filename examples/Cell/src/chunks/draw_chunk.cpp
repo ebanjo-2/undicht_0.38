@@ -20,6 +20,9 @@ namespace cell {
         m_buffer.setLayout(s_cube_layout);
         m_buffer.setData(s_cube_vertices.data(), sizeof(s_cube_vertices));
 
+		BufferLayout instance_layout({ UND_VEC3I, UND_VEC3I, UND_INT });
+		m_buffer.setInstanceLayout(instance_layout);
+
         // init to complete void
         // m_cells.push_back({0,0,0, 255,255,255, 0});
         // this would work, but very large cells are slower to edit
@@ -32,8 +35,7 @@ namespace cell {
 					glm::uvec3 pos = glm::uvec3(x * 51, y * 51, z * 51);
 					glm::uvec3 siz = glm::uvec3(51, 51, 51);
 
-                    m_cells.push_back(Cell(pos, pos + siz, 0));
-
+					addCell(Cell(pos, pos + siz, 0));
                 }
             }
         }
@@ -47,42 +49,191 @@ namespace cell {
 
     }
 
+	void DrawChunk::writeToBuffer(const std::vector<Cell>& cells, int offset) {
+
+		std::vector<int> cell_data;
+
+		for (const Cell c : cells) {
+
+			// if (c.mat == 0) continue;
+			// dont skip, because it may be used in the future
+
+			cell_data.push_back(c.getPoint1()[0]);
+			cell_data.push_back(c.getPoint1()[1]);
+			cell_data.push_back(c.getPoint1()[2]);
+
+			cell_data.push_back(c.getSize()[0]);
+			cell_data.push_back(c.getSize()[1]);
+			cell_data.push_back(c.getSize()[2]);
+
+			cell_data.push_back(c.mat);
+
+		}
+
+		// each instance of the cube drawn has got its own position, size and material
+
+		m_buffer.setInstanceData(cell_data.data(), cell_data.size() * sizeof(int), offset * 7 * sizeof(int));
+
+	}
+
+	int DrawChunk::addCell(const Cell& c) {
+		/** adds the cell to the m_cells vector */
+
+		if (!c.mat) {
+			// invisble
+
+			m_invisible_cells.push_back(c);
+
+			// invisible cells get an negative index starting at -1
+			return -1 * m_invisible_cells.size();
+		} else {
+
+			m_visible_cells.push_back(c);
+
+			// visible cells get a positive index
+			int id = m_visible_cells.size() - 1;
+
+			m_cells_to_update.push_back(id);
+
+			return id;
+		}
+
+	}
+
+	int DrawChunk::updateCell(const Cell& c, int id) {
+		/** updates the existing cell
+		* @return: if the cell is turned visible or invisible a new id will be assigned */
+
+		if (id < 0) {
+			// accessing an invisible cell
+
+			if (c.mat) {
+				// turning it visible
+
+				// removing the cell from the list of invisible cells
+				m_invisible_cells.erase(m_invisible_cells.begin() + -1 * (id + 1));
+
+				// adding the cell to the list of visible cells
+				m_visible_cells.push_back(c);
+				m_cells_to_update.push_back(m_visible_cells.size() - 1);
+
+				return m_visible_cells.size() - 1; // new id
+			} else {
+				// cell remains invisible
+
+				m_invisible_cells.at(-1 * (id + 1)) = c;
+
+				return id;
+			}
+
+		} else {
+			// accessing a visible cell
+
+			if (c.mat) {
+				// cell remains visible
+
+				m_visible_cells.at(id) = c;
+
+				return id;
+			} else {
+				// turning it invisible
+
+				m_visible_cells.at(id).setSize(glm::uvec3(0, 0, 0));
+				m_visible_cells.at(id).mat = 0;
+				m_cells_unused.push_back(id);
+				m_cells_to_update.push_back(id);
+
+				m_invisible_cells.push_back(c);
+
+				return -1 * m_invisible_cells.size();
+			}
+		}
+
+	}
+
+	const Cell& DrawChunk::getCell(int id) {
+
+		if (id < 0) {
+			// invisible cell
+
+			return m_invisible_cells[-1 * (id + 1)];
+		} else {
+			// visible cell
+
+			return m_visible_cells[id];
+		}
+
+	}
+
 
     void DrawChunk::updateCellBuffer() {
 
-        std::vector<int> cell_data;
+		if (getDrawnCellCount() * 7 * sizeof(int) > m_buffer.getInstanceBufferSize()) {
+			// need resize
 
-        for (const Cell c : m_cells) {
+			m_buffer.resizeInstanceBuffer(getDrawnCellCount() * 7 * sizeof(int) * 2); // *2 
+			updateCellBufferTotal();
+		} else {
+			// no resize needed
 
-            if(c.mat == 0) continue;
+			updateCellBufferOnlyNew();
+		}
 
-            cell_data.push_back(c.getPoint1()[0]);
-            cell_data.push_back(c.getPoint1()[1]);
-            cell_data.push_back(c.getPoint1()[2]);
-
-            cell_data.push_back(c.getSize()[0]);
-            cell_data.push_back(c.getSize()[1]);
-            cell_data.push_back(c.getSize()[2]);
-
-            cell_data.push_back(c.mat);
-
-        }
-
-        // each instance of the cube drawn has got its own position, size and material
-        BufferLayout instance_layout({ UND_VEC3I, UND_VEC3I, UND_INT });
-        m_buffer.setInstanceLayout(instance_layout);
-        m_buffer.setInstanceData(cell_data.data(), cell_data.size() * sizeof(int));
-
-        m_drawn_cells = cell_data.size() / 7;;
-
-        std::cout << "drawing " << m_drawn_cells << "\n";
 
     }
+
+	void DrawChunk::updateCellBufferTotal() {
+		/** needed when the cell buffer is resized */
+
+		writeToBuffer(m_visible_cells, 0);
+
+	}
+
+	void DrawChunk::updateCellBufferOnlyNew() {
+		/** updates the cells that are changed since the last time this was called */
+
+		if (!m_cells_to_update.size()) return;
+
+		std::vector<std::vector<Cell>> cells; // batching the cells
+		cells.emplace_back(std::vector<Cell>()); // first batch
+		int first_cell_in_batch = m_cells_to_update[0];
+
+		for (int i = 0; i < m_cells_to_update.size(); i++) {
+
+			const Cell& c = getCell(m_cells_to_update[i]);
+
+			// adding the cell to the current batch
+			cells.back().push_back(c);
+
+			// testing if the batch is complete
+			if ((i + 1 < m_cells_to_update.size()) && (m_cells_to_update[i] + 1 == m_cells_to_update[i + 1])) {
+				// next cell follows this one, they can be batched together
+
+			} else {
+				// the next cell (if there even is one) cant be batched with this cell
+				// "commiting" the current batch and starting a new one
+
+				writeToBuffer(cells.back(), first_cell_in_batch);
+
+				// starting a new batch
+				first_cell_in_batch = i;
+				cells.emplace_back(std::vector<Cell>()); // next batch
+			}
+
+		}
+
+	}
 
     unsigned int DrawChunk::getDrawnCellCount() {
 
-        return m_drawn_cells;
+        return m_visible_cells.size();
     }
+
+	unsigned int DrawChunk::getTotalCellCount() {
+
+		return m_visible_cells.size() + m_invisible_cells.size();
+	}
+
 
     ////////////////////////////////////////// building cube vertices //////////////////////////////////////////
 
