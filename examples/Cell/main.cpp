@@ -44,7 +44,6 @@ int main() {
         Material grass = cr.registerMaterial("default", "grass");
 
 
-
         ImageLoader loader;
         TextureData data;
 
@@ -69,13 +68,16 @@ int main() {
         DrawChunk draw_chunk;
 
         EditChunk big_chunk;
-        Cell c(stone.m_id);
+        Cell c(0);
 		//Cell c(0);
 
 
         //big_chunk.setCell(c, &draw_chunk);
-		big_chunk.setCell(Cell(glm::uvec3(0,0,0), glm::uvec3(255,3,255), dirt.m_id), &draw_chunk);
-        big_chunk.setCell(Cell(glm::uvec3(0,3,0), glm::uvec3(255,4,255), grass.m_id), &draw_chunk);
+		big_chunk.setCell(Cell(glm::uvec3(0, 0, 0), glm::uvec3(255, 60, 255), stone.m_id), &draw_chunk);
+		big_chunk.setCell(Cell(glm::uvec3(0, 60,0), glm::uvec3(255, 70, 255), dirt.m_id), &draw_chunk);
+		big_chunk.setCell(Cell(glm::uvec3(0, 70, 0), glm::uvec3(255, 71, 255), grass.m_id), &draw_chunk);
+		big_chunk.setCell(Cell(glm::uvec3(4, 71, 4), glm::uvec3(15, 80, 15), stone.m_id), &draw_chunk);
+
         /*big_chunk.setCell(Cell({ 20,5,20}, {13,1,10}, stone.m_id), &draw_chunk);
         //big_chunk.setCell({ 20,15,20, 9,9,9, stone.m_id }, &draw_chunk);
         big_chunk.setCell(Cell({ 19,5,31}, {13,1,10}, wood_floor.m_id), &draw_chunk);*/

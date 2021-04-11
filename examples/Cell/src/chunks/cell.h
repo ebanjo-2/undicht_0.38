@@ -47,7 +47,7 @@ namespace cell {
 		glm::uvec3 getSize() const;
 
         /** whether the textures are mirrored in the directions */
-		glm::bvec3 getOrientation();
+		glm::bvec3 getOrientation() const;
 
         unsigned int getVolume() const;
 
@@ -55,16 +55,15 @@ namespace cell {
         // functions to modify the volume of the cell
 
         /** @return true, if the volumes of the cells overlap */
-        bool sharesVolume(const Cell& c);
+        bool sharesVolume(const Cell& c) const;
 
         /** @return a cell that covers the volume shared by this cell and c
         * the returned cells material is equal to cs material */
-        Cell getSharedVolume(const Cell& c);
+        Cell getSharedVolume(const Cell& c) const;
 
         /** splits this cell into new cells, covering the difference between c and this cell
-        * at the end, this cell will be equal to c
         * @param c should be a part of this cells volume */
-        void setInCell(const Cell& c, std::vector<Cell>& new_cells);
+        void setInCell(const Cell& c, std::vector<Cell>& new_cells) const;
 
 	public:
 		// other useful functions

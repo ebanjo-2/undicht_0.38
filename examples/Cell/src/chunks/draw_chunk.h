@@ -19,9 +19,9 @@ namespace cell {
             /** a class that contains all the data needed to draw a chunk
             * with a side length of 256 units */
 
-            /*friend EditChunk;
+            friend EditChunk;
 			friend FastAccessChunk;
-            friend CellRenderer;*/
+            friend CellRenderer;
 
         protected:
             // cube vertices
@@ -39,11 +39,15 @@ namespace cell {
             std::vector<Cell> m_visible_cells; // on ram for the cpu
 			std::vector<Cell> m_invisible_cells;
 			std::vector<int> m_cells_to_update;
+
 			std::vector<int> m_cells_unused; // cells that are no longer being drawn and therefor could be recycled
+			std::vector<int> m_invisible_cells_unused;
 
             undicht::graphics::VertexBuffer m_buffer; // on vram for the gpu (only visible)
 
 			void writeToBuffer(const std::vector<Cell>& cells, int offset);
+			void writeToBuffer(const Cell& cell, int offset);
+
 		
 		public:
 

@@ -76,26 +76,71 @@ namespace cell {
 
 	}
 
+	void DrawChunk::writeToBuffer(const Cell& cell, int offset) {
+
+		std::vector<int> cell_data;
+
+		cell_data.push_back(cell.getPoint1()[0]);
+		cell_data.push_back(cell.getPoint1()[1]);
+		cell_data.push_back(cell.getPoint1()[2]);
+
+		cell_data.push_back(cell.getSize()[0]);
+		cell_data.push_back(cell.getSize()[1]);
+		cell_data.push_back(cell.getSize()[2]);
+
+		cell_data.push_back(cell.mat);
+
+
+		m_buffer.setInstanceData(cell_data.data(), cell_data.size() * sizeof(int), offset * 7 * sizeof(int));
+	}
+
+
 	int DrawChunk::addCell(const Cell& c) {
 		/** adds the cell to the m_cells vector */
 
 		if (!c.mat) {
 			// invisble
 
-			m_invisible_cells.push_back(c);
+			// maybe an already allocated cell can be reused ?
+			if (m_invisible_cells_unused.size()) {
 
-			// invisible cells get an negative index starting at -1
-			return -1 * m_invisible_cells.size();
+				int id = m_invisible_cells_unused.back();
+				m_invisible_cells_unused.pop_back();
+
+				m_invisible_cells[-1 * (id + 1)] = c;
+
+				return id;
+			} else {
+
+				m_invisible_cells.push_back(c);
+
+				// invisible cells get an negative index starting at -1
+				return -1 * m_invisible_cells.size();
+			}
+
 		} else {
 
-			m_visible_cells.push_back(c);
+			// maybe an already allocated cell can be reused ?
+			if (m_cells_unused.size()) {
 
-			// visible cells get a positive index
-			int id = m_visible_cells.size() - 1;
+				int id = m_cells_unused.back();
+				m_cells_unused.pop_back();
 
-			m_cells_to_update.push_back(id);
+				m_visible_cells[id] = c;
+				m_cells_to_update.push_back(id);
 
-			return id;
+				return id;
+			} else {
+
+				m_visible_cells.push_back(c);
+
+				// visible cells get a positive index
+				int id = m_visible_cells.size() - 1;
+				m_cells_to_update.push_back(id);
+
+				return id;
+			}
+
 		}
 
 	}
@@ -111,13 +156,14 @@ namespace cell {
 				// turning it visible
 
 				// removing the cell from the list of invisible cells
-				m_invisible_cells.erase(m_invisible_cells.begin() + -1 * (id + 1));
+				// m_invisible_cells.erase(m_invisible_cells.begin() + -1 * (id + 1));
+				// !WARNING! : cant do that, would mess up ids
+
+				m_invisible_cells_unused.push_back(id);
+				m_invisible_cells.at(-1 * (id + 1)).setSize(glm::uvec3(0, 0, 0));
 
 				// adding the cell to the list of visible cells
-				m_visible_cells.push_back(c);
-				m_cells_to_update.push_back(m_visible_cells.size() - 1);
-
-				return m_visible_cells.size() - 1; // new id
+				return addCell(c);
 			} else {
 				// cell remains invisible
 
@@ -133,6 +179,7 @@ namespace cell {
 				// cell remains visible
 
 				m_visible_cells.at(id) = c;
+				m_cells_to_update.push_back(id);
 
 				return id;
 			} else {
@@ -140,12 +187,11 @@ namespace cell {
 
 				m_visible_cells.at(id).setSize(glm::uvec3(0, 0, 0));
 				m_visible_cells.at(id).mat = 0;
+
 				m_cells_unused.push_back(id);
-				m_cells_to_update.push_back(id);
+				m_cells_to_update.push_back(id); // making sure it doesnt get rendered anymore
 
-				m_invisible_cells.push_back(c);
-
-				return -1 * m_invisible_cells.size();
+				return addCell(c);
 			}
 		}
 
@@ -165,12 +211,13 @@ namespace cell {
 
 	}
 
-
     void DrawChunk::updateCellBuffer() {
+
+		std::cout << "updating " << m_cells_to_update.size() << "Cells \n";
 
 		if (getDrawnCellCount() * 7 * sizeof(int) > m_buffer.getInstanceBufferSize()) {
 			// need resize
-
+			std::cout << "resizing the buffer to " << getDrawnCellCount() * 7 * sizeof(int) * 2 << "\n";
 			m_buffer.resizeInstanceBuffer(getDrawnCellCount() * 7 * sizeof(int) * 2); // *2 
 			updateCellBufferTotal();
 		} else {
@@ -178,6 +225,8 @@ namespace cell {
 
 			updateCellBufferOnlyNew();
 		}
+
+		m_cells_to_update.clear();
 
 
     }
@@ -194,32 +243,9 @@ namespace cell {
 
 		if (!m_cells_to_update.size()) return;
 
-		std::vector<std::vector<Cell>> cells; // batching the cells
-		cells.emplace_back(std::vector<Cell>()); // first batch
-		int first_cell_in_batch = m_cells_to_update[0];
+		for (int i : m_cells_to_update) {
 
-		for (int i = 0; i < m_cells_to_update.size(); i++) {
-
-			const Cell& c = getCell(m_cells_to_update[i]);
-
-			// adding the cell to the current batch
-			cells.back().push_back(c);
-
-			// testing if the batch is complete
-			if ((i + 1 < m_cells_to_update.size()) && (m_cells_to_update[i] + 1 == m_cells_to_update[i + 1])) {
-				// next cell follows this one, they can be batched together
-
-			} else {
-				// the next cell (if there even is one) cant be batched with this cell
-				// "commiting" the current batch and starting a new one
-
-				writeToBuffer(cells.back(), first_cell_in_batch);
-
-				// starting a new batch
-				first_cell_in_batch = i;
-				cells.emplace_back(std::vector<Cell>()); // next batch
-			}
-
+			writeToBuffer(getCell(i), i);
 		}
 
 	}

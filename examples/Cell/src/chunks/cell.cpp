@@ -152,7 +152,7 @@ namespace cell {
     }
 
 
-	glm::bvec3 Cell::getOrientation() {
+	glm::bvec3 Cell::getOrientation() const {
         /** whether the textures are mirrored in the directions */
 
 		glm::bvec3 mirror;
@@ -173,7 +173,7 @@ namespace cell {
 
     ////////////////////////////////////// functions to modify the volume of the cell //////////////////////////////////////
 
-    bool Cell::sharesVolume(const Cell& c) {
+    bool Cell::sharesVolume(const Cell& c) const {
         /** @return true, if the volumes of the cells overlap */
 
         if(!overlappingRanges<int>(pos1[0], 255 - pos2[0], c.pos1[0], 255 - c.pos2[0])) return false;
@@ -183,7 +183,7 @@ namespace cell {
         return true;
     }
 
-    Cell Cell::getSharedVolume(const Cell& c) {
+    Cell Cell::getSharedVolume(const Cell& c) const {
         /** @return a cell that covers the volume shared by this cell and c
         * the returned cells material is equal to cs material */
 
@@ -205,10 +205,9 @@ namespace cell {
 
 
 
-    void Cell::setInCell(const Cell& c, std::vector<Cell>& new_cells) {
-        /** splits this cell into new cells, covering the difference between c and this cell
-        * at the end, this cell will be equal to c
-        * @param c should be a part of this cells volume */
+    void Cell::setInCell(const Cell& c, std::vector<Cell>& new_cells) const {
+		/** splits this cell into new cells, covering the difference between c and this cell
+		* @param c should be a part of this cells volume */
 
         // frequently used values
 		glm::uvec3 point0 = getPoint1();
@@ -245,12 +244,6 @@ namespace cell {
 			// new cell in front
 			new_cells.emplace_back(Cell(glm::uvec3(point1.x, point1.y, point2.z), glm::uvec3(point2.x, point2.y, point3.z), mat));
 		}
-
-        // this cell now takes up the volume of c
-        // with the rest of the old this being filled up with the new cells
-		pos1 = c.pos1;
-		pos2 = c.pos2;
-		mat = c.mat;
 
     }
 

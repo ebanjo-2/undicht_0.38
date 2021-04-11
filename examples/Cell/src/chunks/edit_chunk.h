@@ -14,18 +14,18 @@ namespace cell {
         // internal functions to modify cells
 
 		/** picks one of the search functions based on cs volume and the total number of cells */
-		void getCellsSharingVolume(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume);
+		void getCellsSharingVolume(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume);
 
 
         /** finds every cell of the current DrawChunk that shares some volume with c
         * @param shared_volume : the volume shared between each cell and c
         * the material of the shared_volume cells will be the one provided with c */
-        void getCellsSharingVolumeBySearchingC(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume);
+        void getCellsSharingVolumeBySearchingC(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume);
 
 		/** also finds every cell of the current DrawChunk that shares some volume with c 
 		* but does it not by checking every reference within the volume of c, but by 
 		* checking every Cell in m_chunk source (which may be less then cs volume) */
-		void getCellsSharingVolumeBySearchingAll(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume);
+		void getCellsSharingVolumeBySearchingAll(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume);
 
 
     public:

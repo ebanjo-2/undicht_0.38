@@ -1,5 +1,5 @@
 #include <chunks/fast_access_chunk.h>
-
+#include <iostream>
 
 namespace cell {
 
@@ -22,9 +22,11 @@ namespace cell {
 	///////////// protected members and functions to keep track of the cells within the chunk_source ///////////////
 
 
-	void FastAccessChunk::updateCellReference(const Cell& c, unsigned int id) {
+	void FastAccessChunk::updateCellReference(const Cell& c, int id) {
 		/** sets all the cell references within c to id
 		* used by EditChunk */
+
+		if (!c.getVolume()) return;
 
 		glm::uvec3 point1 = c.getPoint1();
 		glm::uvec3 point2 = c.getPoint2();
@@ -62,21 +64,38 @@ namespace cell {
 
 		m_chunk_source = c;
 
-		for (int i = 0; i < c->m_cells.size(); i++) {
+		int cell_start = -1 * c->m_invisible_cells.size();
+		int cell_end = c->m_visible_cells.size();
 
-			updateCellReference(c->m_cells[i], i);
+		for (int i = cell_start; i < cell_end; i++) {
+
+			updateCellReference(c->getCell(i), i);
 		}
 
 	}
 
-	Cell* FastAccessChunk::getCellAtPosition(const glm::uvec3& pos) {
+	const Cell* FastAccessChunk::getCellAtPosition(const glm::uvec3& pos) {
 
 		if (!m_chunk_source) {
 
 			return 0;
 		}
 
-		return &m_chunk_source->m_cells[m_cell_references[pos.x][pos.y][pos.z]];
+		const Cell& c = m_chunk_source->getCell(m_cell_references[pos.x][pos.y][pos.z]);
+
+		return (Cell*)&c;
 	}
+
+	int FastAccessChunk::getCellIDAtPosition(const glm::uvec3& pos) {
+
+		if (!m_chunk_source) {
+
+			return 0;
+		}
+
+
+		return m_cell_references[pos.x][pos.y][pos.z];
+	}
+
 
 }

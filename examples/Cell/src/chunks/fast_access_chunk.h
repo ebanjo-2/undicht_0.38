@@ -9,13 +9,13 @@ namespace cell {
 	protected:
 		// protected members and functions to keep track of the cells within the chunk_source
 
-		std::vector<std::vector<std::vector<unsigned int>>> m_cell_references;
+		std::vector<std::vector<std::vector<int>>> m_cell_references;
 
 		DrawChunk* m_chunk_source = 0;
 
 		/** sets all the cell references within c to id
 		* used by EditChunk */
-		void updateCellReference(const Cell& c, unsigned int id);
+		void updateCellReference(const Cell& c, int id);
 
 		/** resizes the m_cell_references vector to 256 * 256 * 256
 		* + sets all references to 0 */
@@ -27,7 +27,10 @@ namespace cell {
 		/** sets the chunk of which the Cells are accessed */
 		void setChunkSource(DrawChunk* c);
 
-		Cell* getCellAtPosition(const glm::uvec3& pos);
+		const Cell* getCellAtPosition(const glm::uvec3& pos);
+
+		int getCellIDAtPosition(const glm::uvec3& pos);
+
 
 	public:
 

@@ -21,21 +21,21 @@ namespace cell {
 
     //////////////////////////////////////////// internal functions to modify cells ////////////////////////////////////////////
 
-	void EditChunk::getCellsSharingVolume(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume) {
+	void EditChunk::getCellsSharingVolume(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume) {
 		/** picks one of the search functions based on cs volume and the total number of cells */
 
-		if (c.getVolume() > m_chunk_source->m_cells.size()) {
+		//if (c.getVolume() > m_chunk_source->getTotalCellCount()) {
 
-			getCellsSharingVolumeBySearchingAll(c, loadTo, shared_volume);
-		} else {
+			//getCellsSharingVolumeBySearchingAll(c, loadTo, shared_volume);
+		//} else {
 
 			getCellsSharingVolumeBySearchingC(c, loadTo, shared_volume);
-		}
+		//}
 
 	}
 
 
-    void EditChunk::getCellsSharingVolumeBySearchingC(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume) {
+    void EditChunk::getCellsSharingVolumeBySearchingC(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume) {
         /** finds every cell of the current DrawChunk that shares some volume with c
         * @param shared_volume : the volume shared between each cell and c */
 
@@ -50,11 +50,11 @@ namespace cell {
 		do {
 			
 			// getting a cell that shares volume with c
-			Cell* candidate = getCellAtPosition(current_pos);
+			int candidate = getCellIDAtPosition(current_pos);
 			new_cell = true;
 
 			// testing if the candidate was found before
-			for (Cell* old_candidate : loadTo) {
+			for (int old_candidate : loadTo) {
 
 				if(candidate == old_candidate) {
 					new_cell = false; // cell was already found
@@ -62,14 +62,16 @@ namespace cell {
 				}
 			}
 
+			const Cell& cell_candidate = m_chunk_source->getCell(candidate);
+
 			// if not, adding the new cell to the list of Cells sharing volume with c
 			if (new_cell) {
 				loadTo.push_back(candidate);
-				shared_volume.push_back(candidate->getSharedVolume(c));
+				shared_volume.push_back(cell_candidate.getSharedVolume(c));
 			}
 
 			// dont need to check here anymore
-			current_pos.x = std::max(current_pos.x, candidate->getPoint2().x - 1);
+			current_pos.x = std::max(current_pos.x, cell_candidate.getPoint2().x - 1);
 
 			// going to the next position
 		} while (Cell::marchInCell(current_pos, point1, point2));
@@ -77,16 +79,24 @@ namespace cell {
     }
 
 
-	void EditChunk::getCellsSharingVolumeBySearchingAll(const Cell& c, std::vector<Cell*>& loadTo, std::vector<Cell>& shared_volume) {
+	void EditChunk::getCellsSharingVolumeBySearchingAll(const Cell& c, std::vector<int>& loadTo, std::vector<Cell>& shared_volume) {
 		/** also finds every cell of the current DrawChunk that shares some volume with c
 		* but does it not by checking every reference within the volume of c, but by
 		* checking every Cell in m_chunk source (which may be less then cs volume) */
 
-		for (Cell& existing_cell : m_chunk_source->m_cells) {
+		// checking both every invisible and every visible cell
+
+
+		int id_start = -1 * m_chunk_source->m_invisible_cells.size();
+		int id_end = m_chunk_source->m_visible_cells.size();
+
+		for (int i = id_start; i < id_end; i++) {
+
+			const Cell& existing_cell = m_chunk_source->getCell(i);
 
 			if (existing_cell.sharesVolume(c)) {
 
-				loadTo.push_back(&existing_cell);
+				loadTo.push_back(i);
 				shared_volume.push_back(existing_cell.getSharedVolume(c));
 			}
 
@@ -105,24 +115,29 @@ namespace cell {
 
         setChunkSource(chunk);
 
-        std::vector<Cell*> to_update; // the cells that need to be updated
+        std::vector<int> to_update; // the cells that need to be updated
         std::vector<Cell> updates; // the updates to those cells
 
         getCellsSharingVolume(c, to_update, updates);
 
 		std::vector<Cell> new_cells;
 
-		// updating the cells
+		// calculating the new cells + updating the existing cells
         for(int i = 0; i < to_update.size(); i++) {
-
-            to_update[i]->setInCell(updates[i], new_cells);
+			chunk->getCell(to_update[i]).setInCell(updates[i], new_cells);
         }
 
-		// updating the references to the new cells
+		// updating the existing cells
+		for (int i = 0; i < to_update.size(); i++) {
+			int new_cell_id = chunk->updateCell(updates[i], to_update[i]);
+			updateCellReference(updates[i], new_cell_id);
+		}
+
+		// adding the new cells
 		for (int i = 0; i < new_cells.size(); i++) {
 
-			chunk->m_cells.push_back(new_cells[i]);
-			updateCellReference(new_cells[i], chunk->m_cells.size() - 1);
+			int new_cell_id = chunk->addCell(new_cells[i]);
+			updateCellReference(new_cells[i], new_cell_id);
 		}
 
 
