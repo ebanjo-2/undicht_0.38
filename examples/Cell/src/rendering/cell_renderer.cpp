@@ -164,16 +164,14 @@ namespace cell {
         s_shader->loadUniform(*s_view);
     }
 
-    void CellRenderer::drawChunk(DrawChunk& chunk, int x, int y, int z) {
+    void CellRenderer::drawChunk(DrawChunk& chunk) {
 
         // storing the cellchunks in the vertex buffers per instance data
 
         s_shader->loadTexture(*s_texture_atlas);
 
         // loading the chunk position to the shader
-        float offsets[] = {x * 256, y * 256, z * 256};
-
-        s_chunk_offset->setData(offsets, UND_VEC3F);
+        s_chunk_offset->setData(glm::value_ptr(chunk.m_position), UND_VEC3I);
         s_shader->loadUniform(*s_chunk_offset);
 
         // drawing the chunk

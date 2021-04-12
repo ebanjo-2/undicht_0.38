@@ -31,6 +31,7 @@ namespace cell {
         /** sets whether the textures are mirrored in the directions */
         void setOrientation(const glm::bvec3& mirror);
 
+		void setMaterial(unsigned short mat);
 
     public:
         // getting the data of the cell
@@ -50,6 +51,8 @@ namespace cell {
 		glm::bvec3 getOrientation() const;
 
         unsigned int getVolume() const;
+
+		unsigned short getMaterial() const;
 
     public:
         // functions to modify the volume of the cell

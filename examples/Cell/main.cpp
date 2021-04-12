@@ -23,66 +23,77 @@ int main() {
 
     Window window(1600, 900, "Cell");
 
-    {
+	{
 
-        initCam();
-        key_input->setInputWindow(&window);
-        mouse_input->setInputWindow(&window);
+		initCam();
+		key_input->setInputWindow(&window);
+		mouse_input->setInputWindow(&window);
 
-        window.setCursorVisible(false);
+		window.setCursorVisible(false);
+		//window.setWindowMode(true, false);
 
-        CellRenderer cr;
-        PerspectiveCamera3D cam;
-        cam.setAspectRatio(1600.0f / 900.0f);
-        cam.setPosition(glm::vec3(1, 1, 1));
+		CellRenderer cr;
+		cr.setViewport(1680, 1050);
+		PerspectiveCamera3D cam;
+		cam.setAspectRatio(1600.0f / 900.0f);
+		cam.setPosition(glm::vec3(1, 1, 1));
 
-        // materials
-        Material stone = cr.registerMaterial("default", "stone");
-        Material sand = cr.registerMaterial("default", "sand");
-        Material wood_floor = cr.registerMaterial("default", "wood_floor");
-        Material dirt = cr.registerMaterial("default", "dirt");
-        Material grass = cr.registerMaterial("default", "grass");
-
-
-        ImageLoader loader;
-        TextureData data;
-
-        loader.loadTextureFromFile(data, "res/stone.png");
-        cr.setMaterialTexture(stone, data);
-
-        std::cout << stone.getID() << "\n";
-
-        loader.loadTextureFromFile(data, "res/sand.png");
-        cr.setMaterialTexture(sand, data);
-
-        loader.loadTextureFromFile(data, "res/wood_floor.png");
-        cr.setMaterialTexture(wood_floor, data);
-
-        loader.loadTextureFromFile(data, "res/dirt.png");
-        cr.setMaterialTexture(dirt, data);
-
-        loader.loadTextureFromFile(data, "res/grass.png");
-        cr.setMaterialTexture(grass, data);
+		// materials
+		Material stone = cr.registerMaterial("default", "stone");
+		Material sand = cr.registerMaterial("default", "sand");
+		Material wood_floor = cr.registerMaterial("default", "wood_floor");
+		Material dirt = cr.registerMaterial("default", "dirt");
+		Material grass = cr.registerMaterial("default", "grass");
 
 
-        DrawChunk draw_chunk;
+		ImageLoader loader;
+		TextureData data;
 
-        EditChunk big_chunk;
-        Cell c(0);
-		//Cell c(0);
+		loader.loadTextureFromFile(data, "res/stone.png");
+		cr.setMaterialTexture(stone, data);
+
+		std::cout << stone.getID() << "\n";
+
+		loader.loadTextureFromFile(data, "res/sand.png");
+		cr.setMaterialTexture(sand, data);
+
+		loader.loadTextureFromFile(data, "res/wood_floor.png");
+		cr.setMaterialTexture(wood_floor, data);
+
+		loader.loadTextureFromFile(data, "res/dirt.png");
+		cr.setMaterialTexture(dirt, data);
+
+		loader.loadTextureFromFile(data, "res/grass.png");
+		cr.setMaterialTexture(grass, data);
 
 
-        //big_chunk.setCell(c, &draw_chunk);
-		big_chunk.setCell(Cell(glm::uvec3(0, 0, 0), glm::uvec3(255, 60, 255), stone.m_id), &draw_chunk);
-		big_chunk.setCell(Cell(glm::uvec3(0, 60,0), glm::uvec3(255, 70, 255), dirt.m_id), &draw_chunk);
-		big_chunk.setCell(Cell(glm::uvec3(0, 70, 0), glm::uvec3(255, 71, 255), grass.m_id), &draw_chunk);
-		big_chunk.setCell(Cell(glm::uvec3(4, 71, 4), glm::uvec3(15, 80, 15), stone.m_id), &draw_chunk);
+		DrawChunk draw_chunks[2];
+		draw_chunks[0].m_position = glm::ivec3(0, 0, 0);
+		draw_chunks[1].m_position = glm::ivec3(255, 0, 0);
+
+
+		EditChunk edit_chunks[2];
+
+		//Cell c(stone.m_id);
+		Cell c(0);
+
+		//big_chunk.setCell(c, &draw_chunk);
+		edit_chunks[0].setCell(Cell(glm::uvec3(0, 0, 0), glm::uvec3(255, 60, 255), stone.m_id),	 &draw_chunks[0]);
+		edit_chunks[0].setCell(Cell(glm::uvec3(0, 60,0), glm::uvec3(255, 70, 255), dirt.m_id),	 &draw_chunks[0]);
+		edit_chunks[0].setCell(Cell(glm::uvec3(0, 70, 0), glm::uvec3(255, 71, 255), grass.m_id), &draw_chunks[0]);
+		edit_chunks[0].setCell(Cell(glm::uvec3(4, 71, 4), glm::uvec3(15, 80, 15), stone.m_id),	 &draw_chunks[0]);
+
+		edit_chunks[1].setCell(Cell(glm::uvec3(0, 0, 0), glm::uvec3(255, 60, 255), stone.m_id),	 &draw_chunks[1]);
+		edit_chunks[1].setCell(Cell(glm::uvec3(0, 60, 0), glm::uvec3(255, 70, 255), dirt.m_id),	 &draw_chunks[1]);
+		edit_chunks[1].setCell(Cell(glm::uvec3(0, 70, 0), glm::uvec3(255, 71, 255), grass.m_id), &draw_chunks[1]);
+		edit_chunks[1].setCell(Cell(glm::uvec3(4, 71, 4), glm::uvec3(15, 80, 15), stone.m_id),	 &draw_chunks[1]);
 
         /*big_chunk.setCell(Cell({ 20,5,20}, {13,1,10}, stone.m_id), &draw_chunk);
         //big_chunk.setCell({ 20,15,20, 9,9,9, stone.m_id }, &draw_chunk);
         big_chunk.setCell(Cell({ 19,5,31}, {13,1,10}, wood_floor.m_id), &draw_chunk);*/
 
-        draw_chunk.updateCellBuffer();
+        draw_chunks[0].updateCellBuffer();
+		draw_chunks[1].updateCellBuffer();
 
 
         while (!window.shouldClose()) {
@@ -91,9 +102,9 @@ int main() {
             unsigned int y = cam.getPosition().y;
             unsigned int z = cam.getPosition().z;
 
-            x = std::min(x, unsigned int(245));
-            y = std::min(y, unsigned int(245));
-            z = std::min(z, unsigned int(245));
+            x = std::min(x % 255, unsigned int(245));
+            y = std::min(y % 255, unsigned int(245));
+            z = std::min(z % 255, unsigned int(245));
 
             x = std::max(x, unsigned int(10));
             y = std::max(y, unsigned int(10));
@@ -101,13 +112,50 @@ int main() {
 
             c.setPosition(glm::uvec3(x - 10,y - 10,z - 10));
             c.setSize(glm::uvec3(20, 20, 20));
-			if(key_input->getKeyState(UND_KEY_E)) big_chunk.setCell(c, &draw_chunk);
-            draw_chunk.updateCellBuffer();
+
+
+			if (mouse_input->getButtonState(UND_MOUSE_1)) {
+				// adding a 20*20*20 cube of stone around the camera
+				c.setMaterial(stone.m_id);
+
+				if (cam.getPosition().x <= 255) {
+
+					edit_chunks[0].setCell(c, &draw_chunks[0]);
+
+				} else {
+
+					edit_chunks[1].setCell(c, &draw_chunks[1]);
+				}
+
+			}
+			
+			if (mouse_input->getButtonState(UND_MOUSE_2)) {
+				// adding a 20*20*20 cube of nothing around the camera
+				c.setMaterial(0);
+
+				if (cam.getPosition().x <= 255) {
+
+					edit_chunks[0].setCell(c, &draw_chunks[0]);
+
+				} else {
+
+					edit_chunks[1].setCell(c, &draw_chunks[1]);
+				}
+			}
+
+			draw_chunks[0].updateCellBuffer();
+			draw_chunks[1].updateCellBuffer();
+
 
             cr.clearFramebuffer();
 
             cr.loadCam(cam);
-            cr.drawChunk(draw_chunk, 0,0,0);
+
+			for (DrawChunk& c : draw_chunks) {
+
+				cr.drawChunk(c);
+			}
+
 
             moveCam(cam);
 

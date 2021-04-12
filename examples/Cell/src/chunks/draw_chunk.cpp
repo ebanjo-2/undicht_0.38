@@ -213,8 +213,6 @@ namespace cell {
 
     void DrawChunk::updateCellBuffer() {
 
-		std::cout << "updating " << m_cells_to_update.size() << "Cells \n";
-
 		if (getDrawnCellCount() * 7 * sizeof(int) > m_buffer.getInstanceBufferSize()) {
 			// need resize
 			std::cout << "resizing the buffer to " << getDrawnCellCount() * 7 * sizeof(int) * 2 << "\n";

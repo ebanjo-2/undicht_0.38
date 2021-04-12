@@ -111,6 +111,12 @@ namespace cell {
 
     }
 
+	void Cell::setMaterial(unsigned short mat) {
+
+		this->mat = mat;
+	}
+
+
 
     ////////////////////////////////////// getting the data of the cell //////////////////////////////////////
 
@@ -170,6 +176,11 @@ namespace cell {
 
         return s.x * s.y * s.z;
     }
+
+	unsigned short Cell::getMaterial() const {
+
+		return mat;
+	}
 
     ////////////////////////////////////// functions to modify the volume of the cell //////////////////////////////////////
 

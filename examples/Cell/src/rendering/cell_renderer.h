@@ -64,7 +64,7 @@ namespace cell {
 
             void loadCam(undicht::graphics::PerspectiveCamera3D& cam);
 
-            void drawChunk(DrawChunk& chunk, int x, int y, int z);
+            void drawChunk(DrawChunk& chunk);
 
             CellRenderer();
             virtual ~CellRenderer();

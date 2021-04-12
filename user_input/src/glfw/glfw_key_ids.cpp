@@ -44,6 +44,12 @@ namespace undicht {
                 UND_KEY_LSHIFT = GLFW_KEY_LEFT_SHIFT;
                 UND_KEY_SPACE = GLFW_KEY_SPACE;
 
+				UND_MOUSE_1 = GLFW_MOUSE_BUTTON_1; // left
+				UND_MOUSE_2 = GLFW_MOUSE_BUTTON_2;; // right
+				UND_MOUSE_3 = GLFW_MOUSE_BUTTON_3;;
+				UND_MOUSE_4 = GLFW_MOUSE_BUTTON_4;;
+				UND_MOUSE_5 = GLFW_MOUSE_BUTTON_5;;
+				UND_MOUSE_6 = GLFW_MOUSE_BUTTON_6;;
             }
 
         } // glfw

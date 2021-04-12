@@ -48,7 +48,11 @@ namespace cell {
 			void writeToBuffer(const std::vector<Cell>& cells, int offset);
 			void writeToBuffer(const Cell& cell, int offset);
 
-		
+		public:
+			// the position of the chunk in world space
+
+			glm::ivec3 m_position;
+
 		public:
 
 			/** adds the cell to the m_cells vector */
