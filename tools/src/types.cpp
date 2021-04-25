@@ -11,9 +11,10 @@ namespace undicht {
 
         // primitive data types
         const int UND_INT = 1;
+		const int UND_UINT2 = 10; // 2 bit unsigned integer
 		const int UND_UINT8 = UND_UNSIGNED_CHAR; // 8 bit unsigned int, = UND_UNSIGNED_CHAR
-		const int UND_UINT16 = 10; // = unsigned short
-		const int UND_UINT32 = 11; // = unsigned int
+		const int UND_UINT16 = 11; // = unsigned short
+		const int UND_UINT32 = 12; // = unsigned int
 
         const int UND_FLOAT = 2;
         const int UND_STR = 3;

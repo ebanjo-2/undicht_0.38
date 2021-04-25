@@ -27,7 +27,7 @@ void endFrame(Window& window);
 
 std::array<Light, 10> lights = {
 
-	Light(glm::vec3(0,0,0), glm::vec3(0.5,1.0,0.5), 400),
+	Light(glm::vec3(0,0,0), glm::vec3(0.5,1.0,0.5), 1000),
 	Light(glm::vec3(0,0,0), glm::vec3(0.2,0.2,1.0), 150),
 	Light(glm::vec3(0,0,0), glm::vec3(1.0,0.2,1.0), 150),
 	Light(glm::vec3(0,0,0), glm::vec3(0.2,1.0,0.2), 150),
@@ -78,7 +78,7 @@ int main() {
 
 		PerspectiveCamera3D cam;
 		cam.setViewRange(0.1, 10000);
-		//cam.setPosition(glm::vec3(0, 0, -7));
+		cam.setPosition(glm::vec3(0, 0, -7));
 
 		GBufferRenderer gbuffer_renderer;
 		LightRenderer light_renderer;

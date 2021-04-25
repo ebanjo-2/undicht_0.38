@@ -277,18 +277,51 @@ namespace undicht {
 						m_pixel_layout = GL_RGBA;
 						m_memory_format = GL_RGBA16;
 					}
+					else if (component_types[0] == UND_UINT2) {
+						// 2 bits per color channel
+						m_pixel_layout = GL_RGBA;
+						m_memory_format = GL_RGBA2;
+					}
 
-				} else if (component_types[2] != UND_TYPE_UNAVAILABLE) {
+				}
+				else if (component_types[2] != UND_TYPE_UNAVAILABLE) {
 					// rgb channels
 
 					if (component_types[0] == UND_UNSIGNED_CHAR) {
 						// 8 bits per color channel
 						m_pixel_layout = GL_RGB;
 						m_memory_format = GL_RGB8;
-					} else if (component_types[0] == UND_UINT16) {
+					}
+					else if (component_types[0] == UND_UINT16) {
 						// 16 bits per color channel
 						m_pixel_layout = GL_RGB;
 						m_memory_format = GL_RGB16;
+					}
+
+				}
+				else if (component_types[1] != UND_TYPE_UNAVAILABLE) {
+					// rg channels
+
+					if (component_types[0] == UND_UNSIGNED_CHAR) { // equals UND_UINT8
+						// 8 bits per color channel
+						m_pixel_layout = GL_RG;
+						m_memory_format = GL_RG8;
+					}
+
+				}
+				else if (component_types[0] != UND_TYPE_UNAVAILABLE) {
+					// single channel
+
+					if (component_types[0] == UND_UNSIGNED_CHAR) { // equals UND_UINT8
+						// 8 bits per color channel
+						m_pixel_layout = GL_RED;
+						m_memory_format = GL_R8;
+					}
+					else if (component_types[0] == UND_UINT16) {
+						// 16 bits per color channel
+
+						m_pixel_layout = GL_RED;
+						m_memory_format = GL_R16;
 					}
 
 				}

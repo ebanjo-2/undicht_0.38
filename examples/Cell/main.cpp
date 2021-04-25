@@ -5,8 +5,12 @@
 #include <window/window.h>
 
 #include <material.h>
+#include <material_register.h>
 
 #include <rendering/cell_renderer.h>
+#include <rendering/cell_gbuffer.h>
+
+#include <rendering/final/final_renderer.h>
 
 #include <camera/camera_control.h>
 #include <files/model_loading/image_loader.h>
@@ -34,37 +38,47 @@ int main() {
 
 		CellRenderer cr;
 		cr.setViewport(1680, 1050);
+
 		PerspectiveCamera3D cam;
 		cam.setAspectRatio(1600.0f / 900.0f);
 		cam.setPosition(glm::vec3(1, 1, 1));
 
+		CellGBuffer gbuffer(1680, 1050);
+		cr.submit(&gbuffer);
+
+		FinalRenderer fr;
+		fr.setViewport(1680, 1050);
+
 		// materials
-		Material stone = cr.registerMaterial("default", "stone");
-		Material sand = cr.registerMaterial("default", "sand");
-		Material wood_floor = cr.registerMaterial("default", "wood_floor");
-		Material dirt = cr.registerMaterial("default", "dirt");
-		Material grass = cr.registerMaterial("default", "grass");
+
+		MaterialRegister material_register;
+
+		Material stone = material_register.addMaterial("default", "stone");
+		Material sand = material_register.addMaterial("default", "sand");
+		Material wood_floor = material_register.addMaterial("default", "wood_floor");
+		Material dirt = material_register.addMaterial("default", "dirt");
+		Material grass = material_register.addMaterial("default", "grass");
 
 
 		ImageLoader loader;
 		TextureData data;
 
 		loader.loadTextureFromFile(data, "res/stone.png");
-		cr.setMaterialTexture(stone, data);
+		material_register.setMaterialTexture(stone, data);
 
 		std::cout << stone.getID() << "\n";
 
 		loader.loadTextureFromFile(data, "res/sand.png");
-		cr.setMaterialTexture(sand, data);
+		material_register.setMaterialTexture(sand, data);
 
 		loader.loadTextureFromFile(data, "res/wood_floor.png");
-		cr.setMaterialTexture(wood_floor, data);
+		material_register.setMaterialTexture(wood_floor, data);
 
 		loader.loadTextureFromFile(data, "res/dirt.png");
-		cr.setMaterialTexture(dirt, data);
+		material_register.setMaterialTexture(dirt, data);
 
 		loader.loadTextureFromFile(data, "res/grass.png");
-		cr.setMaterialTexture(grass, data);
+		material_register.setMaterialTexture(grass, data);
 
 
 		DrawChunk draw_chunks[2];
@@ -147,7 +161,7 @@ int main() {
 			draw_chunks[1].updateCellBuffer();
 
 
-            cr.clearFramebuffer();
+            cr.clearFramebuffer(0,0,0,0); // all zeros, no false info for deferred rendering
 
             cr.loadCam(cam);
 
@@ -156,6 +170,8 @@ int main() {
 				cr.drawChunk(c);
 			}
 
+			fr.clearFramebuffer();
+			fr.drawFinal(gbuffer, material_register);
 
             moveCam(cam);
 

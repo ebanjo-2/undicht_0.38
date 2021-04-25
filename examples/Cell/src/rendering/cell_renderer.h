@@ -19,21 +19,6 @@ namespace cell {
     class CellRenderer : public undicht::graphics::Renderer {
 
         public:
-            // storing the data of registered materials
-
-            struct RegisteredMaterial {
-
-                std::string name;
-                int prefix;
-
-            };
-
-            static std::vector<RegisteredMaterial> s_materials;
-            static std::vector<std::string> s_prefixes;
-            static undicht::graphics::Texture* s_texture_atlas; // contains the texture data of all materials
-
-
-        public:
 
             // camera uniforms
             static undicht::graphics::Uniform* s_proj;
@@ -48,16 +33,6 @@ namespace cell {
 
             static void init();
             static void term();
-
-        public:
-            // the data that gets drawn by the renderer
-
-        public:
-            // managing materials
-
-            static Material registerMaterial(const std::string& prefix, const std::string& name);
-
-            static void setMaterialTexture(const Material& mat, undicht::tools::TextureData& data);
 
         public:
             // drawing

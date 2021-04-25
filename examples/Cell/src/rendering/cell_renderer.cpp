@@ -30,12 +30,6 @@ namespace cell {
     int CellRenderer::s_renderer_count = 0;
 
 
-    std::vector<CellRenderer::RegisteredMaterial> CellRenderer::s_materials;
-
-    std::vector<std::string> CellRenderer::s_prefixes;
-
-    Texture* CellRenderer::s_texture_atlas;
-
     void CellRenderer::init() {
 
         s_proj = new Uniform;
@@ -59,22 +53,6 @@ namespace cell {
 
         // initializing the material texture atlas
 
-        {
-
-            s_texture_atlas = new Texture;
-            s_texture_atlas->setName("texture_atlas");
-            s_texture_atlas->setSize(16, 16, 16); // 16 materials is the limit for now
-
-            BufferLayout layout({ UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR, UND_UNSIGNED_CHAR });
-            s_texture_atlas->setPixelFormat(layout);
-
-            s_texture_atlas->setFilteringMethod(UND_NEAREST, UND_NEAREST);
-
-            // first material is void
-
-            registerMaterial("default", "void");
-
-        }
 
 
     }
@@ -86,8 +64,6 @@ namespace cell {
         delete s_view;
         delete s_chunk_offset;
         delete s_shader;
-
-        delete s_texture_atlas;
     }
 
     CellRenderer::CellRenderer() {
@@ -111,47 +87,6 @@ namespace cell {
             term();
     }
 
-    ///////////////////////////////////////// managing materials /////////////////////////////////////////
-
-    Material CellRenderer::registerMaterial(const std::string& prefix, const std::string& name) {
-
-        RegisteredMaterial reg_mat;
-        reg_mat.name = name;
-
-        // searching for the prefix
-        for (int i = 0; i < s_prefixes.size(); i++) {
-
-            if (!prefix.compare(s_prefixes.at(i))) {
-
-                reg_mat.prefix = i;
-                break;
-            }
-
-        }
-
-        Material new_mat;
-        new_mat.setName(prefix, name);
-        new_mat.setID(s_materials.size());
-
-        s_materials.push_back(reg_mat);
-
-        return new_mat;
-    }
-
-    void CellRenderer::setMaterialTexture(const Material& mat, TextureData& data) {
-
-        if (mat.m_id > 15) {
-
-            std::cout << "ERROR: maximum material count is 16" << "\n";
-            return;
-        }
-
-        s_texture_atlas->setData(data.pixels.data(), sizeof(data.pixels), mat.m_id);
-        s_texture_atlas->generateMipMaps();
-
-    }
-
-
     ////////////////////////////////////////////// drawing ///////////////////////////////////////////////
 
     void CellRenderer::loadCam(undicht::graphics::PerspectiveCamera3D& cam) {
@@ -165,10 +100,6 @@ namespace cell {
     }
 
     void CellRenderer::drawChunk(DrawChunk& chunk) {
-
-        // storing the cellchunks in the vertex buffers per instance data
-
-        s_shader->loadTexture(*s_texture_atlas);
 
         // loading the chunk position to the shader
         s_chunk_offset->setData(glm::value_ptr(chunk.m_position), UND_VEC3I);
