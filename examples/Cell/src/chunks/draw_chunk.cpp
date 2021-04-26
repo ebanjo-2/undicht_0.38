@@ -58,15 +58,22 @@ namespace cell {
 			// if (c.mat == 0) continue;
 			// dont skip, because it may be used in the future
 
-			cell_data.push_back(c.getPoint1()[0]);
-			cell_data.push_back(c.getPoint1()[1]);
-			cell_data.push_back(c.getPoint1()[2]);
+			if (c.gets_drawn) {
 
-			cell_data.push_back(c.getSize()[0]);
-			cell_data.push_back(c.getSize()[1]);
-			cell_data.push_back(c.getSize()[2]);
+				cell_data.push_back(c.getPoint1()[0]);
+				cell_data.push_back(c.getPoint1()[1]);
+				cell_data.push_back(c.getPoint1()[2]);
 
-			cell_data.push_back(c.mat);
+				cell_data.push_back(c.getSize()[0]);
+				cell_data.push_back(c.getSize()[1]);
+				cell_data.push_back(c.getSize()[2]);
+
+				cell_data.push_back(c.mat);
+
+			}
+			else {
+				cell_data.insert(cell_data.end(), { 0,0,0, 0,0,0, 0 });
+			}
 
 		}
 
@@ -211,9 +218,12 @@ namespace cell {
 
 	}
 
-    void DrawChunk::updateCellBuffer() {
+    bool DrawChunk::updateCellBuffer() {
 
-		if (getDrawnCellCount() * 7 * sizeof(int) > m_buffer.getInstanceBufferSize()) {
+		bool needs_resize = getDrawnCellCount() * 7 * sizeof(int) > m_buffer.getInstanceBufferSize();
+		/** @return true, if the cell buffer on the video memory needed to be resized */
+
+		if (needs_resize) {
 			// need resize
 			std::cout << "resizing the buffer to " << getDrawnCellCount() * 7 * sizeof(int) * 2 << "\n";
 			m_buffer.resizeInstanceBuffer(getDrawnCellCount() * 7 * sizeof(int) * 2); // *2 
@@ -226,7 +236,7 @@ namespace cell {
 
 		m_cells_to_update.clear();
 
-
+		return needs_resize;
     }
 
 	void DrawChunk::updateCellBufferTotal() {

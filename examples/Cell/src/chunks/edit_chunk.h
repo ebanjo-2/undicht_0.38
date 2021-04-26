@@ -42,6 +42,11 @@ namespace cell {
         // functions to reduce the size of DrawChunks
         // Warning: very large cells are slower to edit
 
+		/** tests if there are void cells around the drawn cells
+		* if not, they dont need to be drawn
+		* should be called after many cells were edited */
+		void findHiddenCells(DrawChunk* c);
+
         /** tries to minimize the size of the DrawChunk
         * by finding cells that can be merged */
         void optDrawChunkByMerge(DrawChunk* c);

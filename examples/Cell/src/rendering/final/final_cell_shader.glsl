@@ -21,20 +21,20 @@ out vec3 FragColor;
 in vec2 uv;
 
 uniform sampler2D uvs;
-uniform sampler2D material;
+uniform usampler2D material;
 uniform sampler2D normal;
 
 uniform sampler2DArray texture_atlas;
 
 void main() {
 
-	float material_id = texture(material, uv).r * 65536;
+	unsigned int material_id = texture(material, uv).r;
 	vec3 tex_atlas_uv = vec3(texture(uvs, uv).rg, material_id);
 	
 	vec3 frag_normal = texture(normal, uv).rgb * 2 - 1;
 	
-	vec3 sun_dir = normalize(vec3(0,1,1));
-	float basic_lighting = dot(frag_normal, sun_dir) + 0.3;
+	vec3 sun_dir = normalize(vec3(0.3,1,0.6));
+	float basic_lighting = dot(frag_normal, sun_dir) * .5 + 0.7;
 
 
 	FragColor = texture(texture_atlas, tex_atlas_uv).rgb * basic_lighting;

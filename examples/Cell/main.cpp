@@ -17,6 +17,8 @@
 
 #include <chunks/edit_chunk.h>
 
+#include <undicht_time.h>
+
 using namespace undicht;
 using namespace graphics;
 
@@ -34,7 +36,7 @@ int main() {
 		mouse_input->setInputWindow(&window);
 
 		window.setCursorVisible(false);
-		//window.setWindowMode(true, false);
+		window.setWindowMode(true, false);
 
 		CellRenderer cr;
 		cr.setViewport(1680, 1050);
@@ -130,7 +132,7 @@ int main() {
 
 			if (mouse_input->getButtonState(UND_MOUSE_1)) {
 				// adding a 20*20*20 cube of stone around the camera
-				c.setMaterial(stone.m_id);
+				c.setMaterial(wood_floor.m_id);
 
 				if (cam.getPosition().x <= 255) {
 
@@ -177,6 +179,8 @@ int main() {
 
             mouse_input->updateCursorOffset();
             window.update();
+
+			std::cout << getFPS() << "\n";
         }
 
         termCam();

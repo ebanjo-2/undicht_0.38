@@ -20,6 +20,8 @@ namespace cell {
         std::array<unsigned char,3> pos2; // stores the distances of the cells other borders to the 255 coordinate
         unsigned short mat;
 
+		bool gets_drawn = true; // can get set to false for cells that are completly surrounded by solid cells
+
     public:
         // setting the data of the cell
 

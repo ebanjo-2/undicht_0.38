@@ -20,7 +20,7 @@ uniform mat4 proj;
 uniform ivec3 chunk_offset = ivec3(0,0,0);
 
 out vec2 uv;
-flat out float material;
+flat out unsigned int material;
 out vec3 normal;
 
 vec2 calcUV(vec3 pos, vec3 normal);
@@ -30,7 +30,7 @@ void main() {
     vec3 pos = aPos * aBlockSize;
 	
 	uv = calcUV(pos, aNormal);
-	material = aMaterial / 65536;
+	material = unsigned int(aMaterial);
 	normal = aNormal * 0.5 + 0.5;
 
 	gl_Position = proj * view * vec4(pos + aBlockPos + chunk_offset, 1.0f);
@@ -47,11 +47,11 @@ vec2 calcUV(vec3 pos, vec3 normal) {
 #version 330 core
 
 out vec2 uv_texture;
-out float mat_texture;
+out unsigned int mat_texture;
 out vec4 norm_texture; // 2 bits per channel are enough
 
 in vec2 uv;
-flat in float material;
+flat in unsigned int material;
 in vec3 normal;
 
 uniform sampler2DArray color;

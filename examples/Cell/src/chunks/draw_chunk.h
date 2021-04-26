@@ -66,7 +66,8 @@ namespace cell {
 
         public:
 
-            void updateCellBuffer();
+			/** @return true, if the cell buffer on the video memory needed to be resized */
+            bool updateCellBuffer();
 
 			/** needed when the cell buffer is resized */
 			void updateCellBufferTotal();

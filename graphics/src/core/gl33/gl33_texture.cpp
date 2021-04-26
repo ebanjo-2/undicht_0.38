@@ -320,8 +320,8 @@ namespace undicht {
 					else if (component_types[0] == UND_UINT16) {
 						// 16 bits per color channel
 
-						m_pixel_layout = GL_RED;
-						m_memory_format = GL_R16;
+						m_pixel_layout = GL_RED_INTEGER;
+						m_memory_format = GL_R16UI;
 					}
 
 				}
