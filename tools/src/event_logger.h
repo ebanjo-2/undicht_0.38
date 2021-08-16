@@ -5,6 +5,7 @@
 #include "note.h"
 #include "string_tools.h"
 
+
 namespace undicht {
 
     namespace tools {

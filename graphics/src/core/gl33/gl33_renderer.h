@@ -30,8 +30,8 @@ namespace undicht {
 				int m_blending_sfactor = tools::UND_SRC_ALPHA;
 				int m_blending_dfactor = tools::UND_ONE_MINUS_SRC_ALPHA;
 
-				int m_viewport_width = 0;
-				int m_viewport_height = 0;
+				int m_viewport_width = 800;
+				int m_viewport_height = 600;
 				int m_viewport_offset_x = 0;
 				int m_viewport_offset_y = 0;
 

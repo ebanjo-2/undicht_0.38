@@ -9,6 +9,7 @@ namespace undicht {
 
 	namespace tools {
 
+        // maybe this should be in its own file
 		struct TextureData {
 
 			std::vector<char> pixels;

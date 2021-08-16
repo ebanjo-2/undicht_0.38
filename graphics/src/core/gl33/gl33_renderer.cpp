@@ -1,6 +1,6 @@
 #include "core/graphics_core.h"
 
-#ifdef USE_GL33 
+#ifdef USE_GL33
 
 #include <glad/glad.h>
 
@@ -237,7 +237,7 @@ namespace undicht {
 				if (s_depth_test_enabled != m_depth_test_enabled) {
 
 					if (m_depth_test_enabled) {
-						
+
 						glEnable(GL_DEPTH_TEST);
 					}
 					else {
@@ -284,7 +284,7 @@ namespace undicht {
 				if (s_culling_enabled != m_culling_enabled) {
 
 					if (m_culling_enabled) {
-			
+
 						glEnable(GL_CULL_FACE);
 					} 	else {
 
@@ -311,7 +311,7 @@ namespace undicht {
 					if (m_blending_enabled) {
 
 						if ((m_blending_sfactor != s_blending_sfactor) || (m_blending_dfactor != s_blending_dfactor)) {
-							// updating the factors								
+							// updating the factors
 
 							if ((m_blending_sfactor == UND_SRC_ALPHA) && (m_blending_dfactor == UND_ONE_MINUS_SRC_ALPHA))
 								glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

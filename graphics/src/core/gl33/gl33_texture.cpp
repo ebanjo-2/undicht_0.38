@@ -59,14 +59,14 @@ namespace undicht {
             }
 
 
-            void Texture::getSize(int& width, int& height) {
+            void Texture::getSize(int& width, int& height) const{
 
                 width = m_width;
                 height = m_height;
 
             }
 
-            void Texture::getSize(int& width, int& height, int& depth) {
+            void Texture::getSize(int& width, int& height, int& depth) const{
 
                 width = m_width;
                 height = m_height;

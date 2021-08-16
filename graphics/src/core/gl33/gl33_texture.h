@@ -46,9 +46,9 @@ namespace undicht {
 				* this can be used to store data for a cubemap (with depth = 6) */
 				virtual void setSize(int width, int height, int depth);
 
-				virtual void getSize(int& width, int& height);
+				virtual void getSize(int& width, int& height) const;
 
-				virtual void getSize(int& width, int& height, int& depth);
+				virtual void getSize(int& width, int& height, int& depth) const;
 
 				/** sets whether there should be a mipmap for this texture
 				* may speed up the scaling of the texture, i.e. when applied to a 3d object

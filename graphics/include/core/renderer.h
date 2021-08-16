@@ -31,12 +31,18 @@ namespace undicht {
 				/** redundand calls (with no changes) should be ignored */
 				virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0) = 0;
 
-				/** @param test_operator : the operator used to determine if a fragment passes the depth test 
-				* @param write_to_buffer : (only if enable is true) choose whether or not the fragment that passed the depth test 
+				/** @param test_operator : the operator used to determine if a fragment passes the depth test
+				* @param write_to_buffer : (only if enable is true) choose whether or not the fragment that passed the depth test
 				* gets written into the depth buffer */
 				virtual void enableDepthTest(bool enable, bool write_to_buffer = true, int test_operator = tools::UND_LESS) = 0;
 				virtual void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE) = 0;
+                /** blending takes the color that is currently stored in the color buffer
+				* and mixes it with the one outputted from the fragment shader
+				* the equation to calc the resulting color looks like this
+				* result = frag_out * sfactor + buffer * dfactor
+				* sfactor and dfactor can be something like UND_SRC_ALPHA (see types.h for all options) */
 				virtual void enableBlending(bool enable, int sfactor, int dfactor) = 0;
+
 
 				virtual void getViewport(int& width, int& height, int& offset_x, int& offset_y) = 0;
 

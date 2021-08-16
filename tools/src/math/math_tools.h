@@ -2,6 +2,7 @@
 #define math_tools
 
 #include <algorithm>
+#include <array>
 
 
 namespace undicht {
@@ -10,7 +11,7 @@ namespace undicht {
 
         template<typename number>
         bool overlappingRanges(number range_start_1, number range_end_1, number range_start_2, number range_end_2) {
-			/** "touching" ranges dont overlap */
+            /** "touching" ranges dont overlap */
 
             // making sure the start of the range is before the end
             number s1 = std::min(range_start_1, range_end_1);
@@ -28,6 +29,15 @@ namespace undicht {
             return true;
         }
 
+        template<typename number>
+        std::array<number,2> getMidValues(number n0, number n1, number n2, number n3) {
+            /** @return not the biggest and not the smallest number */
+
+            // there may be a faster way
+            std::array<number, 4> sorted = std::sort({n0, n1, n2, n3});
+
+            return {sorted[1], sorted[2]};
+        }
 
     }
 

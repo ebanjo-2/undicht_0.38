@@ -46,6 +46,9 @@ add_library("tools"
 	src/files/model_loading/collada/collada_file.h
 	src/files/model_loading/collada/collada_file.cpp
 	
+	src/files/fonts/ttfont_file.h
+	src/files/fonts/ttfont_file.cpp
+	
 	src/math/orientation_3d.h
 	src/math/orientation_3d.cpp
 
@@ -57,10 +60,15 @@ add_library("tools"
 	
 	src/math/math_tools.h
 	src/math/math_tools.cpp
+	
+	src/geometry/geometry.h
+	src/geometry/geometry.cpp
+	
 
 )
 
 target_include_directories("tools" PUBLIC src extern/glm)
+
 
 add_subdirectory(extern/stb)
 target_link_libraries("tools" PUBLIC stb_image)

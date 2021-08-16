@@ -15,14 +15,15 @@ namespace undicht {
 
         }
 
-		File::File(const std::string& file_name) {
+        File::File(const std::string& file_name) {
 
-			open(file_name);
-		}
+            open(file_name);
+        }
 
 
         File::~File() {
 
+            close();
         }
 
         ////////////////////////////////////// opening / closing files ////////////////////////////////////
@@ -32,7 +33,7 @@ namespace undicht {
             /** opens a file from the hard drive
             * @return whether or not the file could be opened */
 
-			close();
+            close();
 
             m_file_name = file_name;
 
@@ -171,6 +172,32 @@ namespace undicht {
             setPosition(old_pos);
 
             return loadTo;
+        }
+
+
+        unsigned int File::getAll(char*& loadTo) {
+            /** allocates new memory for the char array
+            * which needs to be deleted once its no longer used
+            * @return the new size of loadTo */
+
+            size_t file_size = getSize();
+
+            if(file_size == (size_t)-1) {
+                // file not open
+                EventLogger::storeNote(Note(UND_ERROR, "failed to load file content: " + getFileName(), UND_CODE_ORIGIN));
+                return 0;
+            }
+
+            loadTo = new char[file_size];
+
+            size_t old_pos = getPosition();
+            setPosition(0);
+
+            m_file_stream.read(loadTo, file_size);
+
+            setPosition(old_pos);
+
+            return file_size;
         }
 
 

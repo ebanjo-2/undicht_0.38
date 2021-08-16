@@ -7,3 +7,6 @@
 
 // graphics lib
 #define USE_GL33
+
+// tools lib
+#define USE_STB

@@ -34,8 +34,8 @@ add_library(graphics STATIC
 	src/core/gl33/gl33_vertex_buffer.h
 	src/core/gl33/gl33_vertex_buffer.cpp
 
-    src/core/gl33/gl33_tools.cpp
-    src/core/gl33/gl33_tools.h
+   src/core/gl33/gl33_tools.cpp
+   src/core/gl33/gl33_tools.h
 	
 	src/camera/camera_3d.h
 	src/camera/camera_3d.cpp
@@ -54,6 +54,14 @@ add_library(graphics STATIC
 	
 	src/deferred_shading/final_renderer.h
 	src/deferred_shading/final_renderer.cpp
+	
+	src/font_rendering/font.h
+	src/font_rendering/font.cpp
+		
+	src/font_rendering/font_renderer.h
+	src/font_rendering/font_renderer.cpp
+		
+	src/font_rendering/font_shader.glsl
 
 )
 

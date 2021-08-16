@@ -31,7 +31,7 @@ void loadCam(Camera3D& cam, Shader shader);
 void terminate();
 
 int main() {
-	
+
 
 	Window window(800, 600, "HELLO WORLD!");
 

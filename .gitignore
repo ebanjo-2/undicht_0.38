@@ -16,6 +16,7 @@
 !examples/CMakeLists.txt
 !examples/HelloWorld/CMakeLists.txt
 !examples/HelloWorld/*.cpp
+!examples/HelloWorld/res/shader.glsl
 !examples/HelloWorld/src/**/*
 
 !examples/DeferredShading/CMakeLists.txt
@@ -30,6 +31,7 @@
 !tools/.gitignore
 !tools/CMakeLists.txt
 !tools/src/**/*
+!tools/include/**/*
 
 !user_input/.gitignore
 !user_input/CMakeLists.txt
@@ -45,3 +47,4 @@
 !README.md
 
 **/Makefile
+examples/Cell/res/arial.ttf

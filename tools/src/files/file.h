@@ -55,6 +55,11 @@ namespace undicht {
                 /** reads the whole content of the file */
                 virtual std::string& getAll(std::string& loadTo);
 
+                /** allocates new memory for the char array
+                * which needs to be deleted once its no longer used
+                * @return the new size of loadTo */
+                virtual unsigned int getAll(char*& loadTo);
+
             public:
                 // writing to the file
 
