@@ -34,7 +34,7 @@ namespace undicht {
 			/** @return far_plane - near_plane */
 			float getViewRange();
 
-			/** @param fov: all angels are radian */
+			/** @param fov: all angels are radian */ // angels?
 			void setFoV(float fov);
 			float getFoV();
 

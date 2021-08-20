@@ -41,7 +41,7 @@ namespace undicht {
 				* the equation to calc the resulting color looks like this
 				* result = frag_out * sfactor + buffer * dfactor
 				* sfactor and dfactor can be something like UND_SRC_ALPHA (see types.h for all options) */
-				virtual void enableBlending(bool enable, int sfactor, int dfactor) = 0;
+				virtual void enableBlending(bool enable, int sfactor = tools::UND_SRC_ALPHA, int dfactor = tools::UND_ONE_MINUS_SRC_ALPHA) = 0;
 
 
 				virtual void getViewport(int& width, int& height, int& offset_x, int& offset_y) = 0;

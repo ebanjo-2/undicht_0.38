@@ -29,15 +29,15 @@ namespace undicht {
 				virtual void clearKeyLists();
 
 				/** stores the key presses in the order that they occurred in */
-				virtual void getPressed(std::vector<int>& keys);
+				virtual void getPressed(std::vector<int>& keys) const;
 
-				virtual void getRepeated(std::vector<int>& keys);
+				virtual void getRepeated(std::vector<int>& keys) const;
 
 				/** stores the key releases in the order that they occurred in */
-				virtual void getReleased(std::vector<int>& keys);
+				virtual void getReleased(std::vector<int>& keys) const;
 
 				/** @return the state of the key (UND_KEY_PRESSED, ... (types.h) */
-				virtual int getKeyState(int key);
+				virtual int getKeyState(int key) const;
 
 			};
 

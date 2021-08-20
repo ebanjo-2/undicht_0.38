@@ -64,24 +64,24 @@ namespace undicht {
 				s_released_keys.clear();
 			}
 
-			void KeyInput::getPressed(std::vector<int>& keys) {
+			void KeyInput::getPressed(std::vector<int>& keys) const {
 				/** stores the key presses in the order that they occurred in */
 
 				keys = s_pressed_keys;
 			}
 
-			void KeyInput::getRepeated(std::vector<int>& keys) {
+			void KeyInput::getRepeated(std::vector<int>& keys) const {
 
 				keys = s_repeated_keys;
 			}
 
-			void KeyInput::getReleased(std::vector<int>& keys) {
+			void KeyInput::getReleased(std::vector<int>& keys) const {
 				/** stores the key releases in the order that they occurred in */
 
 				keys = s_released_keys;
 			}
 
-			int KeyInput::getKeyState(int key) {
+			int KeyInput::getKeyState(int key) const {
 				/** @return the state of the key (UND_KEY_PRESSED, ... (types.h) */
 
 				if (m_window) {

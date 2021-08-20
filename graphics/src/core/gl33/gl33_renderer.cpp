@@ -72,7 +72,7 @@ namespace undicht {
                     FrameBuffer::bind(0);
                     glClearColor(r,g,b,alpha);
 
-                    if(s_depth_test_enabled) {
+                    if(m_depth_test_enabled) {
 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     } else {

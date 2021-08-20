@@ -2,6 +2,15 @@
 add_executable("cell" 
 
   main.cpp
+  
+  src/player/player.h
+  src/player/player.cpp
+  
+  src/rendering/cell_renderer.h
+  src/rendering/cell_renderer.cpp
+  
+  src/world/cell.h
+  src/world/cell.cpp
 	
 
 )

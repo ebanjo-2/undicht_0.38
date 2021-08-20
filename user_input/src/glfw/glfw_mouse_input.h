@@ -38,10 +38,10 @@ namespace undicht {
 				virtual void clearButtonLists();
 
 				/** stores the button presses in the order that they occurred in */
-				virtual void getPressed(std::vector<int>& keys);
+				virtual void getPressed(std::vector<int>& keys) const;
 
 				/** stores the button releases in the order that they occurred in */
-				virtual void getReleased(std::vector<int>& keys);
+				virtual void getReleased(std::vector<int>& keys) const;
 
 				/** @return the state of the button (UND_KEY_PRESSED, ... (types.h) */
 				virtual int getButtonState(int key) const;

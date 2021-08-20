@@ -92,13 +92,13 @@ namespace undicht {
 
 			}
 
-			void MouseInput::getPressed(std::vector<int>& keys) {
+			void MouseInput::getPressed(std::vector<int>& keys) const {
 				/** stores the button presses in the order that they occurred in */
 
 				keys = s_pressed_buttons;
 			}
 
-			void MouseInput::getReleased(std::vector<int>& keys) {
+			void MouseInput::getReleased(std::vector<int>& keys) const {
 				/** stores the button releases in the order that they occurred in */
 
 				keys = s_released_buttons;

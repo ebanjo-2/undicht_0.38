@@ -10,37 +10,69 @@
 
 #include <undicht_time.h>
 
+#include <player/player.h>
+#include <rendering/cell_renderer.h>
+
 using namespace undicht;
 using namespace graphics;
 using namespace tools;
+using namespace user_input;
+
+using namespace cell;
 
 int main(int argc, char **argv) {
 
-    Window window(1000, 105, "HELLO WORLD");
+    Window window(1650, 1050, "HELLO WORLD");
+    window.setCursorVisible(false);
 
     initEngineTime();
 
     {
 
-        Font arial("res/arial.ttf", 40);
+        Font arial("res/arial.ttf", 50);
 
-        FontRenderer renderer;
-        renderer.setFontColor(glm::vec3(1,1,1));
-        renderer.setViewport(1000, 105);
+        KeyInput key_input;
+        key_input.setInputWindow(&window);
 
-        int x, y;
-        arial.getFontMap().getSize(x,y);
+        MouseInput mouse_input;
+        mouse_input.setInputWindow(&window);
 
+        Player player(glm::vec3(0,0,0));
+
+        CellRenderer renderer;
+        FontRenderer font_renderer;
+
+        renderer.setViewport(1650, 1050);
+        font_renderer.setViewport(1650, 1050);
+
+        double last_time;
 
         while(!window.shouldClose()) {
 
-            renderer.clearFramebuffer(0.5, 0.5, 0.5);
+            renderer.clearFramebuffer();
+            font_renderer.clearFramebuffer();
 
-            renderer.draw(arial, "Hello World! " + toStr((int)getEngineTime()) + " s ", glm::vec2(-1, 1.0f/3.0f), 40);
-            renderer.draw(arial, "Fontmap size: " + toStr(x) + " , " + toStr(y) + " | size in mem: " + toStr(x*y) + " bytes", glm::vec2(-1,2.0f/3.0f - 1.0f), 30);
+            player.loadKeyInput(key_input);
+            player.loadMouseInput(mouse_input);
+
+            renderer.loadCam(player);
+            renderer.draw(glm::vec3(0,0,0));
+            renderer.draw(glm::vec3(1,1,0));
+            renderer.draw(glm::vec3(-1,1,0));
+            renderer.draw(glm::vec3(0,2,0));
+
+            font_renderer.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
+            font_renderer.draw(arial, "+", glm::vec2(0,0), 30);
+
+            font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1,0.8));
+            last_time = getEngineTime();
 
 
+            key_input.clearKeyLists();
+            mouse_input.updateCursorOffset();
+            mouse_input.clearButtonLists();
             window.update();
+
 
         }
 
@@ -48,45 +80,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-#if 0
-
-char ttf_buffer[1<<25];
-
-int main(int argc, char **argv) {
-
-    FontCharacter fc;
-    fc = 'a';
-    std::cout << "size of buffer: "<< (1<<25) << "\n";
-    std::cout << fc << "\n";
-    std::cout << fc.getID() << "\n";
-
-    stbtt_fontinfo font; // stb class for holding the font data
-    unsigned char *bitmap;
-    int w,h; // width, height
-    int i,j; // iterators for the bitmap
-    int c = 'e'; // char to be printed
-    int s = 20; // scale
-
-    // read the contents of the ttf file into the ttf_buffer
-    fread(ttf_buffer, 1, 1<<25, fopen("res/arial.ttf", "rb"));
-
-    // load the font data to the stb fontinfo class
-    stbtt_InitFont(&font, (const unsigned char*)ttf_buffer, stbtt_GetFontOffsetForIndex((const unsigned char*)ttf_buffer,0));
-
-    // generate a bitmap for the character c for the given scale s
-    bitmap = stbtt_GetCodepointBitmap(&font, 0,stbtt_ScaleForPixelHeight(&font, s), c, &w, &h, 0,0);
-
-    std::cout << "width: " << w << " height: " << h << "\n";
-
-    // draw the bitmap into console
-    for (j=0; j < h; ++j) {
-        for (i=0; i < w; ++i)
-            putchar(" .:ioVM@"[bitmap[j*w+i]>>5]);
-        putchar('|');
-        putchar('\n');
-    }
-    return 0;
-}
-
-#endif

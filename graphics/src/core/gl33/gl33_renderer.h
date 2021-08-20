@@ -79,7 +79,7 @@ namespace undicht {
 				virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
 				virtual void enableDepthTest(bool enable, bool write_to_buffer = true, int test_operator = tools::UND_LESS);
 				virtual void enableBackFaceCulling(bool enable, int cull_face = tools::UND_BACK_FACE);
-				virtual void enableBlending(bool enable, int sfactor, int dfactor);
+				virtual void enableBlending(bool enable, int sfactor = tools::UND_SRC_ALPHA, int dfactor = tools::UND_ONE_MINUS_SRC_ALPHA);
 
 
 				virtual void getViewport(int& width, int& height, int& offset_x, int& offset_y);

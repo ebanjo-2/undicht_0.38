@@ -28,13 +28,13 @@ namespace undicht {
 				virtual void clearButtonLists() = 0;
 
 				/** stores the button presses in the order that they occurred in */
-				virtual void getPressed(std::vector<int>& keys) = 0;
+				virtual void getPressed(std::vector<int>& keys) const = 0;
 
 				/** stores the button releases in the order that they occurred in */
-				virtual void getReleased(std::vector<int>& keys) = 0;
+				virtual void getReleased(std::vector<int>& keys) const = 0;
 
 				/** @return the state of the button (UND_KEY_PRESSED, ... (types.h) */
-				virtual int getButtonState(int key) = 0;
+				virtual int getButtonState(int key) const = 0;
 
 				/** the pixel position of the cursor gets stored */
 				virtual void getCursorPosition(int& pos_x, int& pos_y) const = 0;
