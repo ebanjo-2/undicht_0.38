@@ -49,6 +49,9 @@ namespace undicht {
             std::vector<float> vertices;
             std::vector<int> indices;
 
+            Geometry::useIndices(true);
+            Geometry::buildUVs(true);
+            Geometry::buildNormals(false);
             Geometry::genRectangle(glm::vec2(0, 0), glm::vec2(1, -1), vertices, indices);
 
             m_quad.setData(vertices);
@@ -95,6 +98,25 @@ namespace undicht {
 
             return font_scale;
         }
+
+
+        glm::vec2 FontRenderer::getRelSize(const Font& f, const std::string& text, int font_pixel_height) {
+
+            int vp_w, vp_h, vp_x, vp_y;
+            getViewport(vp_w, vp_h, vp_x, vp_y);
+
+            int fm_w, fm_h;
+            f.getFontMap().getSize(fm_w, fm_h);
+
+            float height_scale = float(font_pixel_height) / f.getFontHeight();
+
+            float pixel_width = f.getTotalAdvance(text) * fm_w * height_scale;
+            float pixel_height = font_pixel_height;
+
+
+            return glm::vec2(pixel_width / vp_w * 2.0f, pixel_height / vp_h * 2.0f);
+        }
+
 
         void FontRenderer::draw(const Font& f, float* char_data, int char_count, glm::vec2 pos, glm::vec2 font_scale) {
             /** @param char_data: should contain the data for rendering a string

@@ -8,10 +8,19 @@ add_executable("cell"
   
   src/rendering/cell_renderer.h
   src/rendering/cell_renderer.cpp
+
+  src/rendering/texture_atlas.h
+  src/rendering/texture_atlas.cpp
   
   src/world/cell.h
   src/world/cell.cpp
-	
+
+  src/world/chunk.h
+  src/world/chunk.cpp
+
+  src/math/cell_math.h
+  src/math/cell_math.cpp
+
 
 )
 

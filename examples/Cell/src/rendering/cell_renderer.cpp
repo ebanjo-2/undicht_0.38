@@ -37,9 +37,12 @@ namespace cell {
 
         std::vector<float> vertices;
         std::vector<int> indices;
-        Geometry::genCuboid(glm::vec3(0.5f,0.5f,0.5f), glm::vec3(-0.5f,-0.5f,-0.5f), vertices, indices);
+        Geometry::useIndices(true);
+        Geometry::buildUVs(true);
+        Geometry::buildNormals(false);
+        Geometry::genRectangle(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), vertices, indices);
 
-        m_vertex_buffer.setLayout(BufferLayout({UND_VEC3F}));
+        m_vertex_buffer.setLayout(BufferLayout({UND_VEC3F, UND_VEC2F}));
         m_vertex_buffer.setData(vertices);
         m_vertex_buffer.setIndexData(indices);
 
@@ -49,7 +52,9 @@ namespace cell {
 
         m_view.setName("view");
         m_proj.setName("proj");
-        m_pos.setName("pos");
+        m_chunk_pos.setName("chunk_pos");
+        m_pos0.setName("pos0");
+        m_pos1.setName("pos1");
 
     }
 
@@ -69,10 +74,25 @@ namespace cell {
 
     }
 
+    void CellRenderer::loadTextureAtlas(const TextureAtlas& atlas) {
+
+        m_shader.loadTexture(atlas.m_tex);
+
+    }
+
     void CellRenderer::draw(const glm::vec3& cell_pos) {
 
-        m_pos.setData(glm::value_ptr(cell_pos), UND_VEC3F);
-        m_shader.loadUniform(m_pos);
+        glm::vec3 chunk_pos = glm::vec3(0,0,0);
+        glm::vec3 pos0 = cell_pos;
+        glm::vec3 pos1 = pos0 + glm::vec3(1,1,1);
+
+        m_chunk_pos.setData(glm::value_ptr(chunk_pos), UND_VEC3F);
+        m_pos0.setData(glm::value_ptr(pos0), UND_VEC3F);
+        m_pos1.setData(glm::value_ptr(pos1), UND_VEC3F);
+
+        m_shader.loadUniform(m_chunk_pos);
+        m_shader.loadUniform(m_pos0);
+        m_shader.loadUniform(m_pos1);
 
         submit(&m_shader);
         submit(&m_vertex_buffer);
@@ -80,6 +100,38 @@ namespace cell {
         Renderer::draw();
 
     }
+
+    void CellRenderer::draw(const Cell& c) {
+
+        glm::vec3 pos0 = glm::vec3(c.m_pos0);
+        glm::vec3 pos1 = glm::vec3(c.m_pos1);
+
+        m_pos0.setData(glm::value_ptr(pos0), UND_VEC3F);
+        m_pos1.setData(glm::value_ptr(pos1), UND_VEC3F);
+
+        m_shader.loadUniform(m_pos0);
+        m_shader.loadUniform(m_pos1);
+
+        submit(&m_shader);
+        submit(&m_vertex_buffer);
+
+        Renderer::draw();
+    }
+
+
+    void CellRenderer::draw(const Chunk& c, const glm::vec3& chunk_pos) {
+
+        m_chunk_pos.setData(glm::value_ptr(chunk_pos), UND_VEC3F);
+        m_shader.loadUniform(m_chunk_pos);
+
+        for(const Cell& cell : c.m_cells) {
+
+            draw(cell);
+
+        }
+
+    }
+
 
 
 } // cell

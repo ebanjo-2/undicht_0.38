@@ -20,7 +20,7 @@ namespace undicht {
 	const extern int UND_UINT2; // 2 bits
 	const extern int UND_UINT8; // 8 bit unsigned int, = UND_UNSIGNED_CHAR
 	const extern int UND_UINT16; // = unsigned short
-	const extern int UND_UINT32; // = default int
+	const extern int UND_UINT32; // = default unsigned int
 
     const extern int UND_FLOAT;
     const extern int UND_STR;

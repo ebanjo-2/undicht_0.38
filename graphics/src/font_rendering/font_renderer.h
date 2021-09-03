@@ -37,6 +37,9 @@ namespace undicht {
                 /** @return the scale for text in the given pixel height with the current viewport */
                 glm::vec2 getFontScale(const Font& f, int font_pixel_height);
 
+                /** the size of the text when drawn to the current viewport */
+                glm::vec2 getRelSize(const Font& f, const std::string& text, int font_pixel_height);
+
                 /** @param char_data: should contain the data for rendering a string
                 * with a size of least 7 * sizeof(float) * char_count */
                 void draw(const Font&f, float* char_data, int char_count, glm::vec2 pos, glm::vec2 font_scale);

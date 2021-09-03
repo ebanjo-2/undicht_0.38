@@ -29,12 +29,15 @@ namespace undicht {
             return true;
         }
 
+
+
         template<typename number>
         std::array<number,2> getMidValues(number n0, number n1, number n2, number n3) {
             /** @return not the biggest and not the smallest number */
 
             // there may be a faster way
-            std::array<number, 4> sorted = std::sort({n0, n1, n2, n3});
+            std::array<number, 4> sorted = {n0, n1, n2, n3};
+            std::sort(sorted.begin(), sorted.end());
 
             return {sorted[1], sorted[2]};
         }

@@ -130,6 +130,7 @@ namespace undicht {
 					int texture_id = getTextureID(t.m_name, texture_known);
 					t.bind(texture_id);
 
+
 					if (!texture_known) {
 						/** loading a unique id to the sampler in the shader */
 
@@ -140,13 +141,14 @@ namespace undicht {
 						loadUniform(u);
 					}
 
-					
+
 
                 } else {
 
                     EventLogger::storeNote(Note(UND_ERROR, "SHADER: ERROR: failed to load texture to shader: no type / id", UND_CODE_ORIGIN));
                 }
 
+                undCheckGLError(UND_CODE_ORIGIN);
 
             }
 
@@ -171,7 +173,7 @@ namespace undicht {
 
                 // adding the texture to the list of textures loaded to the shader
                 m_textures.push_back(texture_name);
-	
+
 				was_known = false;
                 return m_textures.size() - 1;
             }

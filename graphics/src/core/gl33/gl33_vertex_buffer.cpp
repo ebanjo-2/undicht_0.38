@@ -223,7 +223,7 @@ namespace undicht {
 			* that changes from instance to instance but not between the vertices
 			* this data can be accessed in the shader just as vertex attributes,
 			* their indexes follow the vertex attributes */
-			
+
 			void VertexBuffer::setInstanceData(const std::vector<float>& data, unsigned int offset) {
 				/* @param offset : (in bytes) at what point in the buffer the data should be stored(0: first byte) */
 
@@ -251,7 +251,7 @@ namespace undicht {
 				* @param num_float: how many floats to copy from the buffer
 				* @param offset: (in bytes) at what point in the buffer to start copying */
 
-				// to be done 
+				// to be done
 			}
 
 			void VertexBuffer::getInstanceData(void* data, unsigned int size, unsigned int offset) {
@@ -260,7 +260,7 @@ namespace undicht {
 				// to be done
 			}
 
-	
+
 			///////////////////////////////////////////// additional instance related data /////////////////////////////////////////////
 
 
@@ -343,6 +343,11 @@ namespace undicht {
 						glVertexAttribPointer(attr_index_offset + attr_id, 1, GL_INT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
 						glEnableVertexAttribArray(attr_index_offset + attr_id);
 						attr_sum += sizeof(int);
+					} else if (attr == UND_UINT8) {
+
+                        glVertexAttribPointer(attr_index_offset + attr_id, 1,  GL_UNSIGNED_BYTE, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
+						glEnableVertexAttribArray(attr_index_offset + attr_id);
+						attr_sum += sizeof(unsigned char);
 					}
 					else if (attr == UND_VEC3F) {
 

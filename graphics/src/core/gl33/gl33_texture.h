@@ -69,8 +69,8 @@ namespace undicht {
 				* @param byte_size: the size of the data to store
 				* @param depth: for which depth level the data should be set
 				* @param mip_map_level: for which mip map level the data should be (with 0 being the biggest/default, 1 being half the size of 0 and so on)
-				* @param offset (in bytes): if you dont want to start at the first pixel */
-				virtual void setData(char* data, int byte_size, int depth = 0, int mip_map_level = 0, int offset = 0);
+                */
+				virtual void setData(char* data, int byte_size, int depth = 0, int mip_map_level = 0, int offsetx = 0, int offsety = 0, int sizex = -1, int sizey = -1);
 
 				/** will automatically generate a mipmap for the textures set data */
 				virtual void generateMipMaps();

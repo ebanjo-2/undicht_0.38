@@ -34,6 +34,16 @@ namespace undicht {
                 /** @param default orientation: pos0 upper left, pos1 lower right */
                 static void genRectangle(glm::vec2 pos0, glm::vec2 pos1, std::vector<float>& vertices, std::vector<int>& indices);
 
+                /** @param default orientation: the positions are positioned clockwise on the plane
+                * unless the two points share the same y coordinate, the rectangle is going to be vertical */
+                static void genRectangle(glm::vec3 pos0, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, std::vector<float>& vertices, std::vector<int>& indices);
+
+
+            public:
+                // manipulating existing geometry
+
+                static void applyIndices(const std::vector<float>& vertices, const std::vector<int>& indices, int vertex_size, std::vector<float>& loadTo_vertices);
+
         };
 
 

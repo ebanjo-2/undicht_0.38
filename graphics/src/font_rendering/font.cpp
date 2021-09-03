@@ -45,8 +45,9 @@ namespace undicht {
 
             m_font_map.setName("fontmap");
             m_font_map.setPixelFormat(BufferLayout({UND_UINT8}));
-            m_font_map.setFilteringMethod(UND_LINEAR, UND_LINEAR);
             m_font_map.setSize(w, h, 1);
+            m_font_map.setFilteringMethod(UND_LINEAR, UND_LINEAR);
+
             m_font_map.setData((char*)fontmap_data, sizeof(unsigned char) * w * h);
 
             delete[] fontmap_data;

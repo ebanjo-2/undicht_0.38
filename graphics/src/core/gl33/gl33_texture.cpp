@@ -24,7 +24,6 @@ namespace undicht {
                 unsigned int id;
                 glGenTextures(1, &id);
                 m_id = id;
-				m_type = GL_TEXTURE_2D;
 
             }
 
@@ -122,24 +121,26 @@ namespace undicht {
             ///////////////////////////////////////// managing the textures data //////////////////////////////////////////
 
 
-            void Texture::setData(char* data, int byte_size, int depth, int mip_map_level, int offset) {
+            void Texture::setData(char* data, int byte_size, int depth, int mip_map_level, int offsetx, int offsety, int sizex, int sizey) {
 
                 if(!(m_size_set && m_layout_set)) {
                     EventLogger::storeNote(Note(UND_ERROR, "Texture: cant set data, format incomplete", UND_CODE_ORIGIN));
                     return;
                 }
 
-                glBindTexture(m_type, m_id);
+                int width = sizex == -1 ? m_width : sizex;
+                int height = sizey == -1 ? m_height : sizey;
+
+                bind();
 
                 if(m_type == GL_TEXTURE_2D) {
 
-                    glTexImage2D(m_type, 0, m_memory_format, m_width, m_height, 0, m_pixel_layout, GL_UNSIGNED_BYTE, data);
-                    //glTexSubImage2D(m_type, mip_map_level, offset, 0, m_width, m_height, m_memory_format, GL_UNSIGNED_BYTE, data);
+                    //glTexImage2D(m_type, 0, m_memory_format, m_width, m_height, 0, m_pixel_layout, GL_UNSIGNED_BYTE, data);
+                    glTexSubImage2D(m_type, 0, offsetx, offsety, width, height, m_pixel_layout, GL_UNSIGNED_BYTE, data);
 
                 } else if (m_type == GL_TEXTURE_2D_ARRAY) {
 
-                    glTexSubImage3D(m_type, 0, 0, 0, depth, m_width, m_height, 1, m_pixel_layout, GL_UNSIGNED_BYTE, data);
-
+                    glTexSubImage3D(m_type, 0, offsetx, offsety, depth, width, height, 1, m_pixel_layout, GL_UNSIGNED_BYTE, data);
 
                 }
 
@@ -212,7 +213,7 @@ namespace undicht {
                         bind();
 
                         // glTexStorage3D(m_type, 1, m_memory_format, m_width, m_height, m_depth); // might require opengl 4.2 or higher
-                        glTexImage3D(m_type, 0, m_memory_format, m_width, m_height, m_depth, 0, m_pixel_layout, GL_UNSIGNED_BYTE, 0);
+                        glTexImage3D(m_type, 0, m_memory_format, m_width, m_height, m_depth, 0, m_pixel_layout, GL_UNSIGNED_BYTE, NULL);
 
                     }
 
@@ -264,6 +265,9 @@ namespace undicht {
             }
 
             void Texture::setOpenglFormat(const std::array<int,4>& component_types) {
+
+                m_pixel_layout = 0;
+                m_memory_format = 0;
 
 				if (component_types[3] != UND_TYPE_UNAVAILABLE) {
 					// rgba channels
