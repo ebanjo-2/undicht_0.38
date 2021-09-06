@@ -55,7 +55,9 @@ namespace cell {
     void subtractCells(const Cell& c0, const Cell& c1, std::array<Cell, 6> &diff) {
         /** c1 should be part of c0
         * creates 6 cells covering the volume difference between c0 and c1
-        * (some of those cells may have a volume of 0) */
+        * (some of those cells may have a volume of 0)
+        * order of the cells created (direction seen from c1) :
+        * +y -y +x -x +z -z */
 
         std::array<unsigned char,4> xcoords = {c0.m_pos0.x, c0.m_pos1.x, c1.m_pos0.x, c1.m_pos1.x};
         std::array<unsigned char,4> ycoords = {c0.m_pos0.y, c0.m_pos1.y, c1.m_pos0.y, c1.m_pos1.y};
@@ -69,8 +71,8 @@ namespace cell {
 
         diff[0] = Cell(u8vec3(xcoords[0], ycoords[2], zcoords[0]), u8vec3(xcoords[3], ycoords[3], zcoords[3])); // top cell
         diff[1] = Cell(u8vec3(xcoords[0], ycoords[0], zcoords[0]), u8vec3(xcoords[3], ycoords[1], zcoords[3])); // bottom cell
-        diff[2] = Cell(u8vec3(xcoords[0], ycoords[1], zcoords[0]), u8vec3(xcoords[1], ycoords[2], zcoords[3])); // left cell
-        diff[3] = Cell(u8vec3(xcoords[2], ycoords[1], zcoords[0]), u8vec3(xcoords[3], ycoords[2], zcoords[3])); // right cell
+        diff[2] = Cell(u8vec3(xcoords[2], ycoords[1], zcoords[0]), u8vec3(xcoords[3], ycoords[2], zcoords[3])); // right cell
+        diff[3] = Cell(u8vec3(xcoords[0], ycoords[1], zcoords[0]), u8vec3(xcoords[1], ycoords[2], zcoords[3])); // left cell
         diff[4] = Cell(u8vec3(xcoords[1], ycoords[1], zcoords[2]), u8vec3(xcoords[2], ycoords[2], zcoords[3])); // front cell
         diff[5] = Cell(u8vec3(xcoords[1], ycoords[1], zcoords[0]), u8vec3(xcoords[2], ycoords[2], zcoords[1])); // back cell
 

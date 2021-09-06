@@ -21,7 +21,7 @@ namespace cell {
         public:
 
             Cell();
-            Cell(const u8vec3& pos0, const u8vec3& pos1);
+            Cell(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat = 0);
             // no virtual destr cause that would increase the size of the class
 
             void setMaterial(unsigned short mat);

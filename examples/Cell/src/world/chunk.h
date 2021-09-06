@@ -44,11 +44,15 @@ namespace cell {
             * spaces without cells should be considered empty (air/void) */
             std::vector<Cell> m_cells;
 
+            std::vector<unsigned char> m_visible_faces;
+
             /** contains data about every cell in the chunk
             * 6 byte positions ( 2 * 3 bytes for u8vec)
             * 2 byte material id
             * 1 byte face mask (stores what face of the cell should get drawn */
-            undicht::graphics::VertexBuffer m_draw_buffer;
+            undicht::graphics::VertexBuffer m_vertex_buffer;
+
+            int getCellCount() const;
 
         public:
             // editing cells within the chunk
@@ -70,6 +74,14 @@ namespace cell {
             void initDrawBuffer();
 
             void updateDrawBuffer(const Cell& c, int id);
+
+
+        public:
+            // deciding which faces of cells cant be seen and therefor shouldnt be rendered
+
+            unsigned char calcVisibleFaces(const Cell& c);
+
+            void updateVisibleFaces();
 
 
 

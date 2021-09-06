@@ -29,8 +29,8 @@ void drawCrosshair(FontRenderer& fr, Font& f);
 
 int main(int argc, char **argv) {
 
-    const int WINDOW_WIDTH = 1600;
-    const int WINDOW_HEIGHT = 900;
+    const int WINDOW_WIDTH = 1650;
+    const int WINDOW_HEIGHT = 1050;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
     window.setCursorVisible(false);
@@ -61,30 +61,29 @@ int main(int argc, char **argv) {
         int iron_ore = texture_atlas.addTexture("res/iron_ore.png");
         int wood_floor = texture_atlas.addTexture("res/wood_floor.png");
 
+        u8vec3 v1(10, 0, 20);
+
+        std::cout << glm::max(glm::vec3(0), glm::vec3(v1) - glm::vec3(1)).y << "\n";
+
         std::cout << "dirt id: " << dirt << "\n";
 
         Chunk chunk_0;
-        chunk_0.m_cells.emplace_back(Cell(u8vec3(0,10,0), u8vec3(10,20,4)));
+        chunk_0.m_cells = {
+
+            Cell(u8vec3(5,5,5), u8vec3(10,10,10), 0),
+            Cell(u8vec3(6,2,6), u8vec3(7,5,7), 1),
+            Cell(u8vec3(10,5,5), u8vec3(15,10,10), 1),
+            Cell(u8vec3(6,6,6), u8vec3(7,15,7), 0),
+
+        };
+
+        chunk_0.initEditCells();
+        chunk_0.updateVisibleFaces();
+
 
         double last_time;
 
-        Cell c0(u8vec3(0,20,0), u8vec3(20, 0, 20));
-        Cell c1(u8vec3(5,5,0), u8vec3(15, 15, 20));
-
-        std::array<Cell, 6> diff;
-        subtractCells(c0, c1, diff);
-
-        std::cout << c0 << "\n";
-        std::cout << "overlapping: " << overlappingVolume(c0, c1) << "\n";
-        std::cout << getVolume(diff[0]) << "\n";
-        std::cout << getVolume(diff[1]) << "\n";
-        std::cout << getVolume(diff[2]) << "\n";
-        std::cout << getVolume(diff[3]) << "\n";
-        std::cout << getVolume(diff[4]) << "\n";
-        std::cout << getVolume(diff[5]) << "\n";
-
-        chunk_0.initEditCells();
-        chunk_0.termEditCells();
+        chunk_0.initDrawBuffer();
 
         while(!window.shouldClose()) {
 
@@ -96,19 +95,10 @@ int main(int argc, char **argv) {
 
             renderer.loadCam(player);
             renderer.loadTextureAtlas(texture_atlas);
-
-            renderer.draw(glm::vec3(0,0,-5));
-            renderer.draw(glm::vec3(1,1,0));
-            renderer.draw(glm::vec3(-1,1,0));
-            renderer.draw(glm::vec3(-1,5,0));
-            renderer.draw(glm::vec3(5,2,0));
-
             renderer.draw(chunk_0, glm::vec3(0,0,0));
 
             font_renderer.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
-
             drawCrosshair(font_renderer, arial);
-
             font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
             last_time = getEngineTime();
 

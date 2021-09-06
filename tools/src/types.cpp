@@ -34,10 +34,11 @@ namespace undicht {
         const int UND_VEC4F = 100;
         const int UND_VEC3F = 101; // 3 float vector
         const int UND_VEC3I = 102; // 3 int vector
-        const int UND_VEC2F = 103; // 2 float vector
-		const int UND_VEC2I = 104; // 2 int vector
-        const int UND_MAT4F = 105; // 4 * 4 float matrix
-        const int UND_MAT3F = 106; // 3 * 3 float matrix
+        const int UND_VEC3UI8 = 103; // 3 * unsigned char vector
+        const int UND_VEC2F = 104; // 2 float vector
+		const int UND_VEC2I = 105; // 2 int vector
+        const int UND_MAT4F = 106; // 4 * 4 float matrix
+        const int UND_MAT3F = 107; // 3 * 3 float matrix
 
         // input states
         const int UND_KEY_RELEASED = 0; // 0
@@ -126,6 +127,8 @@ namespace undicht {
                 return 3 * sizeof(float); // 3 float vector
             if(type == UND_VEC3I)
                 return 3 * sizeof(int); // 3 int vector
+            if(type == UND_VEC3UI8)
+                return 3 * sizeof(unsigned char); // 3 uint vector (1 byte per component)
             if(type == UND_VEC2F)
                 return 2 * sizeof(float); // 2 float vector
 			if (type == UND_VEC2I)
@@ -167,6 +170,8 @@ namespace undicht {
             if(type == UND_VEC3F)
                 return 3; // 3 float vector
             if(type == UND_VEC3I)
+                return 3; // 3 int vector
+            if(type == UND_VEC3UI8)
                 return 3; // 3 int vector
             if(type == UND_VEC2F)
                 return 2; // 2 float vector

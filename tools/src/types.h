@@ -40,6 +40,7 @@ namespace undicht {
     const extern int UND_VEC4F; // 4 float vector
     const extern int UND_VEC3F; // 3 float vector
     const extern int UND_VEC3I; // 3 int vector
+    const extern int UND_VEC3UI8; // 3 * unsigned char vector
     const extern int UND_VEC2F; // 2 float vector
 	const extern int UND_VEC2I; // 2 int vector
     const extern int UND_MAT4F; // 4 * 4 float matrix

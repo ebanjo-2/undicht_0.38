@@ -1,20 +1,14 @@
 #include <geometry/geometry.h>
-
+#include <iostream>
 
 namespace undicht {
 
     namespace tools {
 
-        bool Geometry::s_use_indices = true;
         bool Geometry::s_build_uvs = false;
         bool Geometry::s_build_normals = false;
 
         //////////////////////////// settings for geomtry generation ///////////////////////
-
-        void Geometry::useIndices(bool use_indices) {
-
-            s_use_indices = use_indices;
-        }
 
         void Geometry::buildUVs(bool build_uvs) {
 
@@ -26,32 +20,56 @@ namespace undicht {
             s_build_normals = build_normals;
         }
 
+
+        int Geometry::getCurrVertexSize() {
+            /** the size a vertex generated with the current settings would have (in bytes)
+            * (position: 3 floats)
+            * (uv: 2 floats)
+            * (normal: 3 floats)*/
+
+            int u = sizeof(float);
+
+            return 3 * u + s_build_uvs * 2 * u + s_build_normals * 3 * u;
+        }
+
         /////////////////////////////////// generating geometry //////////////////////////////
 
-        void Geometry::genCuboid(glm::vec3 pos0, glm::vec3 pos1, std::vector<float>& vertices, std::vector<int>& indices) {
+        void Geometry::genCuboid(glm::vec3 pos0, glm::vec3 pos1, std::vector<float>& vertices) {
             /** @param default orientation: pos0 +x +y +z, pos1 -x -y -z */
 
-            vertices = {
-                pos0.x, pos0.y, pos0.z,
-                pos0.x, pos0.y, pos1.z,
-                pos1.x, pos0.y, pos1.z,
-                pos1.x, pos0.y, pos0.z,
+            std::vector<glm::vec3> pos = { // vertex positions of a cube
+                glm::vec3(pos0.x, pos0.y, pos0.z),
+                glm::vec3(pos0.x, pos0.y, pos1.z),
+                glm::vec3(pos1.x, pos0.y, pos1.z),
+                glm::vec3(pos1.x, pos0.y, pos0.z),
 
-                pos0.x, pos1.y, pos0.z,
-                pos0.x, pos1.y, pos1.z,
-                pos1.x, pos1.y, pos1.z,
-                pos1.x, pos1.y, pos0.z
+                glm::vec3(pos0.x, pos1.y, pos0.z),
+                glm::vec3(pos0.x, pos1.y, pos1.z),
+                glm::vec3(pos1.x, pos1.y, pos1.z),
+                glm::vec3(pos1.x, pos1.y, pos0.z)
             };
 
-            // all faces should be defined clockwise
-            indices = {
-                0,1,3, 1,2,3, // +y
-                4,7,5, 5,7,6, // -y
-                3,2,6, 3,6,7, // +x
-                1,0,4, 5,1,4, // -x
-                0,3,4, 3,7,4, // +z
-                2,1,5, 2,5,6  // -z
+            // all faces should be defined counter clockwise
+            std::vector<int> ind = {
+                0,1,2,3, // +y
+                7,6,5,4, // -y
+                1,0,4,5, // +x
+                3,2,6,7, // -x
+                0,3,7,4, // +z
+                2,1,5,6  // -z
             };
+
+            for(int i = 0; i < 6; i++) {
+                // generating the faces
+
+                std::vector<float> temp_vertices;
+                std::vector<int> temp_indices;
+
+                genRectangle(pos[ind[i*4 + 0]], pos[ind[i*4 + 1]], pos[ind[i*4 + 2]], pos[ind[i*4 + 3]], temp_vertices, temp_indices);
+                applyIndices(temp_vertices, temp_indices, getCurrVertexSize() / sizeof(float));
+
+                vertices.insert(vertices.end(), temp_vertices.begin(), temp_vertices.end());
+            }
 
 
         }
@@ -81,8 +99,6 @@ namespace undicht {
                 };
 
             }
-
-
 
             indices = {0,1,2, 1,3,2};
         }
@@ -121,13 +137,18 @@ namespace undicht {
         //////////////////////////////////////// manipulating existing geometry ////////////////////////////////////////
 
 
-        void Geometry::applyIndices(const std::vector<float>& vertices, const std::vector<int>& indices, int vertex_size, std::vector<float>& loadTo_vertices) {
+        void Geometry::applyIndices(std::vector<float>& vertices, const std::vector<int>& indices, int vertex_size) {
+            /** @param vertex_size: number of floats, not bytes */
+
+            int old_vertices_size = vertices.size();
 
             for(const int& i : indices) {
 
-                loadTo_vertices.insert(loadTo_vertices.end(), vertices.begin() + i * vertex_size, vertices.begin() + (i + 1) * vertex_size);
+                vertices.insert(vertices.end(), vertices.begin() + i * vertex_size, vertices.begin() + (i + 1) * vertex_size);
 
             }
+
+            vertices.erase(vertices.begin(), vertices.begin() + old_vertices_size);
 
         }
 

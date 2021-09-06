@@ -19,9 +19,6 @@ namespace cell {
             undicht::graphics::Uniform m_view;
             undicht::graphics::Uniform m_proj;
             undicht::graphics::Uniform m_chunk_pos;
-            undicht::graphics::Uniform m_pos0;
-            undicht::graphics::Uniform m_pos1;
-
 
         public:
 
@@ -35,14 +32,7 @@ namespace cell {
 
             void loadTextureAtlas(const TextureAtlas& atlas);
 
-            /** draws a single cell at the cell_pos relative to 0 | 0 | 0
-            * not bound to chunks */
-            void draw(const glm::vec3& cell_pos);
-
-            /** draws the cell within the current chunk */
-            void draw(const Cell& c);
-
-            void draw(const Chunk& c, const glm::vec3& chunk_pos);
+            void draw(Chunk& c, const glm::vec3& chunk_pos);
 
     };
 

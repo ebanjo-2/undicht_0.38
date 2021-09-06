@@ -345,11 +345,23 @@ namespace undicht {
 						attr_sum += sizeof(int);
 					} else if (attr == UND_UINT8) {
 
-                        glVertexAttribPointer(attr_index_offset + attr_id, 1,  GL_UNSIGNED_BYTE, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
+                        glVertexAttribPointer(attr_index_offset + attr_id, 1, GL_UNSIGNED_BYTE, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
 						glEnableVertexAttribArray(attr_index_offset + attr_id);
 						attr_sum += sizeof(unsigned char);
-					}
-					else if (attr == UND_VEC3F) {
+					} else if (attr == UND_UINT16) {
+
+                        glVertexAttribPointer(attr_index_offset + attr_id, 1, GL_UNSIGNED_SHORT, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
+						glEnableVertexAttribArray(attr_index_offset + attr_id);
+						attr_sum += sizeof(unsigned short);
+					} else if (attr == UND_VEC3UI8) {
+						/*std::cout << "setting vec3 attribute, id= " << attr_index_offset + attr_id << "\n";
+						std::cout << "buffer_chunk_size " << buffer_chunk_size << "\n";
+						std::cout << "attr_sum " << attr_sum << "\n";*/
+
+						glVertexAttribPointer(attr_index_offset + attr_id, 3, GL_UNSIGNED_BYTE, GL_FALSE, buffer_chunk_size, (void*)attr_sum); // will always produce a warning
+						glEnableVertexAttribArray(attr_index_offset + attr_id);
+						attr_sum += 3 * sizeof(unsigned char);
+					} else if (attr == UND_VEC3F) {
 
 						/*std::cout << "setting vec3 attribute, id= " << attr_index_offset + attr_id << "\n";
 						std::cout << "buffer_chunk_size " << buffer_chunk_size << "\n";

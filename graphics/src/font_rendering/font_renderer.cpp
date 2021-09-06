@@ -49,7 +49,6 @@ namespace undicht {
             std::vector<float> vertices;
             std::vector<int> indices;
 
-            Geometry::useIndices(true);
             Geometry::buildUVs(true);
             Geometry::buildNormals(false);
             Geometry::genRectangle(glm::vec2(0, 0), glm::vec2(1, -1), vertices, indices);

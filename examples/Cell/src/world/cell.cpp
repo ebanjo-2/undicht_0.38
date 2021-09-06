@@ -7,10 +7,11 @@ namespace cell {
     }
 
 
-    Cell::Cell(const u8vec3& pos0, const u8vec3& pos1) {
+    Cell::Cell(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat) {
 
         m_pos0 = pos0;
         m_pos1 = pos1;
+        m_material = mat;
 
     }
 
