@@ -36,7 +36,7 @@ namespace cell {
         m_shader.loadSource(shader_src);
 
         enableDepthTest(true);
-        enableBackFaceCulling(true);
+        enableBackFaceCulling(false);
         enableBlending(false);
 
         m_view.setName("view");
