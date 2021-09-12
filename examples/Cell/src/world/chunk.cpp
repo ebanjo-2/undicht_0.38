@@ -137,14 +137,9 @@ namespace cell {
         m_cells[c_id].m_visible_faces = calcVisibleFaces(c, total_cell_pool);
 
         // modifying the cells that occupied the space before c
-        std::vector<int> affected_cells;
-
-        getCellsInVolume(c, affected_cells, total_cell_pool);
-
-        for(int i : affected_cells) {
+        for(int i : total_cell_pool) {
 
             subtractFromCell(i, getSharedVolume(c, m_cells[i]));
-
         }
 
         updateDrawBuffer(c_id);

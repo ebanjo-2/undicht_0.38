@@ -17,6 +17,9 @@ add_executable("cell"
 
   src/world/chunk.h
   src/world/chunk.cpp
+  
+  src/world/chunk_optimization.h
+  src/world/chunk_optimization.cpp
 
   src/math/cell_math.h
   src/math/cell_math.cpp
