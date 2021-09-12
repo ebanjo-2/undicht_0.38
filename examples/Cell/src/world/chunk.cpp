@@ -9,22 +9,12 @@ namespace cell {
     using namespace undicht;
     using namespace tools;
 
-    const unsigned char YP = 0x01; // + y (00000001)
-    const unsigned char YN = 0x02; // - y (00000010)
-    const unsigned char XP = 0x04; // + x (00000100)
-    const unsigned char XN = 0x08; // - x (00001000)
-    const unsigned char ZP = 0x10; // + z (00010000)
-    const unsigned char ZN = 0x20; // - z (00100000)
-
-    const unsigned char FACE_MASK[] = {YP, YN, XP, XN, ZP, ZN};
-
 
 
     Chunk::Chunk() {
 
         m_vertex_buffer.setLayout(BufferLayout({UND_VEC3F, UND_VEC2F, UND_FLOAT}));
         m_vertex_buffer.setInstanceLayout(BufferLayout({UND_VEC3UI8, UND_VEC3UI8, UND_UINT16, UND_UINT8}));
-
 
         // creating the cube that gets drawn for every cell
         std::vector<float> vertices;
@@ -40,6 +30,7 @@ namespace cell {
 
         m_vertex_buffer.setData(vertices);
 
+        setCell(Cell(u8vec3(0,0,0), u8vec3(255, 255, 255), VOID_CELL));
     }
 
 
@@ -47,89 +38,44 @@ namespace cell {
 
     }
 
+    /////////////////////////// adding / removing cells from m_cells /////////////////////////////
 
-    //////////////////////////////////////// managing the edit cells //////////////////////////////////////
+    int Chunk::addCell(const Cell& c) {
 
+        int id;
 
-    void Chunk::initEditCells() {
-        /** will need 256 * 256 * 256 * sizeof(int) bytes (67 MB for 32 bit integer) */
+        if(m_unused_cells.size()) {
 
-        layer.resize(256);
+            id = m_unused_cells.back();
+            m_unused_cells.pop_back();
 
-        for(int i = 0; i < m_cells.size(); i++) {
+        } else {
 
-            Cell& c = m_cells[i];
-
-            setCellRef(c, i);
+            id = m_cells.size();
+            m_cells.resize(id + 1 );
         }
 
+        m_cells[id] = c;
+
+        return id;
     }
 
-    void Chunk::termEditCells() {
-        /** will free the memory used by the cell references */
+    void Chunk::remCell(int id) {
 
-        // clear() is not guaranteed to free the memory
-        // but this does the trick
-        std::vector<ChunkLayer>().swap(layer);
+        m_unused_cells.push_back(id);
+        m_cells[id] = Cell();
     }
 
-    void Chunk::setCellRef(const Cell& c, int ref_id) {
 
-        int x0 = std::min(c.m_pos0.x, c.m_pos1.x);
-        int x1 = std::max(c.m_pos0.x, c.m_pos1.x);
-        int y0 = std::min(c.m_pos0.y, c.m_pos1.y);
-        int y1 = std::max(c.m_pos0.y, c.m_pos1.y);
-        int z0 = std::min(c.m_pos0.z, c.m_pos1.z);
-        int z1 = std::max(c.m_pos0.z, c.m_pos1.z);
+    //////////////////////////////////// searching cells ////////////////////////////////////////
 
-        for(int y = y0; y < y1; y++)
-            for(int z = z0; z < z1; z++)
-                std::fill_n(layer[y].row[z].cell.begin() + x0, x1 - x0, ref_id);
-        // using fill_n to set the reference in the x direction of the cell
 
-    }
-
-    int Chunk::getCellRef(const u8vec3& pos) const {
-
-        return layer[pos.y].row[pos.z].cell[pos.x];
-    }
-
-    int Chunk::getCellRef(unsigned char x, unsigned char y, unsigned char z) const {
-
-        return layer[y].row[z].cell[x];
-    }
-
-    //////////////////////////////////// editing cells //////////////////////////////////////////
-
-    const Cell* Chunk::getCell(const u8vec3& pos) const {
-
-        int cell_ref = getCellRef(pos);
-
-        if(cell_ref == -1) return 0;
-
-        return &m_cells[cell_ref];
-    }
-
-    void Chunk::getCells(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const {
-        /** finds all the cells in the volume of the cuboid described by pos0 and pos1 */
-
-       // if(getVolume(Cell(ppos0, ppos1)) < m_cells.size()) {
-
-            //getCellsBySearchingVol(ppos0, ppos1, loadTo);
-        //} else {
-
-            getCellsBySearchingAll(ppos0, ppos1, loadTo);
-        //}
-
-    }
-
-    void Chunk::getCellsBySearchingAll(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const {
-
-        Cell vol(ppos0, ppos1);
+    void Chunk::getCellsInVolume(const Cell& volume, std::vector<int>& loadTo) {
+        /** searches all of m_cells for cells that overlap with the volume */
 
         for(int i = 0; i < m_cells.size(); i++) {
 
-            if(overlappingVolume(vol, m_cells[i])) {
+            if(overlappingVolume(volume, m_cells[i])) {
 
                 if(std::find(loadTo.begin(), loadTo.end(), i) == loadTo.end()) {
 
@@ -140,36 +86,18 @@ namespace cell {
 
         }
 
-
     }
 
-    void Chunk::getCellsBySearchingVol(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const {
+    void Chunk::getCellsInVolume(const Cell& volume, std::vector<int>& loadTo, const std::vector<int>& cell_pool) {
+        /** searches the cells referenced in cell_pool for cells that overlap with the volume */
 
-        u8vec3 pos0 = glm::min(ppos0, ppos1);
-        u8vec3 pos1 = glm::max(ppos0, ppos1);
+        for(int i : cell_pool) {
 
-        for(unsigned char x = pos0.x; x < pos1.x; x++) {
+            if(overlappingVolume(volume, m_cells[i])) {
 
-            for(unsigned char y = pos0.y; y < pos1.y; y++) {
+                if(std::find(loadTo.begin(), loadTo.end(), i) == loadTo.end()) {
 
-                //std::cout << "y  " << (int)y << "\n";
-
-                for(unsigned char z = pos0.z; z < pos1.z; z++) {
-
-                    //std::cout << "z  " << (int)z << "\n";
-
-                    int cell_ref = getCellRef(x,y,z);
-
-                    if(cell_ref != -1) {
-
-                        if(std::find(loadTo.begin(), loadTo.end(), cell_ref) == loadTo.end()) {
-
-                            loadTo.push_back(cell_ref);
-                        }
-                        // the referenced cell seems to be wrong in very few cases
-                        z = glm::max(m_cells[cell_ref].m_pos0.z, m_cells[cell_ref].m_pos1.z); // skipping the rest of the cell
-                    }
-
+                    loadTo.push_back(i);
                 }
 
             }
@@ -177,6 +105,9 @@ namespace cell {
         }
 
     }
+
+
+    //////////////////////////////////// editing cells //////////////////////////////////////////
 
 
     /** sets multiple cells */
@@ -190,54 +121,129 @@ namespace cell {
 
     void Chunk::setCell(const Cell& c) {
 
-        if(!layer.size()) {
-            // edit cells are not initialized
-            setCellBlind(c);
-            return;
-        }
+        glm::ivec3 ipos0 = glm::ivec3(glm::min(c.m_pos0, c.m_pos1)) - glm::ivec3(1,1,1);
+        glm::ivec3 ipos1 = glm::ivec3(glm::max(c.m_pos0, c.m_pos1)) + glm::ivec3(1,1,1);
 
-        std::vector<int> affected_cells; // the cells affected by setting c
-        getCells(c.m_pos0, c.m_pos1, affected_cells);
+        u8vec3 pos0 = (u8vec3)glm::max(ipos0, glm::ivec3(0,0,0));
+        u8vec3 pos1 = (u8vec3)glm::min(ipos1, glm::ivec3(255,255,255));
+
+        Cell total_volume(pos0, pos1);
+
+        std::vector<int> total_cell_pool; // every cell that might be of interest
+        getCellsInVolume(total_volume, total_cell_pool);
+
+        int c_id = addCell(c);
+
+        m_cells[c_id].m_visible_faces = calcVisibleFaces(c, total_cell_pool);
+
+        // modifying the cells that occupied the space before c
+        std::vector<int> affected_cells;
+
+        getCellsInVolume(c, affected_cells, total_cell_pool);
 
         for(int i : affected_cells) {
 
-            if(!overlappingVolume(c, m_cells[i])) std::cout << "wtf" << "\n";
+            subtractFromCell(i, getSharedVolume(c, m_cells[i]));
 
-            Cell shared_cell = getSharedVolume(c, m_cells[i]);
-            std::array<Cell, 6> split_cells;
-            subtractCells(m_cells[i], shared_cell, split_cells);
+        }
 
-            setCellBlind(Cell(), i); // removing the cell that got split
+        updateDrawBuffer(c_id);
 
-            for(Cell& split : split_cells) {
+    }
 
-                if(getVolume(split))
-                    setCellBlind(split);
 
+
+    // when creating the cells that fill the volume difference
+    // between the original cell and c, some faces of these new cells may or may not be visible
+
+    // copy the face setting from the original cell
+    const std::array<unsigned char, 6> take_from_original = {
+        ~YN & 0x3F,     // the cell in yp direction
+        ~YP & 0x3F,     // the cell in yn direction
+        XP | ZP | ZN,   // the cell in xp direction
+        XN | ZP | ZN,   // the cell in xn direction
+        ZP,             // the cell in zp direction
+        ZN              // the cell in zn direction
+    };
+
+    // faces that might be inside the original cell
+    const std::array<unsigned char, 6> self_covered {
+        0x00,
+        0x00,
+        YP | YN,
+        YP | YN,
+        YP | YN | XP | XN,
+        YP | YN | XP | XN
+    };
+
+    void Chunk::subtractFromCell(int cell_id, const Cell& c) {
+        /** c has to be a part of the cell with no volume outside*/
+
+        Cell original = m_cells[cell_id];
+
+        // creating new cells taking up the volume difference between the original and c
+        std::array<Cell, 6> new_cells;
+        subtractCells(original, c, new_cells);
+
+        // calculating which new cells exist
+        unsigned char new_cell_mask = 0x00;
+
+        for(int i = 0; i < 6; i++) {
+
+            if(getVolume(new_cells[i])) {
+                new_cell_mask |= (0x01 << i);
+                new_cells[i].m_material = original.m_material;
             }
 
         }
 
-        setCellBlind(c);
-    }
+        // calculating the visible faces of the new cells
+        for(int i = 0; i < 6; i++) {
 
+            if(original.m_material == VOID_CELL) continue; // no visible faces
 
-    void Chunk::setCellBlind(const Cell& c, int id) {
-        /** adding the cell to the chunks array of cells
-        * without checking for existing cells in the new cells space */
+            // cell faces taken from the original cell
+            new_cells[i].m_visible_faces |= (original.m_visible_faces & take_from_original[i]);
 
-        int cell_id = id == -1 ? m_cells.size() : id; // id of the new cell
+            // cell faces that may be covered by other new cells
+            new_cells[i].m_visible_faces |= ((~new_cell_mask) & self_covered[i] & original.m_visible_faces);
 
-        setCellRef(c, cell_id);
+            // cell faces facing towards c
+            if(c.m_material != VOID_CELL)
+                new_cells[i].m_visible_faces |= OPPOSING_FACE_MASK[i];
 
-        if(cell_id >= m_cells.size()) m_cells.resize(cell_id + 1);
-        if(cell_id >= m_visible_faces.size()) m_visible_faces.resize(cell_id + 1);
+        }
 
-        m_visible_faces[cell_id] = calcVisibleFaces(c);
-        m_cells[cell_id] = c;
-
+        // editing the m_cells array
+        remCell(cell_id);
         updateDrawBuffer(cell_id);
+
+
+        for(int i = 0; i < 6; i++) {
+
+            if(new_cell_mask & FACE_MASK[i]) {
+
+                int new_id = addCell(new_cells[i]);
+                updateDrawBuffer(new_id);
+            }
+
+        }
+
     }
+
+    bool Chunk::validVolume() {
+        /** @return true, if the sum of all cells fills the entire chunk */
+
+        int cell_vol = 0;
+
+        for(Cell& c : m_cells) {
+
+            cell_vol += getVolume(c);
+        }
+
+        return cell_vol == (255 * 255 * 255);
+    }
+
 
     ///////////////////// creating and maintaining the data to draw the chunk ///////////////////
 
@@ -260,16 +266,13 @@ namespace cell {
         unsigned char mat0 = c.m_material / 256;
         unsigned char mat1 = c.m_material % 256;
 
-        unsigned char visible_faces = m_visible_faces[id];
-
-
 
         unsigned char data[] = {
 
             c.m_pos0.x, c.m_pos0.y, c.m_pos0.z,
             c.m_pos1.x, c.m_pos1.y, c.m_pos1.z,
             mat1, mat0, // i was pretty sure it had to be mat0, mat1    but only this works (even with numbers > 255)
-            visible_faces
+            c.m_visible_faces
         };
 
         if(id < m_vertex_buffer.getInstanceBufferSize() / 9) {
@@ -292,20 +295,20 @@ namespace cell {
 
     ///////////////////////////// deciding which faces of cells cant be seen and therefor shouldnt be rendered /////////////////////////////
 
-    unsigned char Chunk::calcVisibleFaces(const Cell& c) {
+    unsigned char Chunk::calcVisibleFaces(const Cell& c, const std::vector<int>& cell_pool) {
 
-        if(!layer.size()) return 255; // edit cells not initialized
+        if(c.m_material == VOID_CELL) return 0x00; // void cell
 
         glm::ivec3 pos0 = (glm::ivec3)glm::min(c.m_pos0, c.m_pos1);
         glm::ivec3 pos1 = (glm::ivec3)glm::max(c.m_pos0, c.m_pos1);
 
         // vertices of all the faces along which the neighbouring cells need to be checked
         std::array<glm::ivec3, 12> faces = {
-            glm::ivec3(pos0.x, pos1.y + 1, pos0.z), glm::ivec3(pos1.x, pos1.y + 2, pos1.z), // +y
+            glm::ivec3(pos0.x, pos1.y + 0, pos0.z), glm::ivec3(pos1.x, pos1.y + 1, pos1.z), // +y
             glm::ivec3(pos0.x, pos0.y - 1, pos0.z), glm::ivec3(pos1.x, pos0.y - 0, pos1.z), // -y
-            glm::ivec3(pos1.x + 1, pos0.y, pos0.z), glm::ivec3(pos1.x + 2, pos1.y, pos1.z), // +x
+            glm::ivec3(pos1.x + 0, pos0.y, pos0.z), glm::ivec3(pos1.x + 1, pos1.y, pos1.z), // +x
             glm::ivec3(pos0.x - 1, pos0.y, pos0.z), glm::ivec3(pos0.x - 0, pos1.y, pos1.z), // -x
-            glm::ivec3(pos0.x, pos0.y, pos1.z + 1), glm::ivec3(pos1.x, pos1.y, pos1.z + 2), // +z
+            glm::ivec3(pos0.x, pos0.y, pos1.z + 0), glm::ivec3(pos1.x, pos1.y, pos1.z + 1), // +z
             glm::ivec3(pos0.x, pos0.y, pos0.z - 1), glm::ivec3(pos1.x, pos1.y, pos0.z - 0), // -z
         };
 
@@ -313,59 +316,33 @@ namespace cell {
 
         for(int i = 0; i < 6; i++) {
 
-            for(int x = faces[i * 2 + 0].x; x < faces[i * 2 + 1].x; x++) {
-
-                for(int y = faces[i * 2 + 0].y; y < faces[i * 2 + 1].y; y++) {
-
-                    for(int z = faces[i * 2 + 0].z; z < faces[i * 2 + 1].z; z++) {
-
-                        if(!isCellSolid(glm::ivec3(x,y,z))) {
-                            // there is no solid cell at that position
-                            visible_faces = visible_faces | FACE_MASK[i];
-                            break;
-                        }
-
-                    }
-
-                    if(FACE_MASK[i] & visible_faces) break; // face is already marked visible
-                }
-
-                if(FACE_MASK[i] & visible_faces) break; // skipping to the next face
-            }
+            if(hasVoidCells(faces[i * 2 + 0], faces[i * 2 + 1], cell_pool))
+                visible_faces |= FACE_MASK[i];
 
         }
 
         return visible_faces;
     }
 
-    /*void Chunk::updateVisibleFaces() {
+    bool Chunk::hasVoidCells(const glm::ivec3& ppos0, const glm::ivec3& ppos1,  const std::vector<int>& cell_pool) {
 
-        m_visible_faces.resize(m_cells.size());
+        if((ppos0.x < 0) || (ppos1.x > 255)) return true;
+        if((ppos0.y < 0) || (ppos1.y > 255)) return true;
+        if((ppos0.z < 0) || (ppos1.z > 255)) return true;
 
-        for(int i = 0; i < m_cells.size(); i++) {
+        for(const int& i : cell_pool) {
 
-            Cell& c = m_cells[i];
-            m_visible_faces[i] = calcVisibleFaces(c);
+            if(m_cells[i].m_material == VOID_CELL) {
+
+                if(overlappingVolume(m_cells[i], Cell(u8vec3(ppos0), u8vec3(ppos1))))
+                    return true;
+
+            }
 
         }
 
-    }*/
-
-
-    bool Chunk::isCellSolid(const glm::ivec3& pos) {
-        /** @return true, if the cell ref at pos is not -1
-        * note that this function takes an ivec3, which means the values can exceed the range of 0 to 255
-        * (i.e. when checking on a chunks edge)
-        * in which case this function will always return false
-        * it may be a good idea to actually take other chunks into account in the future */
-
-        if((pos.x < 0) || (pos.x > 255)) return false;
-        if((pos.y < 0) || (pos.y > 255)) return false;
-        if((pos.z < 0) || (pos.z > 255)) return false;
-
-        return (layer[pos.y].row[pos.z].cell[pos.x] != -1);
+        return false;
     }
-
 
 
 

@@ -12,43 +12,21 @@
 
 namespace cell {
 
-    struct ChunkRow {
-        /** a row (x direction) of 256 references to cells */
-
-        std::array<int, 256> cell;
-
-        ChunkRow() {
-            // init all cell references to -1 (not referencing a cell, indicating the volume is empty)
-            cell.fill(-1);
-        }
-    };
-
-    struct ChunkLayer {
-        /** contains 256 rows of cells, forming a layer of 256 * 256 cell references */
-
-        std::array<ChunkRow, 256> row;
-    };
-
     class CellRenderer;
 
     class Chunk {
             // stores cells in a 255 * 255 * 255 volume
 
-        protected:
+        public:
 
             friend CellRenderer;
-
-            /** used for quickly addressing a single cell, i.e. for editing
-            * since 256 layers would take up a lot of memory, distant chunks
-            * should delete them */
-            std::vector<ChunkLayer> layer;
 
             /** since i expect cells with the same material to be clustered,
             * this should be a memory efficient way of storing them
             * spaces without cells should be considered empty (air/void) */
             std::vector<Cell> m_cells;
 
-            std::vector<unsigned char> m_visible_faces;
+            std::vector<int> m_unused_cells;
 
             /** contains data about every cell in the chunk
             * 6 byte positions ( 2 * 3 bytes for u8vec)
@@ -61,57 +39,40 @@ namespace cell {
             Chunk();
             virtual ~Chunk();
 
-        public:
-            // managing the edit cells
-            // edit cells store a reference to the cells of the chunk
-            // in an 256 * 256 * 256 array
+        protected:
+            // adding / removing cells from m_cells
 
-            /** will need 256 * 256 * 256 * sizeof(int) bytes (67 MB for 32 bit integer)
-            * on my old laptop this took ~80ms (without cells stored in the chunk),
-            * so use this function wisely (time depends heavily on the number of cells in the chunk)*/
-            void initEditCells();
+            int addCell(const Cell& c);
 
-            /** will free the memory used by the cell references */
-            void termEditCells();
-
-            void setCellRef(const Cell& c, int ref_id);
-
-            int getCellRef(const u8vec3& pos) const;
-
-            int getCellRef(unsigned char x, unsigned char y, unsigned char z) const;
+            void remCell(int id);
 
         public:
-            // editing cells (only call any of these
+            // searching cells
 
-            /** @return 0 if the volume is empty */
-            const Cell* getCell(const u8vec3& pos) const;
+            /** searches all of m_cells for cells that overlap with the volume */
+            void getCellsInVolume(const Cell& volume, std::vector<int>& loadTo);
 
-            /** finds all the cells in the volume of the cuboid described by pos0 and pos1 */
-            void getCells(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const;
+            /** searches the cells referenced in cell_pool for cells that overlap with the volume */
+            void getCellsInVolume(const Cell& volume, std::vector<int>& loadTo, const std::vector<int>& cell_pool);
 
-            void getCellsBySearchingAll(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const;
+        public:
+            // editing cells
 
-            void getCellsBySearchingVol(const u8vec3& ppos0, const u8vec3& ppos1, std::vector<int>& loadTo) const;
-
-            /** sets multiple cells */
             void setCells(const std::vector<Cell>& cells);
 
-            /** unless the edit cells are initialized,
-            * this does not check if the space was already used by another cell
-            * so be careful with setting cells without the edit cells */
             void setCell(const Cell& c);
 
-            /** adding the cell to the chunks array of cells
-            * without checking for existing cells in the new cells space */
-            void setCellBlind(const Cell& c, int id = -1);
+            /** c has to be a part of the cell with no volume outside */
+            void subtractFromCell(int cell_id, const Cell& c);
 
+            /** @return true, if the sum of all cells fills the entire chunk */
+            bool validVolume();
 
         public:
             // creating and maintaining the data to draw the chunk
 
             void resizeDrawBuffer(int cell_count);
 
-            /** assuming the cell was already stored in the draw buffer */
             void updateDrawBuffer(int id);
 
             int getCellCount() const;
@@ -119,18 +80,10 @@ namespace cell {
         public:
             // deciding which faces of cells cant be seen and therefor shouldnt be rendered
 
-            unsigned char calcVisibleFaces(const Cell& c);
+            unsigned char calcVisibleFaces(const Cell& c, const std::vector<int>& cell_pool);
 
-            //void updateVisibleFaces();
-
-            /** @return true, if the cell ref at pos is not -1
-            * note that this function takes an ivec3, which means the values can exceed the range of 0 to 255
-            * (i.e. when checking on a chunks edge)
-            * in which case this function will always return false
-            * it may be a good idea to actually take other chunks into account in the future */
-            bool isCellSolid(const glm::ivec3& pos);
-
-
+            /** @return true, if there are empty cells within the volume */
+            bool hasVoidCells(const glm::ivec3& ppos0, const glm::ivec3& ppos1, const std::vector<int>& cell_pool);
 
     };
 
