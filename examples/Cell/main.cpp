@@ -19,6 +19,8 @@
 #include <world/chunk_optimization.h>
 #include <math/cell_math.h>
 
+#include <thread>
+
 using namespace undicht;
 using namespace graphics;
 using namespace tools;
@@ -30,7 +32,7 @@ void drawCrosshair(FontRenderer& fr, Font& f);
 
 int main(int argc, char **argv) {
 
-    const int WINDOW_WIDTH = 1650;
+    const int WINDOW_WIDTH = 1680;
     const int WINDOW_HEIGHT = 1050;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
@@ -75,6 +77,7 @@ int main(int argc, char **argv) {
 
 
         double last_time;
+        double edit_time = 0;
 
         //chunk_0.initDrawBuffer();
 
@@ -86,9 +89,11 @@ int main(int argc, char **argv) {
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
-            if(key_input.getKeyState(UND_KEY_E))
+            if(key_input.getKeyState(UND_KEY_E)) {
+                edit_time = getEngineTime();
                 chunk_0.setCell(Cell(u8vec3(player.getPosition() - glm::vec3(10, 10, 10)), u8vec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
-
+                edit_time = getEngineTime() - edit_time;
+            }
 
             if(key_input.getKeyState(UND_KEY_O)) {
 
@@ -112,7 +117,9 @@ int main(int argc, char **argv) {
             font_renderer.draw(arial, "Player Position: " + toStr(player.getPosition().x) + " " + toStr(player.getPosition().y) + " " + toStr(player.getPosition().z), glm::vec2(-1.0f,0.6f));
             font_renderer.draw(arial, "Player Direction: " + toStr(player.getViewDirection().x) + " " + toStr(player.getViewDirection().y) + " " + toStr(player.getViewDirection().z), glm::vec2(-1.0f,0.5f));
             font_renderer.draw(arial, "Unused Cells: " + toStr(chunk_0.m_unused_cells.size()), glm::vec2(-1.0f,0.4f));
-            font_renderer.draw(arial, "Valid Chunk: " + toStr(chunk_0.validVolume() ? "true" : "false"), glm::vec2(-1.0f,0.3f));
+            font_renderer.draw(arial, "Last edit took: " + toStr(edit_time) + "s", glm::vec2(-1.0f,0.3f));
+            font_renderer.draw(arial, "Mini Chunks Size: " + toStr(sizeof(chunk_0.m_mini_chunks)), glm::vec2(-1.0f,0.2f));
+            font_renderer.draw(arial, "Valid Chunk: " + toStr(chunk_0.validVolume() ? "true" : "false"), glm::vec2(-1.0f,0.1f));
 
 
             last_time = getEngineTime();

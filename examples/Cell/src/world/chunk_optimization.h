@@ -5,10 +5,8 @@
 
 namespace cell {
 
-
     /** tries to minimize the number of cells in the chunk */
     void optimizeChunk(Chunk& c);
-
 
 
 } // cell

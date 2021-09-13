@@ -13,6 +13,10 @@ namespace cell {
     /** volume of a cuboid */
     int getVolume(const Cell& c);
 
+    int getVolume(const u8vec3& pos0, const u8vec3& pos1);
+
+    bool isPointInside(const Cell& c, const u8vec3& point);
+
     /////////////////////////// relations between cells ///////////////////////////////////
 
     /** @return true, if the cells share some volume (touching isnt enough) */

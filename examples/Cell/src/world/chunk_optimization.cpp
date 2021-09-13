@@ -31,6 +31,9 @@ namespace cell {
         chunk.m_cells.clear();
         chunk.m_unused_cells.clear();
 
+        for(int i = 0; i < 4096; i++)
+            chunk.m_mini_chunks[i / 256][(i / 16) % 16][i % 16].clear();
+
         for(int x = 0; x < 255; x++) {
 
             for(int y = 0; y < 255; y++) {
@@ -42,9 +45,14 @@ namespace cell {
                         Cell c = findCell(u8vec3(x,y,z));
                         c.m_visible_faces = calcVisibleFaces(c);
 
+
                         chunk.m_cells.push_back(c);
+                        chunk.addToMiniChunks(chunk.m_cells.size() - 1);
+
 
                         markCellAsSet(c);
+
+                        z = c.m_pos1.z - 1;
 
                     }
                 }

@@ -57,23 +57,142 @@ namespace cell {
 
         m_cells[id] = c;
 
+        addToMiniChunks(id);
+
         return id;
     }
 
     void Chunk::remCell(int id) {
 
+        remFromMiniChunks(id);
+
         m_unused_cells.push_back(id);
         m_cells[id] = Cell();
     }
 
+    //////////////////////////////////// managing the mini chunks ////////////////////////////////////
+
+    std::vector<int>& Chunk::getMiniChunk(int x, int y, int z) {
+        // coords ranging from 0 to 15
+
+        return m_mini_chunks[x][y][z];
+    }
+
+    std::vector<int>& Chunk::getMiniChunk(const u8vec3& pos) {
+            // coords ranging from 0 to 15
+
+            return m_mini_chunks[pos.x][pos.y][pos.z];
+    }
+
+
+    void Chunk::calcMiniChunks(int cell_id, u8vec3& chunk0, u8vec3& chunk1) {
+        /** calculates which mini chunks c is part of */
+
+        calcMiniChunks(m_cells[cell_id], chunk0, chunk1);
+    }
+
+    void Chunk::calcMiniChunks(const Cell& c, u8vec3& chunk0, u8vec3& chunk1) {
+
+        u8vec3 pos0 = glm::min(c.m_pos0, c.m_pos1);
+        u8vec3 pos1 = glm::max(c.m_pos0, c.m_pos1);
+
+        chunk0 = pos0 / (unsigned char)16;
+        chunk1 = pos1 / (unsigned char)16;
+    }
+
+
+    void Chunk::addToMiniChunks(int cell_id) {
+
+        u8vec3 pos0, pos1;
+        calcMiniChunks(cell_id, pos0, pos1);
+
+
+        for(int x = pos0.x; x <= pos1.x; x++) {
+
+            for(int y = pos0.y; y <= pos1.y; y++) {
+
+                for(int z = pos0.z; z <= pos1.z; z++) {
+
+                    std::vector<int>& mini_chunk = getMiniChunk(x,y,z);
+
+                    mini_chunk.push_back(cell_id);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    void Chunk::remFromMiniChunks(int cell_id) {
+
+        u8vec3 pos0, pos1;
+        calcMiniChunks(cell_id, pos0, pos1);
+
+        for(int x = pos0.x; x <= pos1.x; x++) {
+
+            for(int y = pos0.y; y <= pos1.y; y++) {
+
+                for(int z = pos0.z; z <= pos1.z; z++) {
+
+                    std::vector<int>& mini_chunk = getMiniChunk(x,y,z);
+                    std::vector<int>::iterator pos = std::find(mini_chunk.begin(), mini_chunk.end(), cell_id);
+
+                    if(pos != mini_chunk.end()) {
+
+                        mini_chunk.erase(pos);
+                    }
+
+                }
+
+            }
+
+        }
+    }
 
     //////////////////////////////////// searching cells ////////////////////////////////////////
+
+
+    int Chunk::getCellAt(const u8vec3& pos) {
+
+        std::vector<int>& mini_chunk = getMiniChunk(pos / (unsigned char)16);
+
+        for(int cell : mini_chunk)  {
+
+            if(isPointInside(m_cells[cell], pos))
+                return cell;
+
+        }
+
+        return -1;
+    }
 
 
     void Chunk::getCellsInVolume(const Cell& volume, std::vector<int>& loadTo) {
         /** searches all of m_cells for cells that overlap with the volume */
 
-        for(int i = 0; i < m_cells.size(); i++) {
+        u8vec3 chunk0, chunk1;
+        calcMiniChunks(volume, chunk0, chunk1);
+
+        for(int x = chunk0.x; x <= chunk1.x; x++) {
+
+            for(int y = chunk0.y; y <= chunk1.y; y++) {
+
+                for(int z = chunk0.z; z <= chunk1.z; z++) {
+
+                    std::vector<int>& mini_chunk = getMiniChunk(x,y,z);
+
+                    getCellsInVolume(volume, loadTo, mini_chunk);
+
+                }
+
+            }
+
+        }
+
+
+        /*for(int i = 0; i < m_cells.size(); i++) {
 
             if(overlappingVolume(volume, m_cells[i])) {
 
@@ -84,7 +203,7 @@ namespace cell {
 
             }
 
-        }
+        }*/
 
     }
 

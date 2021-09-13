@@ -21,6 +21,30 @@ namespace cell {
         return glm::abs(w * h * d);
     }
 
+    int getVolume(const u8vec3& pos0, const u8vec3& pos1) {
+
+        int w = pos0.x - pos1.x;
+        int h = pos0.y - pos1.y;
+        int d = pos0.z - pos1.z;
+
+        return glm::abs(w * h * d);
+    }
+
+
+    bool isPointInside(const Cell& c, const u8vec3& point) {
+
+        if(!overlappingRanges(c.m_pos0.x, c.m_pos1.x, point.x, point.x))
+            return false;
+        if(!overlappingRanges(c.m_pos0.y, c.m_pos1.y, point.y, point.y))
+            return false;
+        if(!overlappingRanges(c.m_pos0.z, c.m_pos1.z, point.z, point.z))
+            return false;
+
+        return true;
+
+    }
+
+
     /////////////////////////// relations between cells ///////////////////////////////////
 
     bool overlappingVolume(const Cell& c0, const Cell& c1) {
