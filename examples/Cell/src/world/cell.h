@@ -24,12 +24,13 @@ namespace cell {
     // create the type that stores 3D coordinates of a cell within the 255 * 255 * 255 volume
     typedef glm::detail::tvec3<unsigned char> u8vec3;
 
-    class Cell {
+    template<typename T>
+    class TCell {
             // size of one cell should be 3 bytes (pos0) + 3 bytes (pos1) + 2 bytes (material) = 8 bytes
         public:
 
-            u8vec3 m_pos0 = u8vec3(0,0,0);
-            u8vec3 m_pos1 = u8vec3(0,0,0);
+            glm::detail::tvec3<T> m_pos0 = glm::detail::tvec3<T>(0,0,0);
+            glm::detail::tvec3<T> m_pos1 = glm::detail::tvec3<T>(0,0,0);
 
             // cells with material id 65535 (-1, highest ushort) are invisible
             unsigned short m_material = 0;
@@ -38,15 +39,32 @@ namespace cell {
 
         public:
 
-            Cell();
-            Cell(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat = 0, unsigned char visible_faces = 0x00);
+            TCell() {};
+            TCell(const glm::detail::tvec3<T>& pos0, const glm::detail::tvec3<T>& pos1, unsigned short mat = 0, unsigned char visible_faces = 0x00)  {
+
+                m_pos0 = pos0;
+                m_pos1 = pos1;
+                m_material = mat;
+                m_visible_faces = visible_faces;
+
+            };
+
             // no virtual destr cause that would increase the size of the class
 
-            void setMaterial(unsigned short mat);
-            unsigned short getMaterial();
+            void setMaterial(unsigned short mat) {
+
+                m_material = mat;
+            };
+
+            unsigned short getMaterial() {
+
+                return m_material;
+            };
 
 
     };
+
+    typedef TCell<unsigned char> Cell; // default cell
 
     std::ostream& operator << (std::ostream& out, const Cell& c);
 

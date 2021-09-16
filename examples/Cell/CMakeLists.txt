@@ -20,10 +20,15 @@ add_executable("cell"
   
   src/world/chunk_optimization.h
   src/world/chunk_optimization.cpp
+  
+  src/world/world.h
+  src/world/world.cpp
 
   src/math/cell_math.h
   src/math/cell_math.cpp
-
+  
+  src/worldgen/world_generator.h
+  src/worldgen/world_generator.cpp
 
 )
 

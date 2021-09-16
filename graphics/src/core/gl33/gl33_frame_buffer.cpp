@@ -121,7 +121,6 @@ namespace undicht {
 
                     bind(); // binding the Framebuffer
 					texture.bind(); // binding the texture
-					texture.setData(0, 0);// reserving memory
 
 					glFramebufferTexture2D(m_type, GL_COLOR_ATTACHMENT0 + location, GL_TEXTURE_2D, texture.m_id, 0);
 
@@ -208,7 +207,7 @@ namespace undicht {
 				bind();
 
                 if(m_color_outputs.size()) {
-					
+
                     glDrawBuffers(m_color_outputs.size(), outputs);
                 } else {
                     // from undicht 0.05

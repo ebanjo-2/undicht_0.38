@@ -301,7 +301,6 @@ namespace undicht {
 						m_pixel_layout = GL_RGB;
 						m_memory_format = GL_RGB16;
 					}
-
 				}
 				else if (component_types[1] != UND_TYPE_UNAVAILABLE) {
 					// rg channels

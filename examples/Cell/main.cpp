@@ -17,6 +17,7 @@
 
 #include <world/cell.h>
 #include <world/chunk_optimization.h>
+#include <world/world.h>
 #include <math/cell_math.h>
 
 #include <thread>
@@ -66,22 +67,26 @@ int main(int argc, char **argv) {
 
         u8vec3 v1(10, 0, 20);
 
-        Chunk chunk_0;
+        /*Chunk chunk_0;
 
         chunk_0.setCells({
             Cell(u8vec3(0,0,0), u8vec3(255,250,255), 0),
             Cell(u8vec3(3,5,3), u8vec3(12,12,12), 0),
             Cell(u8vec3(9,5,5), u8vec3(15,10,10), 1),
             Cell(u8vec3(6,2,6), u8vec3(7,5,7), 1),
-        });
+        });*/
+
+        World world_0;
 
 
-        double last_time;
+        double last_time = 0;
         double edit_time = 0;
+        double draw_time = 0;
+
 
         //chunk_0.initDrawBuffer();
 
-        while(!window.shouldClose()) {
+        while(!(window.shouldClose() || key_input.getKeyState(UND_KEY_ESC))) {
 
             renderer.clearFramebuffer();
             font_renderer.clearFramebuffer();
@@ -89,13 +94,21 @@ int main(int argc, char **argv) {
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
-            if(key_input.getKeyState(UND_KEY_E)) {
+            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
+
+            if(mouse_input.getButtonState(UND_MOUSE_1)) {
                 edit_time = getEngineTime();
-                chunk_0.setCell(Cell(u8vec3(player.getPosition() - glm::vec3(10, 10, 10)), u8vec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
                 edit_time = getEngineTime() - edit_time;
             }
 
-            if(key_input.getKeyState(UND_KEY_O)) {
+            if(mouse_input.getButtonState(UND_MOUSE_2)) {
+                edit_time = getEngineTime();
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), 0));
+                edit_time = getEngineTime() - edit_time;
+            }
+
+            /*if(key_input.getKeyState(UND_KEY_O)) {
 
                 optimizeChunk(chunk_0);
 
@@ -104,23 +117,28 @@ int main(int argc, char **argv) {
                     chunk_0.updateDrawBuffer(i);
                 }
 
-            }
+            }*/
 
             renderer.loadCam(player);
             renderer.loadTextureAtlas(texture_atlas);
-            renderer.draw(chunk_0, glm::vec3(0,0,0));
+
+
+            draw_time = getEngineTime();
+            renderer.draw(world_0);
+            renderer.drawFinalScene();
+
+
+            draw_time = getEngineTime() - draw_time;
 
             font_renderer.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
             drawCrosshair(font_renderer, arial);
-            font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
-            font_renderer.draw(arial, "Drawn Cells: " + toStr(chunk_0.getCellCount()), glm::vec2(-1.0f,0.7f));
-            font_renderer.draw(arial, "Player Position: " + toStr(player.getPosition().x) + " " + toStr(player.getPosition().y) + " " + toStr(player.getPosition().z), glm::vec2(-1.0f,0.6f));
-            font_renderer.draw(arial, "Player Direction: " + toStr(player.getViewDirection().x) + " " + toStr(player.getViewDirection().y) + " " + toStr(player.getViewDirection().z), glm::vec2(-1.0f,0.5f));
-            font_renderer.draw(arial, "Unused Cells: " + toStr(chunk_0.m_unused_cells.size()), glm::vec2(-1.0f,0.4f));
-            font_renderer.draw(arial, "Last edit took: " + toStr(edit_time) + "s", glm::vec2(-1.0f,0.3f));
-            font_renderer.draw(arial, "Mini Chunks Size: " + toStr(sizeof(chunk_0.m_mini_chunks)), glm::vec2(-1.0f,0.2f));
-            font_renderer.draw(arial, "Valid Chunk: " + toStr(chunk_0.validVolume() ? "true" : "false"), glm::vec2(-1.0f,0.1f));
 
+            font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
+            font_renderer.draw(arial, "Draw Time: " + toStr(draw_time), glm::vec2(-1.0f,0.75f));
+            font_renderer.draw(arial, "Loaded Chunks: " + toStr(world_0.m_loaded_chunks.size()), glm::vec2(-1.0f,0.7f));
+
+            font_renderer.draw(arial, "Player Position: " + toStr(player.getPosition().x) + " " + toStr(player.getPosition().y) + " " + toStr(player.getPosition().z), glm::vec2(-1.0f,0.6f));
+            font_renderer.draw(arial, "Player Direction: " + toStr(player.getViewDirection().x) + " " + toStr(player.getViewDirection().y) + " " + toStr(player.getViewDirection().z), glm::vec2(-1.0f,0.55f));
 
             last_time = getEngineTime();
 

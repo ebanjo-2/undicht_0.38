@@ -43,6 +43,8 @@ namespace undicht {
 
                 UND_KEY_LSHIFT = GLFW_KEY_LEFT_SHIFT;
                 UND_KEY_SPACE = GLFW_KEY_SPACE;
+                UND_KEY_ESC = GLFW_KEY_ESCAPE;
+
 
 				UND_MOUSE_1 = GLFW_MOUSE_BUTTON_1; // left
 				UND_MOUSE_2 = GLFW_MOUSE_BUTTON_2;; // right

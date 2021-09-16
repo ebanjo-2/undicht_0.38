@@ -60,6 +60,19 @@ namespace cell {
         return true;
     }
 
+        /** @return true, if the cells share some volume (touching isnt enough) */
+    bool overlappingVolume(const TCell<int>& c0, const TCell<int>& c1) {
+
+        if(!overlappingRanges(c0.m_pos0.x, c0.m_pos1.x, c1.m_pos0.x, c1.m_pos1.x))
+            return false;
+        if(!overlappingRanges(c0.m_pos0.y, c0.m_pos1.y, c1.m_pos0.y, c1.m_pos1.y))
+            return false;
+        if(!overlappingRanges(c0.m_pos0.z, c0.m_pos1.z, c1.m_pos0.z, c1.m_pos1.z))
+            return false;
+
+        return true;
+    }
+
     Cell getSharedVolume(const Cell& c0, const Cell& c1) {
         /** @return the volume shared by both cells
         * only works if the actually share some volume (check with overlappingVolume) */
@@ -75,6 +88,18 @@ namespace cell {
         return result;
     }
 
+    TCell<int> getSharedVolume(const TCell<int>& c0, const TCell<int>& c1) {
+
+        std::array<int,2> xcoords = getMidValues(c0.m_pos0.x, c0.m_pos1.x, c1.m_pos0.x, c1.m_pos1.x);
+        std::array<int,2> ycoords = getMidValues(c0.m_pos0.y, c0.m_pos1.y, c1.m_pos0.y, c1.m_pos1.y);
+        std::array<int,2> zcoords = getMidValues(c0.m_pos0.z, c0.m_pos1.z, c1.m_pos0.z, c1.m_pos1.z);
+
+        TCell<int> result;
+        result.m_pos0 = glm::ivec3(xcoords[0], ycoords[0], zcoords[0]);
+        result.m_pos1 = glm::ivec3(xcoords[1], ycoords[1], zcoords[1]);
+
+        return result;
+    }
 
     void subtractCells(const Cell& c0, const Cell& c1, std::array<Cell, 6> &diff) {
         /** c1 should be part of c0
