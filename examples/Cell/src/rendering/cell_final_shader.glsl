@@ -2,7 +2,7 @@
 #version 330 core
 
 layout (location = 0) in vec2 aPos;
-layout (location = 0) in vec2 aUv;
+layout (location = 1) in vec2 aUv;
 
 out vec2 uv;
 
@@ -29,8 +29,9 @@ uniform sampler2DArray texture_atlas;
 void main() {
 
 	
-	vec3 color_uv = texture(uv_texture, uv).rgb * vec3(1,1,255);
+	//vec3 color_uv = texture(uv_texture, uv).rgb * vec3(1,1,255);
 	
-	FragColor = texture(texture_atlas, color_uv).rgb;
-	//FragColor = vec4(1,0.1f,0.01, 1.0f);
+	//FragColor = texture(texture_atlas, color_uv).rgb;
+	//FragColor = texture(uv_texture, uv).rgb;
+	FragColor = texture(normal_texture, uv).rgb;
 }

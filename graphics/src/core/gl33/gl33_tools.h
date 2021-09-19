@@ -4,7 +4,7 @@
 
 #include "event_logger.h"
 
-#define UND_DEBUG
+//#define UND_DEBUG
 
 #ifdef UND_DEBUG
 #define UND_CHECK_GL_ERROR() undCheckGLError(UND_CODE_ORIGIN)

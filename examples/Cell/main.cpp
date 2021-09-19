@@ -65,6 +65,8 @@ int main(int argc, char **argv) {
         int iron_ore = texture_atlas.addTexture("res/iron_ore.png");
         int wood_floor = texture_atlas.addTexture("res/wood_floor.png");
 
+        texture_atlas.m_tex.generateMipMaps();
+
         u8vec3 v1(10, 0, 20);
 
         /*Chunk chunk_0;
@@ -89,12 +91,12 @@ int main(int argc, char **argv) {
         while(!(window.shouldClose() || key_input.getKeyState(UND_KEY_ESC))) {
 
             renderer.clearFramebuffer();
-            font_renderer.clearFramebuffer();
+            //font_renderer.clearFramebuffer();
 
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
-            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
+            world_0.loadChunks(glm::ivec3(player.getPosition()), 0);
 
             if(mouse_input.getButtonState(UND_MOUSE_1)) {
                 edit_time = getEngineTime();

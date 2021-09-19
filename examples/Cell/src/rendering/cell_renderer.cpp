@@ -86,7 +86,7 @@ namespace cell {
 
         Geometry::buildUVs(true);
         Geometry::buildNormals(false);
-        Geometry::genRectangle(glm::vec2(-1.0f,-1.0f), glm::vec2(1.0f,1.0f), vertices, indices);
+        Geometry::genRectangle(glm::vec2(-1.0f,1.0f), glm::vec2(1.0f,-1.0f), vertices, indices);
 
         m_screen_quad.setLayout(BufferLayout({UND_VEC2F, UND_VEC2F}));
         m_screen_quad.setData(vertices);
@@ -96,19 +96,39 @@ namespace cell {
     void CellRenderer::drawFinalScene() {
 
         enableDepthTest(true);
-        //enableBackFaceCulling(false);
-        //enableBlending(false);
+        enableBackFaceCulling(false);
+        enableBlending(false);
 
-        /*submit(&m_screen_quad);
+        m_final_shader.loadTexture(m_uv_texture);
+        m_final_shader.loadTexture(m_normal_texture);
+
+        submit(&m_screen_quad);
         submit(&m_final_shader);
         submit((FrameBuffer*)0);
 
-        Renderer::draw();*/
+        Renderer::draw();
     }
 
 
 
     void CellRenderer::term() {
+
+    }
+
+    void CellRenderer::clearFramebuffer() {
+
+        submit(&m_geometry_buffer);
+        Renderer::clearFramebuffer();
+
+        submit((FrameBuffer*)0);
+        Renderer::clearFramebuffer();
+
+    }
+
+    void CellRenderer::setViewport(int width, int height, int offset_x, int offset_y) {
+
+        m_geometry_buffer.setSize(width, height);
+        Renderer::setViewport(width, height, offset_x, offset_y);
 
     }
 
@@ -140,7 +160,7 @@ namespace cell {
 
         submit(&c.m_vertex_buffer);
         submit(&m_geometry_shader);
-        //submit(&m_geometry_buffer);
+        submit(&m_geometry_buffer);
 
         Renderer::draw(c.getCellCount());
 

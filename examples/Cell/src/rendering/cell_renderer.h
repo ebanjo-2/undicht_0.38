@@ -53,6 +53,9 @@ namespace cell {
             void init();
             void term();
 
+            virtual void clearFramebuffer();
+            virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
+
             void loadCam(undicht::graphics::PerspectiveCamera3D& player_cam);
 
             void loadTextureAtlas(const TextureAtlas& atlas);
