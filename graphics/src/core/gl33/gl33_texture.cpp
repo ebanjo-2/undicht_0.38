@@ -310,6 +310,11 @@ namespace undicht {
 						m_pixel_layout = GL_RG;
 						m_memory_format = GL_RG8;
 					}
+                    else if (component_types[0] == UND_UINT16) {
+						// 16 bits per color channel
+						m_pixel_layout = GL_RG_INTEGER;
+						m_memory_format = GL_RG16UI;
+					}
 
 				}
 				else if (component_types[0] != UND_TYPE_UNAVAILABLE) {

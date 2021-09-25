@@ -16,11 +16,8 @@ layout (location = 6) in float facef;
 
 //const int mat = 1;
 
-out vec3 uv;
-out vec2 uv0;
-out vec2 uv1;
-
-out vec3 tex_normal;
+flat out float material; // expecting a float in the range of 0 to 1 (multiply by 256 * 256 to get the material id)
+flat out float face; // expecting a float in the range of 0 to 1 (multiply by 256 to get the face id)
 
 uniform mat4 view;
 uniform mat4 proj;
@@ -41,49 +38,14 @@ vec2 getUvScale(int face, vec3 cell_size);
 
 void main () {
 
-	int mat = int(matf); // convert to int
-
-    uv0 = vec2(mat % 16, mat / 16) * uv_advance;
-    uv1 = uv0 + uvsize;
-    
-    int aFacei = int(aFace);
-    
-    vec3 cell_size = pos1 - pos0;
-    
-	tex_normal = getTexNormal(aFacei);
-
-	uv.xy = aUv * getUvScale(aFacei, cell_size);
-	uv.z = mat / 256;
+	material = matf;
+	face = aFace;
 
 	vec3 vertex_pos = pos0 * (vec3(1,1,1) - aPos) + pos1 * aPos;
-    bool draw_face = bool(aFacei & int(facef)); // 1 if the face should get drawn, 0 if not
+    bool draw_face = bool(int(aFace) & int(facef)); // 1 if the face should get drawn, 0 if not
     
 	gl_Position = proj * view * vec4(chunk_pos + vertex_pos * float(draw_face), 1.0f);
 	//gl_Position = proj * view * vec4(aPos, 1.0f);
-}
-
-vec3 getTexNormal(int face) {
-
-	vec3 normal =
-		float(bool(face & 0x01)) * vec3( 0.5, 1.0, 0.5) + 
-		float(bool(face & 0x02)) * vec3( 0.5, 0.0, 0.5) + 
-		float(bool(face & 0x04)) * vec3( 1.0, 0.5, 0.5) + 
-		float(bool(face & 0x08)) * vec3( 0.0, 0.5, 0.5) + 
-		float(bool(face & 0x10)) * vec3( 0.5, 0.5, 1.0) + 
-		float(bool(face & 0x20)) * vec3( 0.5, 0.5, 0.0);
-	
-	return normal;
-}
-
-
-vec2 getUvScale(int face, vec3 cell_size) {
-
-	vec2 scale = 
-		float(bool(face & 0x03)) * cell_size.zx + 
-		float(bool(face & 0x0C)) * cell_size.zy + 
-		float(bool(face & 0x30)) * cell_size.xy;
-		
-	return scale;
 }
 
 
@@ -91,23 +53,15 @@ vec2 getUvScale(int face, vec3 cell_size) {
 #fragment 
 #version 330 core
 
-out vec3 uv_texture;
-out vec4 normal_texture;
+//out uvec2 uv_texture;
+out uvec2 geo_texture;
 
-in vec3 uv;
-in vec2 uv0;
-in vec2 uv1;
-
-in vec3 tex_normal;
+flat in float material; // expecting a float in the range of 0 to 1 (multiply by 256 * 256 to get the material id)
+flat in float face; // expecting a float in the range of 0 to 1 (multiply by 256 to get the face id)
 
 void main() {
 
-  vec2 repeating_uv = fract(uv.xy);
 
-
-  uv_texture.xy = (vec2(1.0f, 1.0f) - repeating_uv) * uv0 + repeating_uv * uv1;
-  uv_texture.z = uv.z;
-  
-  normal_texture = vec4(tex_normal,1);
-
+    geo_texture = uvec2(material, face);
+    //geo_texture = uvec2(0, 1);
 }

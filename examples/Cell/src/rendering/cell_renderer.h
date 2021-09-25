@@ -20,11 +20,16 @@ namespace cell {
             undicht::graphics::Shader m_geometry_shader;
 
             undicht::graphics::Uniform m_view;
+            undicht::graphics::Uniform m_inv_view;
+
             undicht::graphics::Uniform m_proj;
+            undicht::graphics::Uniform m_inv_proj;
+
+            undicht::graphics::Uniform m_cam_pos;
+
             undicht::graphics::Uniform m_chunk_pos;
 
-            undicht::graphics::Texture m_uv_texture;
-            undicht::graphics::Texture m_normal_texture;
+            undicht::graphics::Texture m_geo_texture;
             undicht::graphics::Texture m_depth_texture;
 
             undicht::graphics::FrameBuffer m_geometry_buffer;
@@ -33,6 +38,25 @@ namespace cell {
 
         public:
             // rendering lights
+
+            undicht::graphics::Shader m_light_shader;
+
+            undicht::graphics::Texture m_light_map;
+            undicht::graphics::FrameBuffer m_light_buffer;
+
+            undicht::graphics::VertexBuffer m_light_model;
+
+			undicht::graphics::Uniform m_viewport_size;
+
+            // light uniforms
+			undicht::graphics::Uniform m_light_pos;
+			undicht::graphics::Uniform m_light_color;
+			undicht::graphics::Uniform m_light_radius;
+			undicht::graphics::Uniform m_db_light_radius;
+
+            void initLightStage();
+
+            void drawLight(const glm::vec3& pos, const glm::vec3& color, float radius);
 
         public:
             // rendering the final scene

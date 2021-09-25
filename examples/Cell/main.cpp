@@ -126,9 +126,10 @@ int main(int argc, char **argv) {
 
 
             draw_time = getEngineTime();
-            renderer.draw(world_0);
-            renderer.drawFinalScene();
 
+            renderer.draw(world_0);
+            renderer.drawLight(player.getPosition(), glm::vec3(1), 22);
+            renderer.drawFinalScene();
 
             draw_time = getEngineTime() - draw_time;
 
