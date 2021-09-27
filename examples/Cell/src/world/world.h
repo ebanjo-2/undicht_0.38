@@ -46,7 +46,9 @@ namespace cell {
             // editing the world
 
             /** @return the position of the chunk in which pos is located*/
-            glm::ivec3 getChunk(const glm::ivec3& pos);
+            glm::ivec3 getChunkPos(const glm::ivec3& pos);
+
+            Chunk& getChunk(const glm::ivec3& chunk_pos);
 
             /** parts of the cell that are outside the loaded chunks will be ignored */
             void setCell(const TCell<int>& c);

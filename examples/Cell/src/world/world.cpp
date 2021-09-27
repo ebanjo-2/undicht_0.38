@@ -43,7 +43,7 @@ namespace cell {
 
         std::vector<glm::ivec3> positions;
 
-        glm::ivec3 origin_chunk = getChunk(origin);
+        glm::ivec3 origin_chunk = getChunkPos(origin);
 
         for(int x = -1 * m_dst; x <= m_dst; x++) {
 
@@ -123,7 +123,7 @@ namespace cell {
 
     ////////////////////////////////// editing the world //////////////////////////////////
 
-    glm::ivec3 World::getChunk(const glm::ivec3& pos) {
+    glm::ivec3 World::getChunkPos(const glm::ivec3& pos) {
         /** @return the position of the chunk in which pos is located*/
 
         glm::ivec3 chunk_pos = (pos / 255) * 255; // integers!!!
@@ -138,6 +138,18 @@ namespace cell {
             chunk_pos.z -= 255;
 
         return chunk_pos;
+    }
+
+    Chunk& World::getChunk(const glm::ivec3& chunk_pos) {
+
+        for(int i = 0; i < m_loaded_chunks.size(); i++) {
+
+            if(m_chunk_positions[i] == chunk_pos)
+                return m_loaded_chunks[i];
+
+        }
+
+        return m_loaded_chunks[0];
     }
 
     void World::setCell(const TCell<int>& c) {

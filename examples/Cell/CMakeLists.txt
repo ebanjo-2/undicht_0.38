@@ -9,6 +9,15 @@ add_executable("cell"
   src/rendering/cell_renderer.h
   src/rendering/cell_renderer.cpp
 
+  src/rendering/cell_geometry_renderer.h
+  src/rendering/cell_geometry_renderer.cpp
+
+  src/rendering/cell_light_renderer.h
+  src/rendering/cell_light_renderer.cpp
+
+  src/rendering/cell_final_renderer.h
+  src/rendering/cell_final_renderer.cpp
+
   src/rendering/texture_atlas.h
   src/rendering/texture_atlas.cpp
   

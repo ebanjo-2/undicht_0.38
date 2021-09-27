@@ -10,64 +10,18 @@
 
 #include <rendering/texture_atlas.h>
 
+#include <rendering/cell_geometry_renderer.h>
+#include <rendering/cell_light_renderer.h>
+#include <rendering/cell_final_renderer.h>
+
 namespace cell {
 
-    class CellRenderer : public undicht::graphics::Renderer {
+    class CellRenderer {
 
-        public:
-            // rendering to the geometry buffer
-
-            undicht::graphics::Shader m_geometry_shader;
-
-            undicht::graphics::Uniform m_view;
-            undicht::graphics::Uniform m_inv_view;
-
-            undicht::graphics::Uniform m_proj;
-            undicht::graphics::Uniform m_inv_proj;
-
-            undicht::graphics::Uniform m_cam_pos;
-
-            undicht::graphics::Uniform m_chunk_pos;
-
-            undicht::graphics::Texture m_geo_texture;
-            undicht::graphics::Texture m_depth_texture;
-
-            undicht::graphics::FrameBuffer m_geometry_buffer;
-
-            void initGeometryStage();
-
-        public:
-            // rendering lights
-
-            undicht::graphics::Shader m_light_shader;
-
-            undicht::graphics::Texture m_light_map;
-            undicht::graphics::FrameBuffer m_light_buffer;
-
-            undicht::graphics::VertexBuffer m_light_model;
-
-			undicht::graphics::Uniform m_viewport_size;
-
-            // light uniforms
-			undicht::graphics::Uniform m_light_pos;
-			undicht::graphics::Uniform m_light_color;
-			undicht::graphics::Uniform m_light_radius;
-			undicht::graphics::Uniform m_db_light_radius;
-
-            void initLightStage();
-
-            void drawLight(const glm::vec3& pos, const glm::vec3& color, float radius);
-
-        public:
-            // rendering the final scene
-
-            undicht::graphics::VertexBuffer m_screen_quad;
-
-            undicht::graphics::Shader m_final_shader;
-
-            void initFinalStage();
-
-            void drawFinalScene();
+    public:
+            CellGeometryRenderer m_geometry_renderer;
+            CellLightRenderer m_light_renderer;
+            CellFinalRenderer m_final_renderer;
 
         public:
 
@@ -87,6 +41,10 @@ namespace cell {
             void draw(Chunk& c, const glm::ivec3& chunk_pos);
 
             void draw(World& w);
+
+            void drawLight(const glm::vec3& pos, const glm::vec3& color, float radius);
+
+            void drawFinalScene();
 
 
 

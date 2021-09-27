@@ -23,10 +23,13 @@ namespace cell {
 
 
 
-    void optimizeChunk(Chunk& chunk) {
+    void optimizeChunk(const Chunk* old, Chunk* optimized) {
         /** tries to minimize the number of cells in the chunk */
 
-        loadChunk(chunk);
+        const Chunk& old_chunk = *old;
+        Chunk& chunk = *optimized;
+
+        loadChunk(old_chunk);
 
         chunk.m_cells.clear();
         chunk.m_unused_cells.clear();

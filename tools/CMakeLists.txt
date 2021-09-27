@@ -24,6 +24,8 @@ add_library("tools"
 	
 	src/undicht_time.h
 	src/undicht_time.cpp	
+
+	src/undicht_thread.h
 	
 	src/files/file.h
 	src/files/file.cpp

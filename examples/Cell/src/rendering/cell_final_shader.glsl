@@ -37,10 +37,10 @@ uniform mat4 view;
 uniform mat4 proj;
 
 
-const int TEX_ATLAS_WIDTH = 256;
-const int TEX_ATLAS_HEIGHT = 256;
+const int TEX_ATLAS_WIDTH = 512;
+const int TEX_ATLAS_HEIGHT = 512;
 
-const vec2 uv_size = vec2(16.0f / TEX_ATLAS_WIDTH, 16.0f / TEX_ATLAS_HEIGHT);
+const vec2 uv_size = vec2(32.0f / TEX_ATLAS_WIDTH, 32.0f / TEX_ATLAS_HEIGHT);
 
 vec3 getWorldPosition();
 vec2 getTexUV(vec3 pos, int face, uint material);
@@ -66,7 +66,7 @@ vec3 getWorldPosition() {
     // thanks for the math 
     // https://stackoverflow.com/questions/32227283/getting-world-position-from-depth-buffer-value
 
-    float z = texture(depth_map, uv) * 2.0 - 1.0;
+    float z = texture(depth_map, uv).x * 2.0 - 1.0;
 
     vec4 clipSpacePosition = vec4(uv * 2.0 - 1.0, z, 1.0);
     vec4 viewSpacePosition = inv_proj * clipSpacePosition;

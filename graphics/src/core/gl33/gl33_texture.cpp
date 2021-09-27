@@ -25,6 +25,8 @@ namespace undicht {
                 glGenTextures(1, &id);
                 m_id = id;
 
+                //setSize(0,0,1);
+
             }
 
             Texture::~Texture() {

@@ -53,6 +53,7 @@ void main () {
 #fragment 
 #version 330 core
 
+
 //out uvec2 uv_texture;
 out uvec2 geo_texture;
 

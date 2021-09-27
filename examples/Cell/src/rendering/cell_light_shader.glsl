@@ -22,6 +22,7 @@ void main() {
 #fragment
 #version 330 core
 
+
 out vec4 light_color_intensity;
 
 // camera uniforms
@@ -38,7 +39,7 @@ uniform float light_radius = 50;
 uniform float db_light_radius = 1 / 50;
 
 // material values that influenz lighting
-uniform float shininess = 8;
+uniform float shininess = 128;
 uniform float specularStrength = 0.7;
 
 // input textures from the geometry buffer
@@ -83,7 +84,7 @@ void main() {
 vec3 getFragPosition(vec2 _uv) {
 	// @return the position of the fragment extracted from the position texture 
 	
-    float z = texture(depth_map, _uv) * 2.0 - 1.0;
+    float z = texture(depth_map, _uv).x * 2.0 - 1.0;
 
     vec4 clipSpacePosition = vec4(_uv * 2.0 - 1.0, z, 1.0);
     vec4 viewSpacePosition = inv_proj * clipSpacePosition;
