@@ -1,5 +1,5 @@
 #include <world/chunk_optimization.h>
-
+#include <world/cell.h>
 
 namespace cell {
 
@@ -93,7 +93,7 @@ namespace cell {
 
     }
 
-    Cell findCell(const u8vec3& pos0) {
+    /*Cell findCell(const u8vec3& pos0) {
 
         bool search_x = true;
         bool search_y = true;
@@ -153,7 +153,66 @@ namespace cell {
         }
 
         return Cell(pos0, pos1, mat);
-    }
+    }*/
+
+	Cell findCell(const u8vec3& pos0) {
+
+		glm::ivec3 p0 = glm::ivec3(pos0);
+		glm::ivec3 p1 = p0 + glm::ivec3(1);
+
+		unsigned short mat = cell_mat_buffer[pos0.x * 255 * 255 + pos0.y * 255 + pos0.z];
+		bool has_visible_faces = containsVoid(p0 - glm::ivec3(1,1,1), p1 + glm::ivec3(1, 1, 1));
+
+		const glm::ivec3 directions[] = {
+			glm::ivec3( 0, 1, 0),
+			glm::ivec3( 1, 0, 0),
+			glm::ivec3( 0, 0, 1),
+		};
+
+		unsigned char left_search_directions = YP | XP | ZP;
+
+		while (left_search_directions) {
+
+			for (int i = 0; i < 3; i++) {
+
+				unsigned char current_dir = 0x01 << (i * 2);
+
+				if (current_dir & left_search_directions) {
+
+					glm::ivec3 test_pos0 = p1 * directions[i] + p0 * (1 - directions[i]);
+					glm::ivec3 test_pos1 = p1 + directions[i];
+
+					if (test_pos1.x > 255 || test_pos1.y > 255 || test_pos1.z > 255) {
+
+						left_search_directions -= current_dir;
+						continue;
+					}
+
+					glm::ivec3 visible_check0 = test_pos0 - (1 - directions[i]);
+					glm::ivec3 visible_check1 = test_pos1 + 1;
+
+					if ((mat != VOID_CELL) && (containsVoid(visible_check0, visible_check1) != has_visible_faces)) {
+
+						left_search_directions -= current_dir;
+						continue;
+					}
+
+					if (sameMaterial(u8vec3(test_pos0), u8vec3(test_pos1), mat)) {
+
+						p1 += directions[i];
+					} else {
+
+						left_search_directions -= current_dir;
+					}
+
+				}
+
+			}
+
+		}
+
+		return Cell(u8vec3(p0), u8vec3(p1), mat);
+	}
 
     unsigned char calcVisibleFaces(const Cell& c) {
 

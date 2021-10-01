@@ -5,6 +5,8 @@
 #include <string>
 #include <fstream>
 
+#include <buffer_layout.h>
+
 namespace undicht {
 
 	namespace tools {
@@ -23,7 +25,7 @@ namespace undicht {
 
                 /** opens a file from the hard drive
                 * @return whether or not the file could be opened */
-                virtual bool open(const std::string& file_name);
+                virtual bool open(const std::string& file_name, bool open_binary = false);
 
                 /// to be called when the file is no longer used
                 virtual void close();
@@ -60,6 +62,13 @@ namespace undicht {
                 * @return the new size of loadTo */
                 virtual unsigned int getAll(char*& loadTo);
 
+			public:
+				// reading / writing a binary file
+
+				void readBinary(char* loadTo, const BufferLayout& layout, int count = 1);
+
+				void writeBinary(char* data, const BufferLayout& layout, int count = 1);
+
             public:
                 // writing to the file
 
@@ -74,9 +83,12 @@ namespace undicht {
                 // getting information about the state of the file
 
                 /** @return an index into the file
-                * representing the position of the "cursor" which is used to read / write */
+                * representing the position of the "cursor" which is used to read*/
                 virtual size_t getPosition();
                 virtual void setPosition(const size_t& position);
+
+				virtual size_t getWritePosition();
+				virtual void setWritePosition(const size_t& position);
 
                 /** @return whether the "cursor" has reached the end of the file */
                 virtual bool eof()  const;
@@ -87,7 +99,7 @@ namespace undicht {
             public:
 
                 File();
-				File(const std::string& file_name);
+				File(const std::string& file_name, bool open_binary = false);
                 virtual ~File();
 
         };

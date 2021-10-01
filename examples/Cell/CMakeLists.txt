@@ -38,7 +38,9 @@ add_executable("cell"
   
   src/worldgen/world_generator.h
   src/worldgen/world_generator.cpp
-
+  
+  src/worldgen/world_file.h
+  src/worldgen/world_file.cpp
 )
 
 target_link_libraries("cell" graphics user_input)

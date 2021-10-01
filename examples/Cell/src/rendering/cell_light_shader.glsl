@@ -77,7 +77,7 @@ void main() {
 	float distance_to_light = length(obj_position - light_origin);
 	float light_strength = max((light_radius - distance_to_light) * db_light_radius, 0);
 	
-	light_color_intensity = vec4(light_color * phong, light_strength);
+	light_color_intensity = vec4(light_color * phong, light_strength * phong);
     //light_color_intensity = vec4(1,0,0,light_strength);
 }
 

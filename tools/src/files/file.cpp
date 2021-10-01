@@ -15,9 +15,9 @@ namespace undicht {
 
         }
 
-        File::File(const std::string& file_name) {
+        File::File(const std::string& file_name, bool open_binary) {
 
-            open(file_name);
+            open(file_name, open_binary);
         }
 
 
@@ -29,7 +29,7 @@ namespace undicht {
         ////////////////////////////////////// opening / closing files ////////////////////////////////////
 
 
-        bool File::open(const std::string& file_name) {
+        bool File::open(const std::string& file_name, bool open_binary) {
             /** opens a file from the hard drive
             * @return whether or not the file could be opened */
 
@@ -38,7 +38,15 @@ namespace undicht {
             m_file_name = file_name;
 
             // opening the file
-            m_file_stream.open(file_name); // open for both input and output
+			if (open_binary) {
+
+				m_file_stream.open(file_name, std::ios::in | std::ios::out | std::ios::binary); // open for both input and output
+			}
+			else {
+
+				m_file_stream.open(file_name, std::ios::in | std::ios::out); // open for both input and output
+			}
+
 
             if(m_file_stream.fail()) {
                 return false;
@@ -200,6 +208,26 @@ namespace undicht {
             return file_size;
         }
 
+		/////////////////////   ////// reading / writing a binary file ////////////////////////////////////
+
+		void File::readBinary(char* loadTo, const BufferLayout& layout, int count) {
+
+			size_t data_size = layout.getTotalSize() * count;
+
+			m_file_stream.read(loadTo, data_size);
+
+		}
+
+		void File::writeBinary(char* data, const BufferLayout& layout, int count) {
+
+			size_t data_size = layout.getTotalSize() * count;
+
+			// types bigger than 1 byte will be written to the file as they are stored in the data buffer
+			// which probably means high bytes before low bytes
+			// i think this is called big endian
+			m_file_stream.write(data, data_size);
+
+		}
 
         //////////////////////////////////// writing to the file ////////////////////////////////////
 
@@ -225,7 +253,7 @@ namespace undicht {
 
         size_t File::getPosition() {
             /** @return an index into the file
-            * representing the position of the "cursor" which is used to read / write */
+            * representing the position of the "cursor" which is used to read */
 
             return m_file_stream.tellg();
         }
@@ -235,6 +263,15 @@ namespace undicht {
             m_file_stream.seekg(position);
         }
 
+		size_t File::getWritePosition() {
+
+			return m_file_stream.tellp();
+		}
+
+		void File::setWritePosition(const size_t& position) {
+
+			m_file_stream.seekp(position);
+		}
 
         bool File::eof()  const {
             /** @return whether the "cursor" has reached the end of the file */

@@ -1,5 +1,7 @@
 #include "types.h"
 
+#include <stdint.h>
+
 // integers to distinguish data types
 // i.e. to store the type of data of a buffer
 
@@ -105,6 +107,15 @@ namespace undicht {
 		const int UND_TANGENT3F = 204; // used for normal mapping
 		const int UND_BITANGENT3F = 205; // used for normal mapping
 
+
+		bool isBigEndianSys() {
+			/** @return true, if the system stores the high bytes of data types
+			* bigger than one byte,i.e. 32 bit int first (Big Endian) */
+			
+			int32_t num = 1;
+
+			return *(char *)&num != 1;
+		}
 
         int getSizeOfType(int type) {
             /** @return the size of the type in bytes */

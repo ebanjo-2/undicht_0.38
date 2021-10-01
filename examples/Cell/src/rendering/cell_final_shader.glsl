@@ -55,7 +55,7 @@ void main() {
 	
     //FragColor = getWorldPosition().xyz / 16;
 
-    vec3 lighting = texture(light_map, uv).rgb + 0.15;
+    vec3 lighting = texture(light_map, uv).rgb + 0.25;
     
      FragColor = texture(texture_atlas, vec3(tex_uv, material / uint(256))).rgb * lighting;
      //FragColor = lighting;
@@ -86,9 +86,9 @@ vec2 getTexUV(vec3 pos, int face, uint material) {
     vec3 rep_pos = fract(pos); // repeats from 0 to 1
 
 	vec2 rep_uv = 
-		float(bool(face & 0x03)) * fract(rep_pos).zx + 
-		float(bool(face & 0x0C)) * fract(rep_pos).zy + 
-		float(bool(face & 0x30)) * fract(rep_pos).xy;
+		float(bool(face & 0x03)) * rep_pos.zx + 
+		float(bool(face & 0x0C)) * rep_pos.zy + 
+		float(bool(face & 0x30)) * rep_pos.xy;
 
     vec2 tex_uv = vec2(material % uint(16), (material % uint(256)) / uint(16)) * uv_size;
     tex_uv += uv_size * rep_uv;    

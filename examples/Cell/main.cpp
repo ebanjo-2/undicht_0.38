@@ -22,6 +22,8 @@
 
 #include <undicht_thread.h>
 
+#include <worldgen/world_file.h>
+
 using namespace undicht;
 using namespace graphics;
 using namespace tools;
@@ -35,16 +37,25 @@ void drawCrosshair(FontRenderer& fr, Font& f);
 
 int main(int argc, char **argv) {
 
-    const int WINDOW_WIDTH = 1920;
-    const int WINDOW_HEIGHT = 1080;
+    //const int WINDOW_WIDTH = 1920;
+    //const int WINDOW_HEIGHT = 1080;
+	const int WINDOW_WIDTH = 1680;
+	const int WINDOW_HEIGHT = 1050;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
-    window.setWindowMode(true,true);
+    window.setWindowMode(false,false);
     window.setCursorVisible(false);
 
     initEngineTime();
 
     {
+
+
+		WorldFile first_world;
+		first_world.open("res/new.und");
+
+		first_world.writeHeader(2);
+		first_world.writeChunkRegisterHeader(2);
 
         Font arial("res/arial.ttf", 25);
 
@@ -92,6 +103,8 @@ int main(int argc, char **argv) {
         double edit_time = 0;
         double draw_time = 0;
 
+		double last_light_placed = 0;
+
 
         //chunk_0.initDrawBuffer();
 
@@ -99,6 +112,8 @@ int main(int argc, char **argv) {
         double thread_start_time = 0;
         Chunk* old_chunk = 0;
         Chunk* opt_chunk = 0;
+
+		std::vector<glm::vec3> lights;
 
         while(!(window.shouldClose() || key_input.getKeyState(UND_KEY_ESC))) {
 
@@ -122,10 +137,19 @@ int main(int argc, char **argv) {
                 edit_time = getEngineTime() - edit_time;
             }
 
+			if (key_input.getKeyState(UND_KEY_L)) {
+				if (getEngineTime() - last_light_placed > 0.5f) {
+					lights.push_back(player.getPosition());
+					last_light_placed = getEngineTime();
+				} 
+			}
+
             if((!opt_chunk) && key_input.getKeyState(UND_KEY_O)) {
 
                 old_chunk = &world_0.getChunk(world_0.getChunkPos(glm::ivec3(player.getPosition())));
                 opt_chunk = new Chunk();
+
+				std::cout << "old chunk had: " << old_chunk->getCellCount() << " cells" << "\n";
 
                 opt_thread = new Thread(optimizeChunk, old_chunk, opt_chunk);
                 thread_start_time = getEngineTime();
@@ -138,6 +162,9 @@ int main(int argc, char **argv) {
                 opt_thread = 0;
 
                 *old_chunk = *opt_chunk;
+
+				std::cout << "new chunk has: " << old_chunk->getCellCount() << " cells" << "\n";
+
 
                 for(int i = 0; i < opt_chunk->m_cells.size(); i++) {
 
@@ -161,7 +188,13 @@ int main(int argc, char **argv) {
             renderer.drawLight(glm::vec3(0,22,0), glm::vec3(1,0.8,0), 22);
             renderer.drawLight(glm::vec3(50,22,0), glm::vec3(1,0.8,0), 22);
             renderer.drawLight(glm::vec3(20,22,40), glm::vec3(1,0.8,0), 22);
-            renderer.drawLight(player.getPosition(), glm::vec3(3,3.0,3.0), 40);
+            renderer.drawLight(player.getPosition(), glm::vec3(3,3.0,3.0), 80);
+
+			for (glm::vec3& l : lights) {
+				renderer.drawLight(l, glm::vec3(1, 0.8, 0.8), 40);
+			}
+
+			
 
             renderer.drawFinalScene();
 
@@ -173,6 +206,8 @@ int main(int argc, char **argv) {
             font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
             font_renderer.draw(arial, "Draw Time: " + toStr(draw_time), glm::vec2(-1.0f,0.75f));
             font_renderer.draw(arial, "Loaded Chunks: " + toStr(world_0.m_loaded_chunks.size()), glm::vec2(-1.0f,0.7f));
+			font_renderer.draw(arial, "Drawn Lights: " + toStr(lights.size()), glm::vec2(-1.0f, 0.65f));
+
 
             font_renderer.draw(arial, "Player Position: " + toStr(player.getPosition().x) + " " + toStr(player.getPosition().y) + " " + toStr(player.getPosition().z), glm::vec2(-1.0f,0.6f));
             font_renderer.draw(arial, "Current Chunk: " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).x) + " " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).y) + " " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).z), glm::vec2(-1.0f,0.55f));

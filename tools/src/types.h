@@ -8,6 +8,10 @@ namespace undicht {
 
     namespace tools {
 
+		/** @return true, if the system stores the high bytes of data types
+		* bigger than one byte,i.e. 32 bit int first (Big Endian) */
+		bool isBigEndianSys();
+
     /** @return the size of the type in bytes */
     int getSizeOfType(int type);
 
