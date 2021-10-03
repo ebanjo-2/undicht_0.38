@@ -50,13 +50,6 @@ int main(int argc, char **argv) {
 
     {
 
-
-		WorldFile first_world;
-		first_world.open("res/new.und");
-
-		first_world.writeHeader(2);
-		first_world.writeChunkRegisterHeader(2);
-
         Font arial("res/arial.ttf", 25);
 
         KeyInput key_input;
@@ -80,8 +73,12 @@ int main(int argc, char **argv) {
        // int wood_floor = texture_atlas.addTexture("res/wood_floor.png");
 
         int dirt = texture_atlas.addTexture("res/dirt32.png");
-        int grass = texture_atlas.addTexture("res/grass32.png");
+        int grass = texture_atlas.addTexture("res/Gras 1.0.png");
         int stone = texture_atlas.addTexture("res/stone32.png");
+        int stone_wall = texture_atlas.addTexture("res/Stein-gemauert.png");
+        int default_wood = texture_atlas.addTexture("res/default_wood.png");
+        int holz_bretter = texture_atlas.addTexture("res/Holzbrettertextur.png");
+        int holz = texture_atlas.addTexture("res/Holztextur.png");
 
         texture_atlas.m_tex.generateMipMaps();
 
@@ -104,7 +101,7 @@ int main(int argc, char **argv) {
         double draw_time = 0;
 
 		double last_light_placed = 0;
-
+        double last_chunk_save = 0;
 
         //chunk_0.initDrawBuffer();
 
@@ -133,7 +130,11 @@ int main(int argc, char **argv) {
 
             if(mouse_input.getButtonState(UND_MOUSE_2)) {
                 edit_time = getEngineTime();
-                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), 0));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(0, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(2, 10, 2)), holz));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(2, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(10, 8, 2)), stone_wall));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(2, 8, 0)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 2)), holz));
+
+                //world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(10, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(12, 10, 2)), holz));
                 edit_time = getEngineTime() - edit_time;
             }
 
@@ -141,7 +142,7 @@ int main(int argc, char **argv) {
 				if (getEngineTime() - last_light_placed > 0.5f) {
 					lights.push_back(player.getPosition());
 					last_light_placed = getEngineTime();
-				} 
+				}
 			}
 
             if((!opt_chunk) && key_input.getKeyState(UND_KEY_O)) {
@@ -188,13 +189,11 @@ int main(int argc, char **argv) {
             renderer.drawLight(glm::vec3(0,22,0), glm::vec3(1,0.8,0), 22);
             renderer.drawLight(glm::vec3(50,22,0), glm::vec3(1,0.8,0), 22);
             renderer.drawLight(glm::vec3(20,22,40), glm::vec3(1,0.8,0), 22);
-            renderer.drawLight(player.getPosition(), glm::vec3(3,3.0,3.0), 80);
+            renderer.drawLight(player.getPosition(), glm::vec3(1.0,1.0,1.0), 80);
 
 			for (glm::vec3& l : lights) {
-				renderer.drawLight(l, glm::vec3(1, 0.8, 0.8), 40);
+				renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 40);
 			}
-
-			
 
             renderer.drawFinalScene();
 

@@ -33,6 +33,7 @@ namespace undicht {
         int UND_KEY_Z;
 
         int UND_KEY_LSHIFT;
+        int UND_KEY_LCTRL;
         int UND_KEY_SPACE;
         int UND_KEY_ESC;
 

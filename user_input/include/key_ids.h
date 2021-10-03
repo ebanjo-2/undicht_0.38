@@ -34,6 +34,7 @@ namespace undicht {
         extern int UND_KEY_Z;
 
         // special keys (i dont know what they are really called)
+        extern int UND_KEY_LCTRL;
         extern int UND_KEY_LSHIFT;
         extern int UND_KEY_SPACE;
         extern int UND_KEY_ESC;

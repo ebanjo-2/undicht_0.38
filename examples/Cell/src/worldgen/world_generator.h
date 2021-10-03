@@ -3,6 +3,8 @@
 
 #include <world/chunk.h>
 
+#include <worldgen/world_file.h>
+
 namespace cell {
 
 class WorldGenerator {
@@ -10,7 +12,6 @@ class WorldGenerator {
 public:
 
     virtual void initChunk(Chunk& c, const glm::ivec3& chunk_pos);
-
 
 };
 

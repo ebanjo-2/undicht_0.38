@@ -61,6 +61,7 @@ namespace undicht {
         void File::close() {
             /// to be called when the file is no longer used
 
+            m_file_size = -1; // -1 for not open
             m_file_stream.close();
         }
 
@@ -227,17 +228,21 @@ namespace undicht {
 			// i think this is called big endian
 			m_file_stream.write(data, data_size);
 
+			if(getWritePosition() > m_file_size)
+                m_file_size = getWritePosition();
 		}
 
         //////////////////////////////////// writing to the file ////////////////////////////////////
 
 
-        void File::eraseAll() {
+        void File::eraseAll(bool binary) {
             /// erases the content from the file
 
             close();
-            m_file_stream.open(m_file_name, std::ofstream::out | std::ofstream::in |std::ofstream::trunc); // deletes all its content
-            m_file_size = 0;
+            m_file_stream.open(m_file_name, std::ofstream::out | std::ofstream::in | std::ofstream::trunc); // deletes all its content
+
+            // using open() to reopen the file correctly
+            open(m_file_name, binary);
         }
 
 
@@ -270,7 +275,7 @@ namespace undicht {
 
 		void File::setWritePosition(const size_t& position) {
 
-			m_file_stream.seekp(position);
+			m_file_stream.seekp(position, std::ios_base::beg);
 		}
 
         bool File::eof()  const {
@@ -293,6 +298,11 @@ namespace undicht {
             }
 
             return m_file_size;
+        }
+
+        void File::clearErrors() {
+
+            m_file_stream.clear();
         }
 
 

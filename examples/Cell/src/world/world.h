@@ -3,10 +3,15 @@
 
 #include <world/chunk.h>
 #include <worldgen/world_generator.h>
+#include <worldgen/world_file.h>
 
 namespace cell {
 
     class World {
+
+        public:
+
+            WorldFile m_world_file;
 
         public:
 
@@ -21,6 +26,11 @@ namespace cell {
 
             // number of chunks to load in every direction of the origin chunk
             int m_dst = 1;
+
+        public:
+
+            World();
+            virtual ~World();
 
         public:
             // controlling world generation

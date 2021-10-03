@@ -73,7 +73,7 @@ namespace undicht {
                 // writing to the file
 
                 /// erases the content from the file
-                virtual void eraseAll();
+                virtual void eraseAll(bool binary = false);
 
                 /**  writes the string to the file
                 * the "cursor" will be moved behind the inserted string */
@@ -95,6 +95,8 @@ namespace undicht {
 
                 /** @return the size of the file in bytes (equal to the number of characters) */
                 virtual size_t getSize()  const;
+
+                virtual void clearErrors();
 
             public:
 

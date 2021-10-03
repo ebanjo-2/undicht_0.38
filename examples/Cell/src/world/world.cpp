@@ -1,7 +1,22 @@
 #include <world/world.h>
 #include <math/cell_math.h>
+#include <algorithm>
 
 namespace cell {
+
+
+    World::World() {
+
+        m_world_file.open("res/first_world.und");
+
+    }
+
+    World::~World() {
+
+        std::cout << "Destructor of World" << "\n";
+
+        unloadChunks({});
+    }
 
     ///////////////////////////// controlling world generation //////////////////////////////
 
@@ -23,7 +38,7 @@ namespace cell {
         std::vector<glm::ivec3> chunks_to_load = calcChunksToLoad(chunk_positions);
 
         // unloading the old chunks
-        //unloadChunks(chunk_positions);
+        unloadChunks(chunk_positions);
 
         // loading the chunks that need to be loaded
         for(const glm::ivec3& pos : chunks_to_load) {
@@ -31,7 +46,15 @@ namespace cell {
             m_loaded_chunks.emplace_back(Chunk());
             m_chunk_positions.push_back(pos);
 
-            m_generator.initChunk(m_loaded_chunks.back(), pos);
+            if(m_world_file.readChunk(m_loaded_chunks.back(), pos / 255)) {
+
+                for(int i = 0; i < m_loaded_chunks.back().getCellCount(); i++)
+                    m_loaded_chunks.back().updateDrawBuffer(i);
+
+            } else {
+
+                m_generator.initChunk(m_loaded_chunks.back(), pos);
+            }
 
         }
 
@@ -94,6 +117,8 @@ namespace cell {
     void World::unloadChunks(const std::vector<glm::ivec3>& new_chunks) {
         /** unloads the chunks that are not part of the new_chunks */
 
+        std::vector<int> chunks_to_unload;
+
         for(int i = 0; i < m_chunk_positions.size(); i++) {
 
             const glm::ivec3& old_pos = m_chunk_positions[i];
@@ -112,11 +137,23 @@ namespace cell {
             if(!found) {
                 // old_pos is not part of the new chunks
 
-                m_loaded_chunks.erase(m_loaded_chunks.begin() + i);
-                m_chunk_positions.erase(m_chunk_positions.begin() + i);
+                // saving the chunk to the file
+                const Chunk& c = m_loaded_chunks[i];
+                m_world_file.writeChunk(c,  old_pos / 255);
+
+                chunks_to_unload.push_back(i);
 
             }
 
+        }
+
+        // sorting the array in reverse order (biggest id fist)
+        std::sort(chunks_to_unload.rbegin(), chunks_to_unload.rend());
+
+        for(int i : chunks_to_unload) {
+
+            m_loaded_chunks.erase(m_loaded_chunks.begin() + i);
+            m_chunk_positions.erase(m_chunk_positions.begin() + i);
         }
 
     }
