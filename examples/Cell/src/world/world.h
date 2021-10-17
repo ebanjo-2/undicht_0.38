@@ -63,6 +63,10 @@ namespace cell {
             /** parts of the cell that are outside the loaded chunks will be ignored */
             void setCell(const TCell<int>& c);
 
+        public:
+
+            int getChunkId(const glm::ivec3& chunk_pos);
+
 
     };
 

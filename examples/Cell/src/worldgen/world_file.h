@@ -22,10 +22,6 @@ namespace cell {
 			char type3 = '\0';
 			int32_t version = 1;
 
-			// every world file stores 16 * 16 * 16 chunks
-			// this is the position of the chunk with the smallest
-			// x, y, and z coordinates
-            int32_t chunk_x = 0, chunk_y = 0, chunk_z = 0;
 		};
 
 		struct ChunkRegister {
@@ -74,10 +70,6 @@ namespace cell {
     public:
         // managing the storage of chunks and their registers
 
-        /** there are 4096 ChunkRegisters in the file
-        * where they are stored depends on the chunk they belong to
-        * @return -1, if the position is outside of this files range */
-        int getRegID(const glm::ivec3& pos);
 
         /** finds a position in the file where it is safe to write byte_size bytes
         * without overwriting existing chunk data
@@ -87,13 +79,13 @@ namespace cell {
 	private:
 		// writing
 
-		virtual void writeHeader(unsigned int version = 1, const glm::ivec3& origin = glm::ivec3(0,0,0));
+		virtual void writeHeader(unsigned int version = 1);
 
     public:
 
-        /** @param pos: should be within 16 chunks of this files origin chunk
-        * otherwise false is going to be returned and the chunk will no be written */
-		virtual bool writeChunk(const Chunk& c, const glm::ivec3& pos);
+        /** writes the chunk to the file and uses the register id
+        * which can be uesd to retrieve the chunk data again */
+		virtual bool writeChunk(const Chunk& c, unsigned int register_id = 0);
 
 	private:
 		// reading
@@ -103,7 +95,7 @@ namespace cell {
 
     public:
 
-		virtual bool readChunk(Chunk& loadTo, const glm::ivec3& pos);
+		virtual bool readChunk(Chunk& loadTo, unsigned int register_id = 0);
 	};
 
 

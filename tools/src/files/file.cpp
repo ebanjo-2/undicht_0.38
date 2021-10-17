@@ -211,17 +211,17 @@ namespace undicht {
 
 		/////////////////////   ////// reading / writing a binary file ////////////////////////////////////
 
-		void File::readBinary(char* loadTo, const BufferLayout& layout, int count) {
+		void File::readBinary(char* loadTo, unsigned int element_size, int count) {
 
-			size_t data_size = layout.getTotalSize() * count;
+			size_t data_size = element_size * count;
 
 			m_file_stream.read(loadTo, data_size);
 
 		}
 
-		void File::writeBinary(char* data, const BufferLayout& layout, int count) {
+		void File::writeBinary(char* data, unsigned int element_size, int count) {
 
-			size_t data_size = layout.getTotalSize() * count;
+			size_t data_size = element_size * count;
 
 			// types bigger than 1 byte will be written to the file as they are stored in the data buffer
 			// which probably means high bytes before low bytes

@@ -32,15 +32,15 @@ using namespace user_input;
 using namespace cell;
 
 void drawCrosshair(FontRenderer& fr, Font& f);
-
+void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p);
 
 
 int main(int argc, char **argv) {
 
-    //const int WINDOW_WIDTH = 1920;
-    //const int WINDOW_HEIGHT = 1080;
-	const int WINDOW_WIDTH = 1680;
-	const int WINDOW_HEIGHT = 1050;
+    const int WINDOW_WIDTH = 1920;
+    const int WINDOW_HEIGHT = 1080;
+    //const int WINDOW_WIDTH = 1680;
+    //const int WINDOW_HEIGHT = 1050;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
     window.setWindowMode(false,false);
@@ -49,59 +49,39 @@ int main(int argc, char **argv) {
     initEngineTime();
 
     {
-
-        Font arial("res/arial.ttf", 25);
-
         KeyInput key_input;
         key_input.setInputWindow(&window);
 
         MouseInput mouse_input;
         mouse_input.setInputWindow(&window);
 
-        Player player(glm::vec3(0,25,0));
+        Font arial("res/FreeMono.ttf", 25);
+
+        std::cout << "if this isnt 8 bytes ... :" << sizeof(WorldFile::Header) << "\n";
 
         CellRenderer renderer;
         FontRenderer font_renderer;
-
         renderer.setViewport(WINDOW_WIDTH, WINDOW_HEIGHT);
         font_renderer.setViewport(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        TextureAtlas texture_atlas;
-        //int dirt = texture_atlas.addTexture("res/dirt.png");
-        //int grass = texture_atlas.addTexture("res/grass.png");
-        //int iron_ore = texture_atlas.addTexture("res/iron_ore.png");
-       // int wood_floor = texture_atlas.addTexture("res/wood_floor.png");
+        World world_0;
 
+        TextureAtlas texture_atlas;
         int dirt = texture_atlas.addTexture("res/dirt32.png");
         int grass = texture_atlas.addTexture("res/Gras 1.0.png");
         int stone = texture_atlas.addTexture("res/stone32.png");
-        int stone_wall = texture_atlas.addTexture("res/Stein-gemauert.png");
+        int stone_wall = texture_atlas.addTexture("res/Backsteine2.png");
         int default_wood = texture_atlas.addTexture("res/default_wood.png");
         int holz_bretter = texture_atlas.addTexture("res/Holzbrettertextur.png");
         int holz = texture_atlas.addTexture("res/Holztextur.png");
 
         texture_atlas.m_tex.generateMipMaps();
 
-        u8vec3 v1(10, 0, 20);
 
-        /*Chunk chunk_0;
-
-        chunk_0.setCells({
-            Cell(u8vec3(0,0,0), u8vec3(255,250,255), 0),
-            Cell(u8vec3(3,5,3), u8vec3(12,12,12), 0),
-            Cell(u8vec3(9,5,5), u8vec3(15,10,10), 1),
-            Cell(u8vec3(6,2,6), u8vec3(7,5,7), 1),
-        });*/
-
-        World world_0;
-
+        Player player(glm::vec3(0,25,0));
 
         double last_time = 0;
-        double edit_time = 0;
-        double draw_time = 0;
 
-		double last_light_placed = 0;
-        double last_chunk_save = 0;
 
         //chunk_0.initDrawBuffer();
 
@@ -110,12 +90,12 @@ int main(int argc, char **argv) {
         Chunk* old_chunk = 0;
         Chunk* opt_chunk = 0;
 
-		std::vector<glm::vec3> lights;
+        std::vector<glm::vec3> lights;
 
         while(!(window.shouldClose() || key_input.getKeyState(UND_KEY_ESC))) {
 
             renderer.clearFramebuffer();
-            //font_renderer.clearFramebuffer();
+            font_renderer.clearFramebuffer();
 
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
@@ -123,37 +103,28 @@ int main(int argc, char **argv) {
             world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
 
             if(mouse_input.getButtonState(UND_MOUSE_1)) {
-                edit_time = getEngineTime();
+
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
-                edit_time = getEngineTime() - edit_time;
             }
 
             if(mouse_input.getButtonState(UND_MOUSE_2)) {
-                edit_time = getEngineTime();
+
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(0, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(2, 10, 2)), holz));
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(2, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(10, 8, 2)), stone_wall));
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(2, 8, 0)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 2)), holz));
 
                 //world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(10, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(12, 10, 2)), holz));
-                edit_time = getEngineTime() - edit_time;
             }
 
-			if (key_input.getKeyState(UND_KEY_L)) {
-				if (getEngineTime() - last_light_placed > 0.5f) {
-					lights.push_back(player.getPosition());
-					last_light_placed = getEngineTime();
-				}
-			}
 
             if((!opt_chunk) && key_input.getKeyState(UND_KEY_O)) {
 
                 old_chunk = &world_0.getChunk(world_0.getChunkPos(glm::ivec3(player.getPosition())));
                 opt_chunk = new Chunk();
 
-				std::cout << "old chunk had: " << old_chunk->getCellCount() << " cells" << "\n";
+                std::cout << "old chunk had: " << old_chunk->getCellCount() << " cells" << "\n";
 
                 opt_thread = new Thread(optimizeChunk, old_chunk, opt_chunk);
-                thread_start_time = getEngineTime();
 
             }
 
@@ -164,7 +135,7 @@ int main(int argc, char **argv) {
 
                 *old_chunk = *opt_chunk;
 
-				std::cout << "new chunk has: " << old_chunk->getCellCount() << " cells" << "\n";
+                std::cout << "new chunk has: " << old_chunk->getCellCount() << " cells" << "\n";
 
 
                 for(int i = 0; i < opt_chunk->m_cells.size(); i++) {
@@ -178,42 +149,27 @@ int main(int argc, char **argv) {
                 opt_chunk = 0;
             }
 
+            //////////////////////////////////////// drawing ////////////////////////////////////////
+
 
             renderer.loadCam(player);
             renderer.loadTextureAtlas(texture_atlas);
-
-
-            draw_time = getEngineTime();
-
             renderer.draw(world_0);
-            renderer.drawLight(glm::vec3(0,22,0), glm::vec3(1,0.8,0), 22);
-            renderer.drawLight(glm::vec3(50,22,0), glm::vec3(1,0.8,0), 22);
-            renderer.drawLight(glm::vec3(20,22,40), glm::vec3(1,0.8,0), 22);
-            renderer.drawLight(player.getPosition(), glm::vec3(1.0,1.0,1.0), 80);
 
-			for (glm::vec3& l : lights) {
-				renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 40);
-			}
+            for (glm::vec3& l : lights) {
+                renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 40);
+            }
 
             renderer.drawFinalScene();
 
-            draw_time = getEngineTime() - draw_time;
-
-            font_renderer.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
             drawCrosshair(font_renderer, arial);
 
-            font_renderer.draw(arial, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
-            font_renderer.draw(arial, "Draw Time: " + toStr(draw_time), glm::vec2(-1.0f,0.75f));
-            font_renderer.draw(arial, "Loaded Chunks: " + toStr(world_0.m_loaded_chunks.size()), glm::vec2(-1.0f,0.7f));
-			font_renderer.draw(arial, "Drawn Lights: " + toStr(lights.size()), glm::vec2(-1.0f, 0.65f));
+            drawInfo(font_renderer, arial, last_time, player);
 
 
-            font_renderer.draw(arial, "Player Position: " + toStr(player.getPosition().x) + " " + toStr(player.getPosition().y) + " " + toStr(player.getPosition().z), glm::vec2(-1.0f,0.6f));
-            font_renderer.draw(arial, "Current Chunk: " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).x) + " " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).y) + " " + toStr(world_0.getChunkPos((glm::ivec3)player.getPosition()).z), glm::vec2(-1.0f,0.55f));
-            font_renderer.draw(arial, "Player Direction: " + toStr(player.getViewDirection().x) + " " + toStr(player.getViewDirection().y) + " " + toStr(player.getViewDirection().z), glm::vec2(-1.0f,0.50f));
+            ///////////////////////////// finishing the frame ////////////////////////////////////////
 
             last_time = getEngineTime();
-
 
             key_input.clearKeyLists();
             mouse_input.updateCursorOffset();
@@ -245,7 +201,15 @@ void drawCrosshair(FontRenderer& fr, Font& f) {
 
     fr.draw(f, crosshair, pos, crosshair_size);
 
-
-
-
 }
+
+void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p) {
+
+    fr.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
+
+    fr.draw(f, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
+
+    fr.draw(f, "Player Position: " + toStr(p.getPosition().x) + " " + toStr(p.getPosition().y) + " " + toStr(p.getPosition().z), glm::vec2(-1.0f,0.6f));
+    fr.draw(f, "Player Direction: " + toStr(p.getViewDirection().x) + " " + toStr(p.getViewDirection().y) + " " + toStr(p.getViewDirection().z), glm::vec2(-1.0f,0.50f));
+}
+

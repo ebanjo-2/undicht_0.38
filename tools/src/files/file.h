@@ -65,9 +65,9 @@ namespace undicht {
 			public:
 				// reading / writing a binary file
 
-				void readBinary(char* loadTo, const BufferLayout& layout, int count = 1);
+				void readBinary(char* loadTo, unsigned int element_size = 0, int count = 1);
 
-				void writeBinary(char* data, const BufferLayout& layout, int count = 1);
+				void writeBinary(char* data, unsigned int element_size = 0, int count = 1);
 
             public:
                 // writing to the file

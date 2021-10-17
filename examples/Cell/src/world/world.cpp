@@ -46,7 +46,7 @@ namespace cell {
             m_loaded_chunks.emplace_back(Chunk());
             m_chunk_positions.push_back(pos);
 
-            if(m_world_file.readChunk(m_loaded_chunks.back(), pos / 255)) {
+            if(m_world_file.readChunk(m_loaded_chunks.back(), getChunkId(pos / 255))) {
 
                 for(int i = 0; i < m_loaded_chunks.back().getCellCount(); i++)
                     m_loaded_chunks.back().updateDrawBuffer(i);
@@ -139,7 +139,7 @@ namespace cell {
 
                 // saving the chunk to the file
                 const Chunk& c = m_loaded_chunks[i];
-                m_world_file.writeChunk(c,  old_pos / 255);
+                m_world_file.writeChunk(c, getChunkId(old_pos / 255));
 
                 chunks_to_unload.push_back(i);
 
@@ -210,5 +210,11 @@ namespace cell {
 
     }
 
+    int World::getChunkId(const glm::ivec3& chunk_pos) {
+
+        glm::ivec3 relative = chunk_pos + glm::ivec3(8);
+
+        return relative.x * 256 + relative.y * 16 + relative.z;
+    }
 
 } // cell
