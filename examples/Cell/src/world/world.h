@@ -1,9 +1,12 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <world/chunk.h>
+#include <world/world_chunk.h>
 #include <worldgen/world_generator.h>
 #include <worldgen/world_file.h>
+
+#include <undicht_thread.h>
+
 
 namespace cell {
 
@@ -13,19 +16,26 @@ namespace cell {
 
             WorldFile m_world_file;
 
+            WorldGenerator m_generator;
+
         public:
 
-            std::vector<Chunk> m_loaded_chunks;
+            std::vector<WorldChunk> m_loaded_chunks;
 
-            /** chunks start every 255 cells */
-            std::vector<glm::ivec3> m_chunk_positions;
 
-            WorldGenerator m_generator;
+        public:
 
             glm::ivec3 m_origin_chunk; // the origin chunk of the loaded world
 
             // number of chunks to load in every direction of the origin chunk
             int m_dst = 1;
+
+        public:
+            // optimizing chunks
+
+            undicht::tools::Thread* m_opt_thread = 0;
+            WorldChunk* m_temp_chunk = 0;
+            int m_opt_chunk_id = -1; // the chunk that currently gets optimized
 
         public:
 
@@ -51,6 +61,12 @@ namespace cell {
 
             /** unloads the chunks that are not part of the new_chunks */
             void unloadChunks(const std::vector<glm::ivec3>& new_chunks);
+
+        public:
+            // optimizing chunks that have been edited
+
+            void optChunks();
+
 
         public:
             // editing the world

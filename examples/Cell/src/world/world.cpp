@@ -2,7 +2,12 @@
 #include <math/cell_math.h>
 #include <algorithm>
 
+#include <world/chunk_optimization.h>
+
 namespace cell {
+
+    using namespace undicht;
+    using namespace tools;
 
 
     World::World() {
@@ -13,9 +18,15 @@ namespace cell {
 
     World::~World() {
 
-        std::cout << "Destructor of World" << "\n";
+        if(m_opt_thread)
+            delete m_opt_thread; // will wait for the thread to finish
+
+
+        if(m_temp_chunk)
+            delete m_temp_chunk;
 
         unloadChunks({});
+
     }
 
     ///////////////////////////// controlling world generation //////////////////////////////
@@ -43,8 +54,7 @@ namespace cell {
         // loading the chunks that need to be loaded
         for(const glm::ivec3& pos : chunks_to_load) {
 
-            m_loaded_chunks.emplace_back(Chunk());
-            m_chunk_positions.push_back(pos);
+            m_loaded_chunks.emplace_back(WorldChunk(pos));
 
             if(m_world_file.readChunk(m_loaded_chunks.back(), getChunkId(pos / 255))) {
 
@@ -94,9 +104,9 @@ namespace cell {
             bool found = false;
 
             // std::find doesnt work ?
-            for(const glm::ivec3& old_pos : m_chunk_positions) {
+            for(const WorldChunk& old_chunk : m_loaded_chunks) {
 
-                if(old_pos == pos) {
+                if(old_chunk.getOrigin() == pos) {
                     found = true;
                     break;
                 }
@@ -119,9 +129,9 @@ namespace cell {
 
         std::vector<int> chunks_to_unload;
 
-        for(int i = 0; i < m_chunk_positions.size(); i++) {
+        for(int i = 0; i < m_loaded_chunks.size(); i++) {
 
-            const glm::ivec3& old_pos = m_chunk_positions[i];
+            const glm::ivec3& old_pos = m_loaded_chunks[i].getOrigin();
 
             bool found = false;
 
@@ -153,8 +163,72 @@ namespace cell {
         for(int i : chunks_to_unload) {
 
             m_loaded_chunks.erase(m_loaded_chunks.begin() + i);
-            m_chunk_positions.erase(m_chunk_positions.begin() + i);
         }
+
+    }
+
+    ////////////////////////// optimizing chunks that have been edited //////////////////////////
+
+    void World::optChunks() {
+
+        if(m_opt_thread && m_opt_thread->hasFinished()) {
+            // a chunk has been optimized
+
+            if(m_loaded_chunks[m_opt_chunk_id].getOrigin() == m_temp_chunk->getOrigin()) {
+
+
+                if(!m_loaded_chunks[m_opt_chunk_id].getOptNeed()) {
+                    // else: the chunk has been changed; applying the optimized version would revert those changes
+
+                    m_loaded_chunks[m_opt_chunk_id] = *m_temp_chunk;
+                    m_loaded_chunks[m_opt_chunk_id].updateDrawBuffer();
+                    m_loaded_chunks[m_opt_chunk_id].markAsOptimzed();
+
+                    std::cout << "optimized chunk: " << m_loaded_chunks[m_opt_chunk_id].getCellCount() << " Cells \n";
+
+                }
+
+            }
+
+            m_opt_chunk_id = -1;
+
+            delete m_opt_thread;
+            m_opt_thread = 0;
+
+            delete m_temp_chunk;
+            m_temp_chunk = 0;
+
+        }
+
+        if(!m_opt_thread) {
+            // finding a new chunk to optimize
+
+            int c = 0; // the chunk with the highest need for optimization
+
+            for(int i = 1; i < m_loaded_chunks.size(); i++) {
+
+                if(m_loaded_chunks[i].getOptNeed() > m_loaded_chunks[c].getOptNeed()) {
+
+                    c = i;
+                }
+
+            }
+
+            // optimizing the chunk with the highest opt need
+            if(m_loaded_chunks[c].getOptNeed()) {
+
+                m_opt_chunk_id = c;
+                m_temp_chunk = new WorldChunk(m_loaded_chunks[c].getOrigin());
+
+                m_opt_thread = new Thread(optimizeChunk, m_loaded_chunks[c], m_temp_chunk);
+
+                // to check if the chunk got changed during optimization
+                m_loaded_chunks[c].markAsOptimzed();
+
+                std::cout << "old chunk had " << m_loaded_chunks[c].getCellCount() << " Cells \n";
+            }
+        }
+
 
     }
 
@@ -181,7 +255,7 @@ namespace cell {
 
         for(int i = 0; i < m_loaded_chunks.size(); i++) {
 
-            if(m_chunk_positions[i] == chunk_pos)
+            if(m_loaded_chunks[i].getOrigin() == chunk_pos)
                 return m_loaded_chunks[i];
 
         }
@@ -194,7 +268,7 @@ namespace cell {
 
         for(int i = 0; i < m_loaded_chunks.size(); i++) {
 
-            glm::ivec3 chunk_pos = m_chunk_positions[i];
+            glm::ivec3 chunk_pos = m_loaded_chunks[i].getOrigin();
             TCell<int> chunk_cell(chunk_pos, chunk_pos + glm::ivec3(255));
 
             if(overlappingVolume(chunk_cell, c)) {

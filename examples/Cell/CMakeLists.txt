@@ -33,6 +33,9 @@ add_executable("cell"
   src/world/world.h
   src/world/world.cpp
 
+  src/world/world_chunk.h
+  src/world/world_chunk.cpp
+
   src/math/cell_math.h
   src/math/cell_math.cpp
   

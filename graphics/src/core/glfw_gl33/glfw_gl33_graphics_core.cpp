@@ -27,6 +27,10 @@ namespace undicht {
 				if (!s_glfw_initialized) {
 					glfwInit();
 					s_glfw_initialized = true;
+
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+                    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 				}
 
 
@@ -49,6 +53,8 @@ namespace undicht {
 				Note::setStaticMessage("ERROR 1284: GL_STACK_UNDERFLOW", 1284);
 				Note::setStaticMessage("ERROR 1285: GL_OUT_OF_MEMORY", 1285);
 				Note::setStaticMessage("ERROR 1286: GL_INVALID_FRAMEBUFFER_OPERATION", 1286);
+
+
 
 				return true;
 			}

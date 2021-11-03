@@ -41,6 +41,10 @@ namespace cell {
     /////////////////////////// adding / removing cells from m_cells /////////////////////////////
 
     int Chunk::addCell(const Cell& c) {
+        /** recycles previously deleted Cell memory (if possible)
+        * + adds the cell to the mini chunk system
+        * so dont just use m_cells.push_back to add cells */
+
 
         int id;
 
@@ -79,9 +83,9 @@ namespace cell {
     }
 
     std::vector<int>& Chunk::getMiniChunk(const u8vec3& pos) {
-            // coords ranging from 0 to 15
+        // coords ranging from 0 to 15
 
-            return m_mini_chunks[pos.x][pos.y][pos.z];
+        return m_mini_chunks[pos.x][pos.y][pos.z];
     }
 
 
@@ -142,7 +146,7 @@ namespace cell {
                     if(pos != mini_chunk.end()) {
 
                         mini_chunk.erase(pos);
-                    }
+                    } // else : something wasnt done corectly when initalizing the cell
 
                 }
 
@@ -363,6 +367,8 @@ namespace cell {
 
 
     void Chunk::resizeDrawBuffer(int cell_count) {
+        /** resizes the buffer that stores the data for every cell within the chunk
+        * + fills the resized buffer with all the cells of the chunk */
 
         m_vertex_buffer.resizeInstanceBuffer(m_cells.size() * 9 * 2);
 
@@ -374,6 +380,8 @@ namespace cell {
 
 
     void Chunk::updateDrawBuffer(int id) {
+        /** updates the data of the cell within the vertex_buffer
+        * will also resize the buffer to fit new cells */
 
         Cell& c = m_cells[id];
 
@@ -385,7 +393,7 @@ namespace cell {
 
             c.m_pos0.x, c.m_pos0.y, c.m_pos0.z,
             c.m_pos1.x, c.m_pos1.y, c.m_pos1.z,
-            mat1, mat0, // i was pretty sure it had to be mat0, mat1    but only this works (even with numbers > 255)
+            mat1, mat0, // i was pretty sure it had to be mat0, mat1    but only this works (even with numbers > 255) edit: little endian
             c.m_visible_faces
         };
 
@@ -401,6 +409,15 @@ namespace cell {
 
     }
 
+    void Chunk::updateDrawBuffer() {
+        /** updates the draw buffer for every cell of the chunk */
+
+        for(int i = 0; i < m_cells.size(); i++) {
+
+            updateDrawBuffer(i);
+        }
+
+    }
 
     int Chunk::getCellCount() const {
 
@@ -410,6 +427,10 @@ namespace cell {
     ///////////////////////////// deciding which faces of cells cant be seen and therefor shouldnt be rendered /////////////////////////////
 
     unsigned char Chunk::calcVisibleFaces(const Cell& c, const std::vector<int>& cell_pool) {
+        /** checks for every face if there are VOID_CELLS in front of it
+        * if so, the face will be marked visible
+        * the face will also be visible if its at the chunk edge
+        * cells with material type VOID_CELL always have no visible faces */
 
         if(c.m_material == VOID_CELL) return 0x00; // void cell
 
@@ -439,6 +460,8 @@ namespace cell {
     }
 
     bool Chunk::hasVoidCells(const glm::ivec3& ppos0, const glm::ivec3& ppos1,  const std::vector<int>& cell_pool) {
+        /** @return true, if there are empty cells within the volume
+        * or if the volume goes outside the chunk range of [0,255]*/
 
         if((ppos0.x < 0) || (ppos1.x > 255)) return true;
         if((ppos0.y < 0) || (ppos1.y > 255)) return true;

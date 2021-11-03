@@ -37,13 +37,13 @@ void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p);
 
 int main(int argc, char **argv) {
 
-    const int WINDOW_WIDTH = 1920;
-    const int WINDOW_HEIGHT = 1080;
+    const int WINDOW_WIDTH = 512;
+    const int WINDOW_HEIGHT = 300;
     //const int WINDOW_WIDTH = 1680;
     //const int WINDOW_HEIGHT = 1050;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
-    window.setWindowMode(false,false);
+    //window.setWindowMode(true,false);
     window.setCursorVisible(false);
 
     initEngineTime();
@@ -83,14 +83,8 @@ int main(int argc, char **argv) {
         double last_time = 0;
 
 
-        //chunk_0.initDrawBuffer();
-
-        Thread* opt_thread = 0;
-        double thread_start_time = 0;
-        Chunk* old_chunk = 0;
-        Chunk* opt_chunk = 0;
-
         std::vector<glm::vec3> lights;
+        lights.push_back(glm::vec3(0,21,0));
 
         while(!(window.shouldClose() || key_input.getKeyState(UND_KEY_ESC))) {
 
@@ -100,7 +94,7 @@ int main(int argc, char **argv) {
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
-            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
+            world_0.loadChunks(glm::ivec3(player.getPosition()), 0);
 
             if(mouse_input.getButtonState(UND_MOUSE_1)) {
 
@@ -116,38 +110,7 @@ int main(int argc, char **argv) {
                 //world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(10, 0, 0)), glm::ivec3(player.getPosition() + glm::vec3(12, 10, 2)), holz));
             }
 
-
-            if((!opt_chunk) && key_input.getKeyState(UND_KEY_O)) {
-
-                old_chunk = &world_0.getChunk(world_0.getChunkPos(glm::ivec3(player.getPosition())));
-                opt_chunk = new Chunk();
-
-                std::cout << "old chunk had: " << old_chunk->getCellCount() << " cells" << "\n";
-
-                opt_thread = new Thread(optimizeChunk, old_chunk, opt_chunk);
-
-            }
-
-            if(opt_thread && opt_thread->hasFinished()) {
-
-                delete opt_thread;
-                opt_thread = 0;
-
-                *old_chunk = *opt_chunk;
-
-                std::cout << "new chunk has: " << old_chunk->getCellCount() << " cells" << "\n";
-
-
-                for(int i = 0; i < opt_chunk->m_cells.size(); i++) {
-
-                    old_chunk->updateDrawBuffer(i);
-                }
-
-                old_chunk = 0;
-
-                delete opt_chunk;
-                opt_chunk = 0;
-            }
+            world_0.optChunks();
 
             //////////////////////////////////////// drawing ////////////////////////////////////////
 
@@ -176,11 +139,7 @@ int main(int argc, char **argv) {
             mouse_input.clearButtonLists();
             window.update();
 
-
         }
-
-        if(opt_thread)
-            delete opt_thread;
 
     }
 

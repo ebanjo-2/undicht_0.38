@@ -3,30 +3,21 @@
 
 namespace cell {
 
-    // stores the material of every position within a chunk
-    std::vector<unsigned short> cell_mat_buffer(255 * 255 * 255);
-    std::vector<bool> cell_set_buffer(255 * 255 * 255);
-
-    void loadChunk(const Chunk& chunk);
-
-    Cell findCell(const u8vec3& pos0);
-
-    unsigned char calcVisibleFaces(const Cell& c) ;
-
-    void markCellAsSet(const Cell& c);
-
-    /** @return true, if the volume is completely filled with that material */
-    bool sameMaterial(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat);
-
-    bool containsVoid(const glm::ivec3& pos0, const glm::ivec3& pos1);
-
-
-
-
-    void optimizeChunk(const Chunk* old, Chunk* optimized) {
+    void optimizeChunk(Chunk old, Chunk* optimized){
         /** tries to minimize the number of cells in the chunk */
 
-        const Chunk& old_chunk = *old;
+        // creating the buffers used by the ChunkOptimizer on the stack
+        // seams to be to much, that why it gets created with new
+
+        ChunkOptimizer* o = new ChunkOptimizer;
+        o->optimizeChunk(old, optimized);
+        delete o;
+
+    }
+
+    void ChunkOptimizer::optimizeChunk(Chunk old_chunk, Chunk* optimized) {
+        /** tries to minimize the number of cells in the chunk */
+
         Chunk& chunk = *optimized;
 
         loadChunk(old_chunk);
@@ -43,7 +34,7 @@ namespace cell {
 
                 for(int z = 0; z < 255; z++) {
 
-                    if(!cell_set_buffer[x * 255 * 255 + y * 255 + z]) {
+                    if(!m_cell_set_buffer[x * 255 * 255 + y * 255 + z]) {
 
                         Cell c = findCell(u8vec3(x,y,z));
                         c.m_visible_faces = calcVisibleFaces(c);
@@ -66,7 +57,7 @@ namespace cell {
 
     }
 
-    void loadChunk(const Chunk& chunk) {
+    void ChunkOptimizer::loadChunk(const Chunk& chunk) {
 
         for(const Cell& c : chunk.m_cells) {
 
@@ -77,8 +68,8 @@ namespace cell {
 
                 for(int y = pos0.y; y < pos1.y; y++) {
 
-                    std::vector<unsigned short>::iterator i1 = cell_mat_buffer.begin() + (x * 255 * 255) + (y * 255) + pos0.z;
-                    std::vector<unsigned short>::iterator i2 = cell_mat_buffer.begin() + (x * 255 * 255) + (y * 255) + pos1.z;
+                    std::array<unsigned short, 255 * 255 * 255>::iterator i1 = m_cell_mat_buffer.begin() + (x * 255 * 255) + (y * 255) + pos0.z;
+                    std::array<unsigned short, 255 * 255 * 255>::iterator i2 = m_cell_mat_buffer.begin() + (x * 255 * 255) + (y * 255) + pos1.z;
 
 
                     std::fill(i1, i2, c.m_material);
@@ -89,7 +80,7 @@ namespace cell {
 
         }
 
-        std::fill(cell_set_buffer.begin(), cell_set_buffer.end(), false);
+        std::fill(m_cell_set_buffer.begin(), m_cell_set_buffer.end(), false);
 
     }
 
@@ -155,12 +146,12 @@ namespace cell {
         return Cell(pos0, pos1, mat);
     }*/
 
-	Cell findCell(const u8vec3& pos0) {
+	Cell ChunkOptimizer::findCell(const u8vec3& pos0) {
 
 		glm::ivec3 p0 = glm::ivec3(pos0);
 		glm::ivec3 p1 = p0 + glm::ivec3(1);
 
-		unsigned short mat = cell_mat_buffer[pos0.x * 255 * 255 + pos0.y * 255 + pos0.z];
+		unsigned short mat = m_cell_mat_buffer[pos0.x * 255 * 255 + pos0.y * 255 + pos0.z];
 		bool has_visible_faces = containsVoid(p0 - glm::ivec3(1,1,1), p1 + glm::ivec3(1, 1, 1));
 
 		const glm::ivec3 directions[] = {
@@ -214,7 +205,7 @@ namespace cell {
 		return Cell(u8vec3(p0), u8vec3(p1), mat);
 	}
 
-    unsigned char calcVisibleFaces(const Cell& c) {
+    unsigned char ChunkOptimizer::calcVisibleFaces(const Cell& c) {
 
         if(c.m_material == VOID_CELL) return 0x00; // void cell
 
@@ -244,7 +235,7 @@ namespace cell {
     }
 
 
-    void markCellAsSet(const Cell& c) {
+    void ChunkOptimizer::markCellAsSet(const Cell& c) {
 
         u8vec3 pos0 = glm::min(c.m_pos0, c.m_pos1);
         u8vec3 pos1 = glm::max(c.m_pos0, c.m_pos1);
@@ -253,8 +244,8 @@ namespace cell {
 
             for(int y = pos0.y; y < pos1.y; y++) {
 
-                std::vector<bool>::iterator i1 = cell_set_buffer.begin() + (x * 255 * 255) + (y * 255) + pos0.z;
-                std::vector<bool>::iterator i2 = cell_set_buffer.begin() + (x * 255 * 255) + (y * 255) + pos1.z;
+                std::array<bool, 255 * 255 * 255>::iterator i1 = m_cell_set_buffer.begin() + (x * 255 * 255) + (y * 255) + pos0.z;
+                std::array<bool, 255 * 255 * 255>::iterator i2 = m_cell_set_buffer.begin() + (x * 255 * 255) + (y * 255) + pos1.z;
 
 
                 std::fill(i1, i2, true);
@@ -265,7 +256,7 @@ namespace cell {
     }
 
 
-    bool sameMaterial(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat) {
+    bool ChunkOptimizer::sameMaterial(const u8vec3& pos0, const u8vec3& pos1, unsigned short mat) {
         /** if the volume is completely filled with that material */
 
         for(int x = pos0.x; x < pos1.x; x++) {
@@ -274,10 +265,10 @@ namespace cell {
 
                 for(int z = pos0.z; z < pos1.z; z++) {
 
-                    if(cell_mat_buffer[x * 255 * 255 + y * 255 + z] != mat)
+                    if(m_cell_mat_buffer[x * 255 * 255 + y * 255 + z] != mat)
                         return false;
 
-                    if(cell_set_buffer[x * 255 * 255 + y * 255 + z])
+                    if(m_cell_set_buffer[x * 255 * 255 + y * 255 + z])
                         return false;
                 }
             }
@@ -287,7 +278,7 @@ namespace cell {
     }
 
 
-    bool containsVoid(const glm::ivec3& pos0, const glm::ivec3& pos1) {
+    bool ChunkOptimizer::containsVoid(const glm::ivec3& pos0, const glm::ivec3& pos1) {
 
         if(pos0.x < 0 || pos0.y < 0 || pos0.z < 0) return true;
         if(pos1.x > 255 || pos1.y > 255 || pos1.z > 255) return true;
@@ -299,7 +290,7 @@ namespace cell {
 
                 for(int z = pos0.z; z < pos1.z; z++) {
 
-                    if(cell_mat_buffer[x * 255 * 255 + y * 255 + z] == VOID_CELL)
+                    if(m_cell_mat_buffer[x * 255 * 255 + y * 255 + z] == VOID_CELL)
                         return true;
 
                 }

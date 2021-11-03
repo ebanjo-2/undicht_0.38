@@ -97,7 +97,7 @@ namespace cell {
 
         for(int i = 0; i < w.m_loaded_chunks.size(); i++) {
 
-            draw(w.m_loaded_chunks[i], w.m_chunk_positions[i]);
+            draw(w.m_loaded_chunks[i], w.m_loaded_chunks[i].getOrigin());
         }
 
     }
