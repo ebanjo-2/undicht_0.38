@@ -41,7 +41,7 @@ namespace cell {
 
             virtual void setViewport(int width, int height, int offset_x = 0, int offset_y = 0);
 
-            virtual void draw(Chunk& c, const glm::ivec3& chunk_pos);
+            virtual void draw(WorldChunk& c, const glm::ivec3& chunk_pos);
             virtual void draw(World& w);
 
     };

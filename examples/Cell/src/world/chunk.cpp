@@ -1,6 +1,5 @@
 #include <world/chunk.h>
 #include <algorithm>
-#include <geometry/geometry.h>
 
 #include <math/cell_math.h>
 
@@ -9,26 +8,7 @@ namespace cell {
     using namespace undicht;
     using namespace tools;
 
-
-
     Chunk::Chunk() {
-
-        m_vertex_buffer.setLayout(BufferLayout({UND_VEC3F, UND_VEC2F, UND_FLOAT}));
-        m_vertex_buffer.setInstanceLayout(BufferLayout({UND_VEC3UI8, UND_VEC3UI8, UND_UINT16, UND_UINT8}));
-
-        // creating the cube that gets drawn for every cell
-        std::vector<float> vertices;
-
-        Geometry::buildUVs(true);
-        Geometry::buildNormals(false);
-        Geometry::genCuboid(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(0.0f, 0.0f, 0.0f), vertices);
-
-        // adding the face mask to the vertices
-        int vertex_count = vertices.size() / 5;
-        for(int i = 0; i < vertex_count; i++)
-            vertices.insert(vertices.begin() + i * 6 + 5, (float)FACE_MASK[i / 6]);
-
-        m_vertex_buffer.setData(vertices);
 
         setCell(Cell(u8vec3(0,0,0), u8vec3(255, 255, 255), VOID_CELL));
     }
@@ -36,6 +16,17 @@ namespace cell {
 
     Chunk::~Chunk() {
 
+    }
+
+    const std::vector<Cell>& Chunk::getCells() const{
+        /** dont edit these directly!! */
+
+        return m_cells;
+    }
+
+    int Chunk::getCellCount() const {
+
+        return m_cells.size();
     }
 
     /////////////////////////// adding / removing cells from m_cells /////////////////////////////
@@ -255,17 +246,16 @@ namespace cell {
         std::vector<int> total_cell_pool; // every cell that might be of interest
         getCellsInVolume(total_volume, total_cell_pool);
 
-        int c_id = addCell(c);
+        Cell ccopy = c;
+        ccopy.m_visible_faces = calcVisibleFaces(c, total_cell_pool);
 
-        m_cells[c_id].m_visible_faces = calcVisibleFaces(c, total_cell_pool);
+        addCell(ccopy);
 
         // modifying the cells that occupied the space before c
         for(int i : total_cell_pool) {
 
             subtractFromCell(i, getSharedVolume(c, m_cells[i]));
         }
-
-        updateDrawBuffer(c_id);
 
     }
 
@@ -334,15 +324,12 @@ namespace cell {
 
         // editing the m_cells array
         remCell(cell_id);
-        updateDrawBuffer(cell_id);
-
 
         for(int i = 0; i < 6; i++) {
 
             if(new_cell_mask & FACE_MASK[i]) {
 
-                int new_id = addCell(new_cells[i]);
-                updateDrawBuffer(new_id);
+                addCell(new_cells[i]);
             }
 
         }
@@ -362,67 +349,42 @@ namespace cell {
         return cell_vol == (255 * 255 * 255);
     }
 
+    ///////////////////// api for functions loading/generating cells /////////////////////
 
-    ///////////////////// creating and maintaining the data to draw the chunk ///////////////////
 
+    void Chunk::readyForReInit(int num) {
+        /** @warning only to be used before the chunk is constructed from a file / generator
+        * @warning will breake the current chunk, editing will no longer work
+        * @param will reserve enough space for num cells, so that while setting new cells
+        * no resize of the cell buffer will be needed */
 
-    void Chunk::resizeDrawBuffer(int cell_count) {
-        /** resizes the buffer that stores the data for every cell within the chunk
-        * + fills the resized buffer with all the cells of the chunk */
+        m_cells.resize(num);
+        m_unused_cells.clear();
 
-        m_vertex_buffer.resizeInstanceBuffer(m_cells.size() * 9 * 2);
+        for(int i = 0; i < 4096; i++)
+            m_mini_chunks[i / 256][(i / 16) % 16][i % 16].clear();
 
-        for(int i = 0; i < m_cells.size(); i++ ) {
-
-            updateDrawBuffer(i);
-        }
     }
 
-
-    void Chunk::updateDrawBuffer(int id) {
-        /** updates the data of the cell within the vertex_buffer
-        * will also resize the buffer to fit new cells */
-
-        Cell& c = m_cells[id];
-
-        unsigned char mat0 = c.m_material / 256;
-        unsigned char mat1 = c.m_material % 256;
+    void Chunk::setCellBlind(const Cell& c, int offset) {
+        /** @warning readyForReInit should be called before this function
+        * wont check if the volume of the new cell was occupied before
+        * usefull for initializing the chunk from data stored in files
+        * which is already arranged without overlapping cells
+        * will write the cell into the cell buffer at position 'offset'
+        * without thinking about the cell that might have been there before*/
 
 
-        unsigned char data[] = {
+        if(offset >= m_cells.size()) {
 
-            c.m_pos0.x, c.m_pos0.y, c.m_pos0.z,
-            c.m_pos1.x, c.m_pos1.y, c.m_pos1.z,
-            mat1, mat0, // i was pretty sure it had to be mat0, mat1    but only this works (even with numbers > 255) edit: little endian
-            c.m_visible_faces
-        };
-
-        if(id < m_vertex_buffer.getInstanceBufferSize() / 9) {
-
-            m_vertex_buffer.setInstanceData(data, sizeof(char) * 9, id * sizeof(char) * 9);
-
-        } else {
-            // instance buffer needs to be resized
-            // and every cell needs to be rewritten to that buffer
-            resizeDrawBuffer((m_cells.size() + 1) * 9 * 2);
+            m_cells.resize(offset + 1);
         }
 
+        m_cells[offset] = c;
+        addToMiniChunks(offset);
     }
 
-    void Chunk::updateDrawBuffer() {
-        /** updates the draw buffer for every cell of the chunk */
 
-        for(int i = 0; i < m_cells.size(); i++) {
-
-            updateDrawBuffer(i);
-        }
-
-    }
-
-    int Chunk::getCellCount() const {
-
-        return m_cells.size();
-    }
 
     ///////////////////////////// deciding which faces of cells cant be seen and therefor shouldnt be rendered /////////////////////////////
 

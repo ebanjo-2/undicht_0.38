@@ -56,15 +56,10 @@ namespace cell {
 
             m_loaded_chunks.emplace_back(WorldChunk(pos));
 
-            if(m_world_file.readChunk(m_loaded_chunks.back(), getChunkId(pos / 255))) {
-
-                for(int i = 0; i < m_loaded_chunks.back().getCellCount(); i++)
-                    m_loaded_chunks.back().updateDrawBuffer(i);
-
-            } else {
-
+            if(!m_world_file.readChunk(m_loaded_chunks.back(), getChunkId(pos / 255)))
                 m_generator.initChunk(m_loaded_chunks.back(), pos);
-            }
+
+            m_loaded_chunks.back().updateDrawBuffer();
 
         }
 
@@ -114,8 +109,8 @@ namespace cell {
             }
 
             if(!found) {
-                chunks_to_load.push_back(pos);
 
+                chunks_to_load.push_back(pos);
 
             }
 
@@ -171,20 +166,19 @@ namespace cell {
 
     void World::optChunks() {
 
+
         if(m_opt_thread && m_opt_thread->hasFinished()) {
             // a chunk has been optimized
 
             if(m_loaded_chunks[m_opt_chunk_id].getOrigin() == m_temp_chunk->getOrigin()) {
 
 
-                if(!m_loaded_chunks[m_opt_chunk_id].getOptNeed()) {
+                if(m_loaded_chunks[m_opt_chunk_id].getOptNeed() == m_last_opt_need) {
                     // else: the chunk has been changed; applying the optimized version would revert those changes
 
                     m_loaded_chunks[m_opt_chunk_id] = *m_temp_chunk;
                     m_loaded_chunks[m_opt_chunk_id].updateDrawBuffer();
                     m_loaded_chunks[m_opt_chunk_id].markAsOptimzed();
-
-                    std::cout << "optimized chunk: " << m_loaded_chunks[m_opt_chunk_id].getCellCount() << " Cells \n";
 
                 }
 
@@ -223,12 +217,11 @@ namespace cell {
                 m_opt_thread = new Thread(optimizeChunk, m_loaded_chunks[c], m_temp_chunk);
 
                 // to check if the chunk got changed during optimization
-                m_loaded_chunks[c].markAsOptimzed();
+                m_last_opt_need = m_loaded_chunks[c].getOptNeed();
 
-                std::cout << "old chunk had " << m_loaded_chunks[c].getCellCount() << " Cells \n";
             }
-        }
 
+        }
 
     }
 

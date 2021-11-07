@@ -36,6 +36,7 @@ namespace cell {
             undicht::tools::Thread* m_opt_thread = 0;
             WorldChunk* m_temp_chunk = 0;
             int m_opt_chunk_id = -1; // the chunk that currently gets optimized
+            int m_last_opt_need = 0;
 
         public:
 

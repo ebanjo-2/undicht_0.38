@@ -22,11 +22,7 @@ namespace cell {
 
         loadChunk(old_chunk);
 
-        chunk.m_cells.clear();
-        chunk.m_unused_cells.clear();
-
-        for(int i = 0; i < 4096; i++)
-            chunk.m_mini_chunks[i / 256][(i / 16) % 16][i % 16].clear();
+        chunk.readyForReInit(0);
 
         for(int x = 0; x < 255; x++) {
 
@@ -39,10 +35,7 @@ namespace cell {
                         Cell c = findCell(u8vec3(x,y,z));
                         c.m_visible_faces = calcVisibleFaces(c);
 
-
-                        chunk.m_cells.push_back(c);
-                        chunk.addToMiniChunks(chunk.m_cells.size() - 1);
-
+                        chunk.setCellBlind(c, chunk.getCellCount());
 
                         markCellAsSet(c);
 
@@ -59,7 +52,7 @@ namespace cell {
 
     void ChunkOptimizer::loadChunk(const Chunk& chunk) {
 
-        for(const Cell& c : chunk.m_cells) {
+        for(const Cell& c : chunk.getCells()) {
 
             u8vec3 pos0 = glm::min(c.m_pos0, c.m_pos1);
             u8vec3 pos1 = glm::max(c.m_pos0, c.m_pos1);

@@ -93,7 +93,7 @@ namespace cell {
         m_final_renderer.loadTextureAtlas(atlas.m_tex);
     }
 
-    void CellRenderer::draw(Chunk& c, const glm::ivec3& chunk_pos) {
+    void CellRenderer::draw(WorldChunk& c, const glm::ivec3& chunk_pos) {
 
         m_geometry_renderer.draw(c, chunk_pos);
     }

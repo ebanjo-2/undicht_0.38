@@ -38,7 +38,7 @@ namespace cell {
 
             void loadTextureAtlas(const TextureAtlas& atlas);
 
-            void draw(Chunk& c, const glm::ivec3& chunk_pos);
+            void draw(WorldChunk& c, const glm::ivec3& chunk_pos);
 
             void draw(World& w);
 

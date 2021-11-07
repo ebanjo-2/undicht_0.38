@@ -48,18 +48,20 @@
 
 namespace cell {
 
-    class CellRenderer;
+    //class CellRenderer;
+    class CellGeometryRenderer;
     class ChunkOptimizer;
     class WorldFile;
 
     class Chunk {
             // stores cells in a 255 * 255 * 255 volume
 
-        public:
+        protected:
 
-            friend CellRenderer;
-            friend ChunkOptimizer;
-            friend WorldFile;
+            //friend CellRenderer;
+            //friend CellGeometryRenderer;
+            //friend ChunkOptimizer;
+            //friend WorldFile;
 
             /** since i expect cells with the same material to be clustered,
             * this should be a memory efficient way of storing them
@@ -71,16 +73,16 @@ namespace cell {
 
             std::array<std::array<std::array<std::vector<int>, 16>, 16>,16> m_mini_chunks;
 
-            /** contains data about every cell in the chunk
-            * 6 byte positions ( 2 * 3 bytes for u8vec)
-            * 2 byte material id
-            * 1 byte face mask (stores what face of the cell should get drawn */
-            undicht::graphics::VertexBuffer m_vertex_buffer;
 
         public:
 
             Chunk();
             virtual ~Chunk();
+
+            /** dont edit these directly!! */
+            const std::vector<Cell>& getCells() const;
+
+            int getCellCount() const;
 
         protected:
             // adding / removing cells from m_cells
@@ -88,9 +90,9 @@ namespace cell {
             /** recycles previously deleted Cell memory (if possible)
             * + adds the cell to the mini chunk system
             * so dont just use m_cells.push_back to add cells */
-            int addCell(const Cell& c);
+            virtual int addCell(const Cell& c);
 
-            void remCell(int id);
+            virtual void remCell(int id);
 
 
         protected:
@@ -140,20 +142,21 @@ namespace cell {
             bool validVolume();
 
         public:
-            // creating and maintaining the data to draw the chunk
+            // api for functions loading/generating cells
 
-            /** resizes the buffer that stores the data for every cell within the chunk
-            * + fills the resized buffer with all the cells of the chunk */
-            void resizeDrawBuffer(int cell_count);
+            /** @warning only to be used before the chunk is constructed from a file / generator
+            * @warning will breake the current chunk, editing will no longer work
+            * @param will reserve enough space for num cells, so that while setting new cells
+            * no resize of the cell buffer will be needed */
+            void readyForReInit(int num);
 
-            /** updates the data of the cell within the vertex_buffer
-            * will also resize the buffer to fit new cells */
-            void updateDrawBuffer(int id);
-
-            /** updates the draw buffer for every cell of the chunk */
-            void updateDrawBuffer();
-
-            int getCellCount() const;
+            /** @warning readyForReInit should be called before this function
+            * wont check if the volume of the new cell was occupied before
+            * usefull for initializing the chunk from data stored in files
+            * which is already arranged without overlapping cells
+            * will write the cell into the cell buffer at position 'offset'
+            * without thinking about the cell that might have been there before*/
+            void setCellBlind(const Cell& c, int offset);
 
         public:
             // deciding which faces of cells cant be seen and therefor shouldnt be rendered

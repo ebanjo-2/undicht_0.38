@@ -83,12 +83,12 @@ namespace cell {
         Renderer::setViewport(width, height, offset_x, offset_y);
     }
 
-    void CellGeometryRenderer::draw(Chunk& c, const glm::ivec3& chunk_pos) {
+    void CellGeometryRenderer::draw(WorldChunk& c, const glm::ivec3& chunk_pos) {
 
         m_chunk_pos.setData(glm::value_ptr(chunk_pos), UND_VEC3I);
         m_shader.loadUniform(m_chunk_pos);
 
-        submit(&c.m_vertex_buffer);
+        submit(&c.getDrawBuffer());
 
         Renderer::draw(c.getCellCount());
     }

@@ -15,7 +15,7 @@ namespace cell {
 
         if(!opened) return false;
 
-        eraseAll(true);
+        //eraseAll(true);
 
         bool correct_header = readHeader();
 
@@ -98,7 +98,7 @@ namespace cell {
         // writing the chunks cells
         setWritePosition(reg.offset);
 
-        for(const Cell& cell : c.m_cells) {
+        for(const Cell& cell : c.getCells()) {
 
             CellStruct cell_data;
             cell_data.pos0x = cell.m_pos0.x;
@@ -143,6 +143,7 @@ namespace cell {
 	}
 
     bool WorldFile::readChunk(Chunk& loadTo, unsigned int register_id) {
+        /** @return false, if the reading failed */
 
         if((register_id < 0) || (register_id >= 4096)) return false;
 
@@ -155,11 +156,7 @@ namespace cell {
 
         if(!cell_count) return false;
 
-        loadTo.m_cells.resize(cell_count);
-        loadTo.m_unused_cells.clear();
-
-        for(int i = 0; i < 4096; i++)
-            loadTo.m_mini_chunks[i / 256][(i / 16) % 16][i % 16].clear();
+        loadTo.readyForReInit(cell_count);
 
 
         for(int i = 0; i < cell_count; i++){
@@ -167,19 +164,14 @@ namespace cell {
             CellStruct cell_data;
             readBinary((char*)& cell_data, sizeof(CellStruct));
 
-            loadTo.m_cells[i].m_pos0 = glm::ivec3(cell_data.pos0x, cell_data.pos0y, cell_data.pos0z);
-            loadTo.m_cells[i].m_pos1 = glm::ivec3(cell_data.pos1x, cell_data.pos1y, cell_data.pos1z);
-            loadTo.m_cells[i].m_material = cell_data.mat;
+            Cell c;
 
-            if(cell_data.mat == VOID_CELL) {
+            c.m_pos0 = glm::ivec3(cell_data.pos0x, cell_data.pos0y, cell_data.pos0z);
+            c.m_pos1 = glm::ivec3(cell_data.pos1x, cell_data.pos1y, cell_data.pos1z);
+            c.m_material = cell_data.mat;
+            c.m_visible_faces = (cell_data.mat == VOID_CELL) ? 0x00 : 0xFF;
 
-                loadTo.m_cells[i].m_visible_faces = 0x00;
-            } else {
-
-                loadTo.m_cells[i].m_visible_faces = 0xFF;
-            }
-
-            loadTo.addToMiniChunks(i);
+            loadTo.setCellBlind(c, i);
 
         }
 

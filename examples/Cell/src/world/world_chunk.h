@@ -17,6 +17,17 @@ namespace cell {
 
             int m_last_optimized_cell_count = 0;
 
+            /** contains data about every cell in the chunk
+            * 6 byte positions ( 2 * 3 bytes for u8vec)
+            * 2 byte material id
+            * 1 byte face mask (stores what face of the cell should get drawn */
+            undicht::graphics::VertexBuffer m_vertex_buffer;
+
+        public:
+
+            WorldChunk();
+            WorldChunk(const glm::ivec3& origin);
+
         public:
 
             /** @return a rough estimation of how much a optimization of the chunk is needed
@@ -33,12 +44,31 @@ namespace cell {
             const glm::ivec3& getOrigin() const;
             void setOrigin(const glm::ivec3& origin);
 
+        public:
+        // adding / removing cells from m_cells
+        // + updating the draw buffer afterwards
+
+            virtual int addCell(const Cell& c);
+
+            virtual void remCell(int id);
 
         public:
+            // creating and maintaining the data to draw the chunk
 
-            WorldChunk();
-            WorldChunk(const glm::ivec3& origin);
+            void initDrawBuffer();
 
+            /** resizes the buffer that stores the data for every cell within the chunk
+            * + fills the resized buffer with all the cells of the chunk */
+            void resizeDrawBuffer(int cell_count);
+
+            /** updates the data of the cell within the vertex_buffer
+            * will also resize the buffer to fit new cells */
+            void updateDrawBuffer(int id);
+
+            /** updates the draw buffer for every cell of the chunk */
+            void updateDrawBuffer();
+
+            undicht::graphics::VertexBuffer& getDrawBuffer();
 
     };
 

@@ -32,15 +32,17 @@ using namespace user_input;
 using namespace cell;
 
 void drawCrosshair(FontRenderer& fr, Font& f);
-void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p);
+void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p, int cell_count);
 
 
 int main(int argc, char **argv) {
 
-    const int WINDOW_WIDTH = 512;
-    const int WINDOW_HEIGHT = 300;
+    //const int WINDOW_WIDTH = 512;
+    //const int WINDOW_HEIGHT = 300;
     //const int WINDOW_WIDTH = 1680;
     //const int WINDOW_HEIGHT = 1050;
+    const int WINDOW_WIDTH = 1920;
+    const int WINDOW_HEIGHT = 1080;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
     //window.setWindowMode(true,false);
@@ -94,12 +96,16 @@ int main(int argc, char **argv) {
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
-            world_0.loadChunks(glm::ivec3(player.getPosition()), 0);
+
+            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
+
+            lights.back() = player.getPosition();
 
             if(mouse_input.getButtonState(UND_MOUSE_1)) {
 
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
             }
+
 
             if(mouse_input.getButtonState(UND_MOUSE_2)) {
 
@@ -112,6 +118,7 @@ int main(int argc, char **argv) {
 
             world_0.optChunks();
 
+
             //////////////////////////////////////// drawing ////////////////////////////////////////
 
 
@@ -120,23 +127,26 @@ int main(int argc, char **argv) {
             renderer.draw(world_0);
 
             for (glm::vec3& l : lights) {
-                renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 40);
+                renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 100);
             }
 
             renderer.drawFinalScene();
 
             drawCrosshair(font_renderer, arial);
 
-            drawInfo(font_renderer, arial, last_time, player);
+            drawInfo(font_renderer, arial, last_time, player, world_0.getChunk(world_0.getChunkPos(glm::ivec3(player.getPosition()))).getCellCount());
 
 
             ///////////////////////////// finishing the frame ////////////////////////////////////////
 
             last_time = getEngineTime();
 
+
+
             key_input.clearKeyLists();
             mouse_input.updateCursorOffset();
             mouse_input.clearButtonLists();
+
             window.update();
 
         }
@@ -162,12 +172,12 @@ void drawCrosshair(FontRenderer& fr, Font& f) {
 
 }
 
-void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p) {
+void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p, int cell_count) {
 
     fr.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
 
     fr.draw(f, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
-
+    fr.draw(f, "Current Chunk has: " + toStr(cell_count) + " Cells", glm::vec2(-1.0f,0.7f));
     fr.draw(f, "Player Position: " + toStr(p.getPosition().x) + " " + toStr(p.getPosition().y) + " " + toStr(p.getPosition().z), glm::vec2(-1.0f,0.6f));
     fr.draw(f, "Player Direction: " + toStr(p.getViewDirection().x) + " " + toStr(p.getViewDirection().y) + " " + toStr(p.getViewDirection().z), glm::vec2(-1.0f,0.50f));
 }
