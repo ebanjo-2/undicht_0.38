@@ -76,7 +76,7 @@ namespace cell {
 		File::writeBinary((char*)&m_registers, sizeof(ChunkRegister), 4096);
 	}
 
-    bool WorldFile::writeChunk(const Chunk& c, unsigned int register_id) {
+    bool WorldFile::writeChunk(const WorldChunk& c, unsigned int register_id) {
         /** @param pos: should be within 16 chunks of this files origin chunk
         * otherwise false is going to be returned and the chunk will no be written */
 
@@ -90,7 +90,7 @@ namespace cell {
 
         reg.offset = findFreeSpace(chunk_size);
         reg.byte_size = chunk_size;
-
+        reg.opt_need = c.getOptNeed();
 
         setWritePosition(sizeof(Header) + register_id * sizeof(ChunkRegister));
         File::writeBinary((char*)&reg, sizeof(ChunkRegister));
@@ -142,7 +142,7 @@ namespace cell {
 		return true;
 	}
 
-    bool WorldFile::readChunk(Chunk& loadTo, unsigned int register_id) {
+    bool WorldFile::readChunk(WorldChunk& loadTo, unsigned int register_id) {
         /** @return false, if the reading failed */
 
         if((register_id < 0) || (register_id >= 4096)) return false;
@@ -157,7 +157,8 @@ namespace cell {
         if(!cell_count) return false;
 
         loadTo.readyForReInit(cell_count);
-
+        loadTo.setOptNeed(reg.opt_need);
+        std::cout << "chunk opt need is: " << reg.opt_need << "\n";
 
         for(int i = 0; i < cell_count; i++){
 

@@ -66,6 +66,8 @@ add_library("tools"
 	src/geometry/geometry.h
 	src/geometry/geometry.cpp
 	
+	src/random/perlin_noise.h
+	src/random/perlin_noise.cpp
 
 )
 

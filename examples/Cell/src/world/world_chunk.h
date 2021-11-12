@@ -33,7 +33,10 @@ namespace cell {
             /** @return a rough estimation of how much a optimization of the chunk is needed
             * 0 can mean that there is no need, the heigher the return,
             * the more cells were added to the chunk and the heigher the need for optimization */
-            int getOptNeed();
+            int getOptNeed() const;
+
+            /** may be used when a chunk is loaded from a file */
+            void setOptNeed(int need);
 
             /** tells the chunk that its just been optimized
             * getOptNeed() will now return 0 until changes are made to the chunk*/

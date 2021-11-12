@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <files/file.h>
 
-#include <world/chunk.h>
+#include <world/world_chunk.h>
 
 namespace cell {
 
@@ -30,16 +30,19 @@ namespace cell {
 
 			uint32_t offset = sizeof(Header) + 4096 * sizeof(ChunkRegister); // the position where the chunk is located in the file (in bytes from the very start of the file)
 			uint32_t byte_size = 0; // the size of the chunk
+			uint32_t opt_need = 0;
 
 			bool operator<(const ChunkRegister& r) {
+                // used to sort registers by the memory block they use to store their cells
+                // when the registers are sorted this way, its easy to find unused memory between them
 
                 if(offset < r.offset)
                     return true;
 
+                // this register might be uninitialized and r may use the first memory location for cells
                 if((offset == r.offset) && (byte_size < r.byte_size))
                     return true;
 
-                //return (offset + byte_size) < (r.offset + r.byte_size);
                 return false;
 			}
 
@@ -85,7 +88,7 @@ namespace cell {
 
         /** writes the chunk to the file and uses the register id
         * which can be uesd to retrieve the chunk data again */
-		virtual bool writeChunk(const Chunk& c, unsigned int register_id = 0);
+		virtual bool writeChunk(const WorldChunk& c, unsigned int register_id = 0);
 
 	private:
 		// reading
@@ -95,7 +98,7 @@ namespace cell {
 
     public:
 
-		virtual bool readChunk(Chunk& loadTo, unsigned int register_id = 0);
+		virtual bool readChunk(WorldChunk& loadTo, unsigned int register_id = 0);
 	};
 
 

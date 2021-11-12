@@ -20,7 +20,7 @@ namespace cell {
     }
 
 
-    int WorldChunk::getOptNeed() {
+    int WorldChunk::getOptNeed() const{
         /** @return a rough estimation of how much a optimization of the chunk is needed
         * 0 can mean that there is no need, the heigher the return,
         * the more cells were added to the chunk and the heigher the need for optimization */
@@ -28,6 +28,11 @@ namespace cell {
         return getCellCount() - m_last_optimized_cell_count;
     }
 
+    void WorldChunk::setOptNeed(int need) {
+        /** may be used when a chunk is loaded from a file */
+
+        m_last_optimized_cell_count = getCellCount() - need;
+    }
 
     void WorldChunk::markAsOptimzed() {
         /** tells the chunk that its just been optimized

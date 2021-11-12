@@ -143,7 +143,7 @@ namespace cell {
                 // old_pos is not part of the new chunks
 
                 // saving the chunk to the file
-                const Chunk& c = m_loaded_chunks[i];
+                const WorldChunk& c = m_loaded_chunks[i];
                 m_world_file.writeChunk(c, getChunkId(old_pos / 255));
 
                 chunks_to_unload.push_back(i);

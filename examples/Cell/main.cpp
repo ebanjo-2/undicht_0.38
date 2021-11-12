@@ -39,10 +39,10 @@ int main(int argc, char **argv) {
 
     //const int WINDOW_WIDTH = 512;
     //const int WINDOW_HEIGHT = 300;
-    //const int WINDOW_WIDTH = 1680;
-    //const int WINDOW_HEIGHT = 1050;
-    const int WINDOW_WIDTH = 1920;
-    const int WINDOW_HEIGHT = 1080;
+    const int WINDOW_WIDTH = 1680;
+    const int WINDOW_HEIGHT = 1050;
+    //const int WINDOW_WIDTH = 1920;
+    //const int WINDOW_HEIGHT = 1080;
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "HELLO WORLD");
     //window.setWindowMode(true,false);
@@ -104,6 +104,9 @@ int main(int argc, char **argv) {
             if(mouse_input.getButtonState(UND_MOUSE_1)) {
 
                 world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(10, 10, 10)), glm::ivec3(player.getPosition() + glm::vec3(10, 10, 10)), -1));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() - glm::vec3(11, 10, 11)), glm::ivec3(player.getPosition() + glm::vec3(-9, 10, -9)), holz_bretter));
+                world_0.setCell(TCell<int>(glm::ivec3(player.getPosition() + glm::vec3(11, 10, 11)), glm::ivec3(player.getPosition() - glm::vec3(-9, 10, -9)), holz_bretter));
+
             }
 
 
@@ -127,7 +130,7 @@ int main(int argc, char **argv) {
             renderer.draw(world_0);
 
             for (glm::vec3& l : lights) {
-                renderer.drawLight(l, glm::vec3(0.5, 1.0, 0.8), 100);
+                renderer.drawLight(l, 0.5f * glm::vec3(1.0, 0.8, 0.8), 100);
             }
 
             renderer.drawFinalScene();
