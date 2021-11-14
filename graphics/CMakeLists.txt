@@ -63,6 +63,11 @@ add_library(graphics STATIC
 		
 	src/font_rendering/font_shader.glsl
 
+    src/vector_graphics/vg_renderer.h
+    src/vector_graphics/vg_renderer.cpp
+
+    src/vector_graphics/line_shader.glsl
+
 )
 
 target_include_directories(graphics PUBLIC include src)
