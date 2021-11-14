@@ -28,6 +28,11 @@
 !examples/Cell/res/**/*.png
 !examples/Cell/src/**/*
 
+!examples/Noise/CMakeLists.txt
+!examples/Noise/*.cpp
+!examples/Noise/res/**/*.png
+!examples/Noise/src/**/*
+
 !tools/.gitignore
 !tools/CMakeLists.txt
 !tools/src/**/*
