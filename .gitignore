@@ -33,6 +33,11 @@
 !examples/Noise/res/**/*.png
 !examples/Noise/src/**/*
 
+!examples/et1/CMakeLists.txt
+!examples/et1/*.cpp
+!examples/et1/res/**/*.png
+!examples/et1/src/**/*
+
 !tools/.gitignore
 !tools/CMakeLists.txt
 !tools/src/**/*

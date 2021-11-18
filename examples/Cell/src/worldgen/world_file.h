@@ -52,10 +52,10 @@ namespace cell {
 			// the cells are located after the reserved memory for the ChunkRegisters
 			// the cells are grouped in chunks, but there may be no space between chunks
 
-			// pray that this struct ends up being 8 bytes
-
 			uint8_t pos0x, pos0y, pos0z;
 			uint8_t pos1x, pos1y, pos1z;
+
+			uint8_t visible_faces;
 
 			uint16_t mat;
 		};

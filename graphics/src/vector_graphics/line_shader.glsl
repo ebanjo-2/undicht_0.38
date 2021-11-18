@@ -6,9 +6,11 @@ layout (location = 0) in vec2 aPos; // will always go from 0 to 1
 out vec2 screen_pos;
 
 
+uniform float aspect_ratio = 1;
+
 void main() {
 
-    screen_pos = aPos;
+    screen_pos = aPos * vec2(aspect_ratio, 1);
 
     gl_Position = vec4(aPos, 1.0f, 1.0f);
 
@@ -51,8 +53,8 @@ void main() {
     //out_color = vec4(0,1.0f / (d * 100.0f), 0,1);
 
 
-
-   float alpha = min(1.0f, (width - d) * 200.0f);
+	 	// (width - d) will be negative, if screen_pos is outside of the line
+   	float alpha = min(1.0f, (width - d) * 200.0f);
 
    out_color = vec4(color.rgb, color.a * alpha);
 

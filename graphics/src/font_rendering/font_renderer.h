@@ -46,7 +46,9 @@ namespace undicht {
 
                 /** @param pos: upper left corner of the baseline (characters such as j will go below)
                 * @param font_pixel_height describes the maximum height of a line of text (capital letters + letters such as j)
-                * about 1/3 of the font_pixel_height is below the baseline */
+                * about 1/3 of the font_pixel_height is below the baseline
+                * positions go from -1 to 1 in y direction
+                * the max x coords depend on the aspect ratio of the viewport, xmax = width / height */
                 void draw(const Font& f, const std::string& text, glm::vec2 pos, int font_pixel_height = 20);
 
         };

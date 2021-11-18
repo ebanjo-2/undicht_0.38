@@ -109,6 +109,8 @@ namespace cell {
             cell_data.pos1y = cell.m_pos1.y;
             cell_data.pos1z = cell.m_pos1.z;
 
+            cell_data.visible_faces = cell.m_visible_faces;
+
             cell_data.mat = cell.m_material;
 
             writeBinary((char*)&cell_data, sizeof(CellStruct));
@@ -170,7 +172,7 @@ namespace cell {
             c.m_pos0 = glm::ivec3(cell_data.pos0x, cell_data.pos0y, cell_data.pos0z);
             c.m_pos1 = glm::ivec3(cell_data.pos1x, cell_data.pos1y, cell_data.pos1z);
             c.m_material = cell_data.mat;
-            c.m_visible_faces = (cell_data.mat == VOID_CELL) ? 0x00 : 0xFF;
+            c.m_visible_faces = cell_data.visible_faces;
 
             loadTo.setCellBlind(c, i);
 

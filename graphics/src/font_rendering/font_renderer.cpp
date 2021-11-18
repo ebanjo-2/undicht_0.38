@@ -124,6 +124,11 @@ namespace undicht {
             m_font_scale.setData(glm::value_ptr(font_scale), UND_VEC2F);
             m_shader.loadUniform(m_font_scale);
 
+            // applying aspect ratio to the x coords
+            int vp_w, vp_h, vp_x, vp_y;
+            getViewport(vp_w, vp_h, vp_x, vp_y);
+            pos.x /= float(vp_w) / vp_h;
+
             m_text_pos.setData(glm::value_ptr(pos), UND_VEC2F);
             m_shader.loadUniform(m_text_pos);
 

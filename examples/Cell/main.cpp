@@ -6,6 +6,8 @@
 #include <font_rendering/font_renderer.h>
 #include <window/window.h>
 
+#include <vector_graphics/vg_renderer.h>
+
 #include <string_tools.h>
 
 #include <undicht_time.h>
@@ -31,7 +33,7 @@ using namespace user_input;
 
 using namespace cell;
 
-void drawCrosshair(FontRenderer& fr, Font& f);
+void drawCrosshair(VGRenderer& vr);
 void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p, int cell_count);
 
 
@@ -63,8 +65,11 @@ int main(int argc, char **argv) {
 
         CellRenderer renderer;
         FontRenderer font_renderer;
+        VGRenderer vg_renderer;
+
         renderer.setViewport(WINDOW_WIDTH, WINDOW_HEIGHT);
         font_renderer.setViewport(WINDOW_WIDTH, WINDOW_HEIGHT);
+        vg_renderer.setViewport(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         World world_0;
 
@@ -135,7 +140,7 @@ int main(int argc, char **argv) {
 
             renderer.drawFinalScene();
 
-            drawCrosshair(font_renderer, arial);
+            drawCrosshair(vg_renderer);
 
             drawInfo(font_renderer, arial, last_time, player, world_0.getChunk(world_0.getChunkPos(glm::ivec3(player.getPosition()))).getCellCount());
 
@@ -143,8 +148,6 @@ int main(int argc, char **argv) {
             ///////////////////////////// finishing the frame ////////////////////////////////////////
 
             last_time = getEngineTime();
-
-
 
             key_input.clearKeyLists();
             mouse_input.updateCursorOffset();
@@ -161,17 +164,11 @@ int main(int argc, char **argv) {
 
 
 
-void drawCrosshair(FontRenderer& fr, Font& f) {
+void drawCrosshair(VGRenderer& vr) {
 
-    const float crosshair_size = 30;
-
-    std::string crosshair = "+";
-
-    glm::vec2 cr_rel_size = fr.getRelSize(f, crosshair, crosshair_size);
-
-    glm::vec2 pos = glm::vec2(-0.5f, 2.0f/3.0f * -0.5f) * cr_rel_size;
-
-    fr.draw(f, crosshair, pos, crosshair_size);
+    vr.setColor(glm::vec4(1,1,1,0.1));
+    vr.drawCircle(glm::vec2(0,0), 0.025, 0.005);
+    vr.drawCircle(glm::vec2(0,0), 0, 0.005);
 
 }
 
