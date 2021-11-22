@@ -11,6 +11,8 @@ add_executable("et1"
 	
 	src/user_interface/ui_base.h 
 	src/user_interface/ui_base.cpp 
+
+    src/lin_equations/linear_equations.h
 )
 
 target_link_libraries("et1" graphics user_input)

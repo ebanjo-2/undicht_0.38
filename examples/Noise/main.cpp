@@ -13,8 +13,10 @@ using namespace user_input;
 
 int main() {
 
-    const int WINDOW_WIDTH = 1680;
-    const int WINDOW_HEIGHT = 1050;
+    //const int WINDOW_WIDTH = 1680;
+    //const int WINDOW_HEIGHT = 1050;
+    const int WINDOW_WIDTH = 800;
+    const int WINDOW_HEIGHT = 600;
     const float ASPECT_RATIO = float(WINDOW_WIDTH) / float(WINDOW_HEIGHT);
 
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Vector Graphics + Noise");
