@@ -225,6 +225,31 @@ namespace cell {
 
     }
 
+    /////////////////////////////////////// collision detection ///////////////////////////////////////
+
+
+
+    Cell World::getCellAt(const glm::ivec3& pos) {
+        /** @return undefined, if the requested position is outside the loaded world */
+
+        WorldChunk& cchunk = getChunk(getChunkPos(pos));
+
+        return cchunk.getCellAt(pos);
+    }
+
+    std::vector<Cell> World::getCellsAt(glm::ivec3& pos, const glm::ivec3& siz) {
+        /** @return the cells within the described volume
+        * siz can not be larger than 255 * 255 * 255 */
+
+        // the corners of the described volume can be in 8 different chunks at max
+        glm::ivec3 corner0 = offset;
+        glm::ivec3 corner1 = offset + siz.;
+        glm::ivec3 corner2 = offset;
+        glm::ivec3 corner3 = offset + glm::ivec3(volume.);
+
+
+    }
+
     ////////////////////////////////// editing the world //////////////////////////////////
 
     glm::ivec3 World::getChunkPos(const glm::ivec3& pos) {
@@ -244,7 +269,7 @@ namespace cell {
         return chunk_pos;
     }
 
-    Chunk& World::getChunk(const glm::ivec3& chunk_pos) {
+    WorldChunk& World::getChunk(const glm::ivec3& chunk_pos) {
 
         for(int i = 0; i < m_loaded_chunks.size(); i++) {
 

@@ -98,11 +98,14 @@ int main(int argc, char **argv) {
             renderer.clearFramebuffer();
             font_renderer.clearFramebuffer();
 
+            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
+
             player.loadKeyInput(key_input);
             player.loadMouseInput(mouse_input);
 
+            player.checkCollision(world_0, 0.016f);
+            player.processMovement(0.016f);
 
-            world_0.loadChunks(glm::ivec3(player.getPosition()), 1);
 
             lights.back() = player.getPosition();
 
@@ -176,9 +179,9 @@ void drawInfo(FontRenderer& fr, Font& f, double last_time, Player& p, int cell_c
 
     fr.setFontColor(glm::vec3(0.8f, 0.8f, 0.8f));
 
-    fr.draw(f, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.0f,0.8f));
-    fr.draw(f, "Current Chunk has: " + toStr(cell_count) + " Cells", glm::vec2(-1.0f,0.7f));
-    fr.draw(f, "Player Position: " + toStr(p.getPosition().x) + " " + toStr(p.getPosition().y) + " " + toStr(p.getPosition().z), glm::vec2(-1.0f,0.6f));
-    fr.draw(f, "Player Direction: " + toStr(p.getViewDirection().x) + " " + toStr(p.getViewDirection().y) + " " + toStr(p.getViewDirection().z), glm::vec2(-1.0f,0.50f));
+    fr.draw(f, "FPS: " + toStr(1 / (getEngineTime() - last_time)), glm::vec2(-1.5f,0.8f));
+    fr.draw(f, "Current Chunk has: " + toStr(cell_count) + " Cells", glm::vec2(-1.5f,0.7f));
+    fr.draw(f, "Player Position: " + toStr(p.getPosition().x) + " " + toStr(p.getPosition().y) + " " + toStr(p.getPosition().z), glm::vec2(-1.5f,0.6f));
+    fr.draw(f, "Player Direction: " + toStr(p.getViewDirection().x) + " " + toStr(p.getViewDirection().y) + " " + toStr(p.getViewDirection().z), glm::vec2(-1.5f,0.50f));
 }
 

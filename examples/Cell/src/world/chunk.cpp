@@ -149,7 +149,7 @@ namespace cell {
     //////////////////////////////////// searching cells ////////////////////////////////////////
 
 
-    int Chunk::getCellAt(const u8vec3& pos) {
+    int Chunk::getCellIDAt(const u8vec3& pos) {
 
         std::vector<int>& mini_chunk = getMiniChunk(pos / (unsigned char)16);
 

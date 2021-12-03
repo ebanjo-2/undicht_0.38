@@ -29,6 +29,19 @@ namespace cell {
             WorldChunk(const glm::ivec3& origin);
 
         public:
+            // using the chunk at its position in the world
+
+            /** @return true, if the pos is within the 255*255*255 chunk starting at getOrigin() */
+            bool isInside(const glm::ivec3& pos); // thats what she said
+
+            // no override
+            /** the pos actually has to be within the chunk,
+            * otherwise its not defined which cell gets returned */
+            Cell getCellAt(const glm::ivec3& pos);
+
+
+        public:
+            // estimating the optimization need for the chunk
 
             /** @return a rough estimation of how much a optimization of the chunk is needed
             * 0 can mean that there is no need, the heigher the return,

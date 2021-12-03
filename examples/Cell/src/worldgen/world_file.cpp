@@ -160,7 +160,7 @@ namespace cell {
 
         loadTo.readyForReInit(cell_count);
         loadTo.setOptNeed(reg.opt_need);
-        std::cout << "chunk opt need is: " << reg.opt_need << "\n";
+        //std::cout << "chunk opt need is: " << reg.opt_need << "\n";
 
         for(int i = 0; i < cell_count; i++){
 

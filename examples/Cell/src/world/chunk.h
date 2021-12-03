@@ -119,7 +119,7 @@ namespace cell {
         public:
             // searching cells
 
-            int getCellAt(const u8vec3& pos);
+            int getCellIDAt(const u8vec3& pos);
 
             /** searches all of m_cells for cells that overlap with the volume */
             void getCellsInVolume(const Cell& volume, std::vector<int>& loadTo);

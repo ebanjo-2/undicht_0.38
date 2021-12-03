@@ -17,6 +17,8 @@ namespace cell {
 
     bool isPointInside(const Cell& c, const u8vec3& point);
 
+    bool isPointInside(const TCell<int>& c, const glm::ivec3& point);
+
     /////////////////////////// relations between cells ///////////////////////////////////
 
     /** @return true, if the cells share some volume (touching isnt enough) */

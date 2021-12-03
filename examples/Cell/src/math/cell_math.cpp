@@ -33,15 +33,30 @@ namespace cell {
 
     bool isPointInside(const Cell& c, const u8vec3& point) {
 
-        if(!overlappingRanges(c.m_pos0.x, c.m_pos1.x, point.x, point.x))
+        if((c.m_pos0.x > point.x) || (c.m_pos1.x <= point.x))
             return false;
-        if(!overlappingRanges(c.m_pos0.y, c.m_pos1.y, point.y, point.y))
+
+        if((c.m_pos0.y > point.y) || (c.m_pos1.y <= point.y))
             return false;
-        if(!overlappingRanges(c.m_pos0.z, c.m_pos1.z, point.z, point.z))
+
+        if((c.m_pos0.z > point.z) || (c.m_pos1.z <= point.z))
             return false;
 
         return true;
+    }
 
+    bool isPointInside(const TCell<int>& c, const glm::ivec3& point) {
+
+        if((c.m_pos0.x > point.x) || (c.m_pos1.x <= point.x))
+            return false;
+
+        if((c.m_pos0.y > point.y) || (c.m_pos1.y <= point.y))
+            return false;
+
+        if((c.m_pos0.z > point.z) || (c.m_pos1.z <= point.z))
+            return false;
+
+        return true;
     }
 
 

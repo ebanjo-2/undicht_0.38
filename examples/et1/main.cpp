@@ -69,9 +69,9 @@ int main() {
     stromquellen.push_back({100, 1,0,1});
 
     LinearSystem gleichungen(3,3);
-    gleichungen.setRow(0, {2,3}, 0);
-    gleichungen.setRow(1, {3,1}, 0);
-
+    gleichungen.setRow(0, {1,1,1}, 6);
+    gleichungen.setRow(1, {-15,-9,-12}, -54);
+    gleichungen.setRow(2, {0,0,2}, 24);
 
     solveLinearEquations(gleichungen);
 

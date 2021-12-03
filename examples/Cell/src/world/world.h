@@ -68,6 +68,16 @@ namespace cell {
 
             void optChunks();
 
+        public:
+            // collision detection
+
+            /** @return undefined, if the requested position is outside the loaded world */
+            Cell getCellAt(const glm::ivec3& pos);
+
+            /** @return the cells within the described volume
+            * siz can not be larger than 255 * 255 * 255 */
+            std::vector<Cell> getCellsAt(glm::ivec3& pos, const glm::ivec3& siz);
+
 
         public:
             // editing the world
@@ -75,7 +85,7 @@ namespace cell {
             /** @return the position of the chunk in which pos is located*/
             glm::ivec3 getChunkPos(const glm::ivec3& pos);
 
-            Chunk& getChunk(const glm::ivec3& chunk_pos);
+            WorldChunk& getChunk(const glm::ivec3& chunk_pos);
 
             /** parts of the cell that are outside the loaded chunks will be ignored */
             void setCell(const TCell<int>& c);

@@ -1,5 +1,6 @@
 #include "world/world_chunk.h"
 #include <geometry/geometry.h>
+#include <math/cell_math.h>
 
 
 namespace cell {
@@ -19,8 +20,28 @@ namespace cell {
         setOrigin(origin);
     }
 
+    bool WorldChunk::isInside(const glm::ivec3& pos) {
+        /** @return true, if the pos is within the 255*255*255 chunk starting at getOrigin() */
 
-    int WorldChunk::getOptNeed() const{
+        glm::ivec3 d = pos - m_origin;
+
+        return isPointInside(TCell<int>(glm::ivec3(0,0,0), glm::ivec3(255,255,255)), d);
+    }
+
+    Cell WorldChunk::getCellAt(const glm::ivec3& pos) {
+        /** the pos actually has to be within the chunk,
+        * otherwise its not defined which cell gets returned */
+
+        u8vec3 cpos = u8vec3(pos - m_origin);
+
+        int i = getCellIDAt(cpos);
+
+        return m_cells[i];
+    }
+
+    /////////////////////////////// estimating the optimization need for the chunk ///////////////////////////////
+
+    int WorldChunk::getOptNeed() const {
         /** @return a rough estimation of how much a optimization of the chunk is needed
         * 0 can mean that there is no need, the heigher the return,
         * the more cells were added to the chunk and the heigher the need for optimization */
